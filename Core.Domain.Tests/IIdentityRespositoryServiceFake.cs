@@ -25,6 +25,9 @@ namespace Core.Domain.Tests
         }
         async public Task<JwtSecurityToken> Create(User user, string password)
         {
+            if (user.UserName == null) { throw new Exception("User not given"); }
+            if (password == null) { throw new Exception("Password not given"); }
+            if (user.Email == null) { throw new Exception("Email not given"); }
             _authHelper.IsValidEmail(user.Email);
             IList<String> roleslist = new List<String>();
             roleslist.Add("DOCTOR");
@@ -33,9 +36,19 @@ namespace Core.Domain.Tests
             return token;
         }
 
-        Task<JwtSecurityToken> IIdentityRepository.login(User user, string password)
+        async public  Task<JwtSecurityToken> login(User user, string password)
         {
-            throw new NotImplementedException();
+            _authHelper.IsValidEmail(user.Email);
+            if (user.UserName == null) { throw new Exception("User not given"); }
+            if (password == null) { throw new Exception("Password not given"); }
+            if (user.Email == null) { throw new Exception("Email not given"); }
+            if (user.Email != "email@gmail.com") { throw new Exception("User doesnt exist"); }
+            if(password != "bijen") { throw new Exception("Wrong password"); }
+
+            IList<String> roleslist = new List<String>();
+            roleslist.Add("DOCTOR");
+                JwtSecurityToken token = _authHelper.GenerateToken(user, roleslist);
+                return token;
         }
 
 

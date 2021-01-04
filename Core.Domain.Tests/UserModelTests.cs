@@ -15,6 +15,7 @@ using AutoMapper;
 using log4net.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Core.Domain.Tests
 {
@@ -44,16 +45,30 @@ namespace Core.Domain.Tests
         }
 
         [Fact]
-        public async Task Get_WhenCalled_ReturnsAllItemsAsync()
+        public async Task StatusCode200WhenRegister()
         {
             User a = new User
             {
-                Email = "emailaddress@gmail.com",
+                Email = "email@gmail.com",
                 UserName = "harry"
             };
             String password = "bijen";
-           var result = await Controller.RegisterAsync(a, password);
-            Assert.Equal(1, 1);
+            OkObjectResult result = (OkObjectResult)await Controller.RegisterAsync(a, password);
+            Assert.Equal(result.StatusCode, 200);
+        }
+
+
+        [Fact]
+        public async Task StatusCode200WhenLogin()
+        {
+            User a = new User
+            {
+                Email = "email@gmail.com",
+                UserName = "harry"
+            };
+            String password = "bijen";
+            OkObjectResult result = (OkObjectResult)await Controller.LoginAsync(a, password);
+            Assert.Equal(result.StatusCode, 200);
         }
 
 
