@@ -9,10 +9,10 @@ using System.Text;
 
 namespace Core.DomainServices.Helper
 {
-    public class TokenController
+    public class AuthHelper
     {
         private readonly IConfiguration _configuration;
-        public TokenController( IConfiguration configuration){
+        public AuthHelper( IConfiguration configuration){
             _configuration = configuration;
          }
 
@@ -25,7 +25,6 @@ namespace Core.DomainServices.Helper
                 new Claim("role", roles[0])
             };
                 
-
             return new JwtSecurityToken(
               issuer: _configuration["JWT:ValidIssuer"],
               audience: _configuration["JWT:ValidAudience"],
@@ -33,6 +32,20 @@ namespace Core.DomainServices.Helper
               claims: claims,
               signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
               ); 
+        }
+
+
+        public bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return true;
+            }
+            catch
+            {
+                throw new Exception("Email isnt valid or set");
+            }
         }
 
 

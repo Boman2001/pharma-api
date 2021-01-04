@@ -20,21 +20,19 @@ namespace WebApi.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IIdentityRepository _IdentityRepository;
-        private readonly TokenController _tokenController;
+        private readonly AuthHelper _tokenController;
 
         public LoginController(UserManager<User> userManager, IIdentityRepository identityRepository, IConfiguration configuration)
         {
-            _tokenController = new TokenController(configuration);
+            _tokenController = new AuthHelper(configuration);
             _IdentityRepository = identityRepository;
         }
        
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromForm] User model)
+        public async Task<IActionResult> RegisterAsync([FromForm] User model, [FromForm] String password)
         {
-
-
-
+            model.PasswordHash = password;
             try
             {
                 var Result = await _IdentityRepository.Create(model, model.PasswordHash);
@@ -49,8 +47,9 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync([FromForm] User model)
+        public async Task<IActionResult> LoginAsync([FromForm] User model, [FromForm] String password)
         {
+            model.PasswordHash = password;
             try
             {
                 var Result = await _IdentityRepository.login(model, model.PasswordHash);
