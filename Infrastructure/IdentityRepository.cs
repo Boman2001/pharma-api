@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Core.Domain;
@@ -26,8 +27,8 @@ namespace Infrastructure
 
         async public Task<JwtSecurityToken> Create(User user, string password)
         {
-          
-            List<Exception> exceptions = new List<Exception>();
+            IsValidEmail(user.Email);
+                List<Exception> exceptions = new List<Exception>();
 
             var result = await _userManager.CreateAsync(user, password);
             await _userManager.AddToRoleAsync(user, "Doctor");
@@ -46,6 +47,7 @@ namespace Infrastructure
 
         public async Task<JwtSecurityToken> login(User user, string password)
         {
+            IsValidEmail(user.Email);
 
             var result = await _userManager.FindByEmailAsync(user.Email);
 
@@ -71,5 +73,21 @@ namespace Infrastructure
             
       
         }
+
+
+       public bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return true ;
+            }
+            catch
+            {
+                throw new Exception("Email isnt valid");
+            }
+        }
+
+
     }
 }
