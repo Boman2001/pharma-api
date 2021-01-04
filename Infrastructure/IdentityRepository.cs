@@ -16,9 +16,11 @@ namespace Infrastructure
 
         private readonly UserManager<User> _userManager;
         private readonly TokenController _tokenController;
-        public IdentityRepository(UserManager<User> userManager, IConfiguration configuration)
+        private SignInManager<User> _signInManager;
+        public IdentityRepository(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
             _tokenController = new TokenController(configuration);
         }
 
@@ -40,6 +42,33 @@ namespace Infrastructure
             }
             JwtSecurityToken token =  _tokenController.GenerateToken(user, null);
             return token;
+        }
+
+        public async Task<JwtSecurityToken> login(User user, string password)
+        {
+
+            var result = await _userManager.FindByEmailAsync(user.Email);
+
+           
+                if (result != null)
+                {
+                    var resultlogin = await _signInManager.PasswordSignInAsync(user.Email, password, false, false);
+                    if (resultlogin.Succeeded)
+                    {
+                        JwtSecurityToken token = _tokenController.GenerateToken(user, null);
+                        return token;
+                    }
+                    else
+                    {
+                        throw new Exception("Wrong password");
+                    }
+                }
+                else
+                {
+                    throw new Exception("User doesnt exist");
+                }
+            
+      
         }
     }
 }

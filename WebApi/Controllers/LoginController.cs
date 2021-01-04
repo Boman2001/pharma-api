@@ -14,7 +14,7 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
     public class LoginController : ControllerBase
     {
@@ -25,11 +25,7 @@ namespace WebApi.Controllers
             _tokenController = new TokenController(configuration);
             _IdentityRepository = identityRepository;
         }
-        [HttpGet("test")]
-        public IActionResult test()
-        {
-            return Ok();
-        }
+       
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync([FromForm] User model)
@@ -37,6 +33,21 @@ namespace WebApi.Controllers
             try
             {
                 var Result = await _IdentityRepository.Create(model, model.PasswordHash);
+                return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(Result) });
+            }
+            catch (Exception ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync([FromForm] User model)
+        {
+            try
+            {
+                var Result = await _IdentityRepository.login(model, model.PasswordHash);
                 return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(Result) });
             }
             catch (Exception ex)
