@@ -16,7 +16,7 @@ namespace Infrastructure
 
         private readonly UserManager<User> _userManager;
         private readonly TokenController _tokenController;
-        private SignInManager<User> _signInManager;
+        private readonly SignInManager<User> _signInManager;
         public IdentityRepository(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
         {
             _userManager = userManager;
@@ -30,8 +30,8 @@ namespace Infrastructure
             List<Exception> exceptions = new List<Exception>();
 
             var result = await _userManager.CreateAsync(user, password);
-
-
+            await _userManager.AddToRoleAsync(user, "Doctor");
+            IList<String> roleslist = await _userManager.GetRolesAsync(user);
             foreach (IdentityError error  in result.Errors)
             {
                 exceptions.Add(new Exception(error.Description));
@@ -40,7 +40,7 @@ namespace Infrastructure
             {
                 throw new AggregateException("Encountered errors while trying to do something.",exceptions);
             }
-            JwtSecurityToken token =  _tokenController.GenerateToken(user, null);
+            JwtSecurityToken token =  _tokenController.GenerateToken(user, roleslist);
             return token;
         }
 
@@ -53,9 +53,10 @@ namespace Infrastructure
                 if (result != null)
                 {
                     var resultlogin = await _signInManager.PasswordSignInAsync(user.Email, password, false, false);
-                    if (resultlogin.Succeeded)
+                    IList<String> roleslist = await _userManager.GetRolesAsync(result);
+                if (resultlogin.Succeeded)
                     {
-                        JwtSecurityToken token = _tokenController.GenerateToken(user, null);
+                        JwtSecurityToken token = _tokenController.GenerateToken(user, roleslist);
                         return token;
                     }
                     else

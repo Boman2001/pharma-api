@@ -11,5 +11,6 @@ namespace Core.Domain
     [Table("AspNetUsers")]
     public class User : IdentityUser
     {
+
     }
 }

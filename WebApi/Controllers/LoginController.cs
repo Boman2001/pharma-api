@@ -11,6 +11,7 @@ using Core.DomainServices;
 using Core.DomainServices.Helper;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebApi.Controllers
 {
@@ -20,7 +21,8 @@ namespace WebApi.Controllers
     {
         private readonly IIdentityRepository _IdentityRepository;
         private readonly TokenController _tokenController;
-        public LoginController( IIdentityRepository identityRepository, IConfiguration configuration)
+
+        public LoginController(UserManager<User> userManager, IIdentityRepository identityRepository, IConfiguration configuration)
         {
             _tokenController = new TokenController(configuration);
             _IdentityRepository = identityRepository;
@@ -30,9 +32,13 @@ namespace WebApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync([FromForm] User model)
         {
+
+
+
             try
             {
                 var Result = await _IdentityRepository.Create(model, model.PasswordHash);
+
                 return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(Result) });
             }
             catch (Exception ex)

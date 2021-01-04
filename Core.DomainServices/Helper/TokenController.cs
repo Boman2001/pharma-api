@@ -16,17 +16,22 @@ namespace Core.DomainServices.Helper
             _configuration = configuration;
          }
 
-        public JwtSecurityToken GenerateToken(User User, IList<String> claims)
+        public JwtSecurityToken GenerateToken(User User, IList<String> roles)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-        
+
+            var claims = new List<Claim>{
+                new Claim(JwtRegisteredClaimNames.NameId, User.Id),
+                new Claim("role", roles[0])
+            };
+                
+
             return new JwtSecurityToken(
               issuer: _configuration["JWT:ValidIssuer"],
               audience: _configuration["JWT:ValidAudience"],
               expires: DateTime.Now.AddHours(3),
+              claims: claims,
               signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-
-
               ); 
         }
 

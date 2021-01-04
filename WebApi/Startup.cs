@@ -39,10 +39,7 @@ namespace WebApi
                 config.Password.RequireUppercase = false;
                 config.Password.RequiredUniqueChars = 0;
                 config.Password.RequireLowercase = false;
-            }
-           )
-
-         .AddEntityFrameworkStores<IdentityAppdbContext>().AddDefaultTokenProviders();
+            }).AddRoles<IdentityRole>().AddEntityFrameworkStores<IdentityAppdbContext>().AddDefaultTokenProviders();
 
 
 
