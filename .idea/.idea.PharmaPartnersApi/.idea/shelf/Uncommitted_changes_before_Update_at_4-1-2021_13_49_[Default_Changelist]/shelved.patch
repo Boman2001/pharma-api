@@ -1,0 +1,264 @@
+Index: Core.DomainServices/Repositories/IRepository.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Core.DomainServices/Repositories/IRepository.cs b/Core.DomainServices/Repositories/IRepository.cs
+new file mode 100644
+--- /dev/null	(date 1609764469002)
++++ b/Core.DomainServices/Repositories/IRepository.cs	(date 1609764469002)
+@@ -0,0 +1,27 @@
++using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Linq.Expressions;
++using System.Threading.Tasks;
++using Core.Domain;
++
++namespace Core.DomainServices.Repositories
++{
++    public interface IRepository<T> where T : BaseEntity
++    {
++        IEnumerable<T> Get();
++        Task<T> Get(int id);
++        IEnumerable<T> Get(Expression<Func<T, bool>> filter);
++        IEnumerable<T> Get(Expression<Func<T, bool>> filter, string includeProperties);
++
++        IEnumerable<T> Get(Expression<Func<T, bool>> filter, string includeProperties,
++            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy);
++        Task Add(T model);
++        Task Update(T model);
++        Task Delete(int id);
++        Task Delete(T model);
++        Task Save();
++        void Detach(IEnumerable<T> entities);
++        void Detach(T entity);
++    }
++}
+\ No newline at end of file
+Index: Infrastructure/Repositories/Repository.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Infrastructure/Repositories/Repository.cs b/Infrastructure/Repositories/Repository.cs
+new file mode 100644
+--- /dev/null	(date 1609762587166)
++++ b/Infrastructure/Repositories/Repository.cs	(date 1609762587166)
+@@ -0,0 +1,142 @@
++using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Linq.Expressions;
++using System.Threading.Tasks;
++using Core.DomainServices.Repositories;
++using Domain;
++using Microsoft.EntityFrameworkCore;
++
++namespace Infrastructure.Repositories
++{
++    public class Repository<T> : IRepository<T> where T : BaseEntity
++    {
++        private readonly DbContext _context;
++        private readonly DbSet<T> _dbSet;
++
++        public Repository(DbContext context)
++        {
++            _context = context;
++            _dbSet = _context.Set<T>();
++        }
++
++        public IEnumerable<T> Get()
++        {
++            return _dbSet.ToList();
++        }
++
++        public async Task<T> Get(int id)
++        {
++            return await _dbSet.SingleOrDefaultAsync(e => e.Id == id);
++        }
++
++        public IEnumerable<T> Get(Expression<Func<T, bool>> filter)
++        {
++            IQueryable<T> query = _dbSet;
++
++            if (filter != null)
++            {
++                query = query.Where(filter);
++            }
++
++            return query.ToList();
++        }
++
++        public IEnumerable<T> Get(Expression<Func<T, bool>> filter, string includeProperties)
++        {
++            IQueryable<T> query = _dbSet;
++
++            foreach (var includeProperty in includeProperties.Split
++                (new[] {','}, StringSplitOptions.RemoveEmptyEntries))
++            {
++                query = query.Include(includeProperty);
++            }
++
++            if (filter != null)
++            {
++                query = query.Where(filter);
++            }
++
++            return query.ToList();
++        }
++
++        public IEnumerable<T> Get(Expression<Func<T, bool>> filter, string includeProperties,
++            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy)
++        {
++            IQueryable<T> query = _dbSet;
++
++            foreach (var includeProperty in includeProperties.Split
++                (new[] {','}, StringSplitOptions.RemoveEmptyEntries))
++            {
++                query = query.Include(includeProperty);
++            }
++
++            if (filter != null)
++            {
++                query = query.Where(filter);
++            }
++
++            if (orderBy != null)
++            {
++                return orderBy(query).ToList();
++            }
++
++            return query.ToList();
++        }
++
++        public async Task Add(T entity)
++        {
++            await _dbSet.AddAsync(entity);
++            await Save();
++        }
++
++        public async Task Update(T entity)
++        {
++            _dbSet.Update(entity);
++
++            await Save();
++        }
++
++        public async Task Delete(int id)
++        {
++            var entity = await Get(id);
++
++            if (entity == null)
++            {
++                return;
++            }
++
++            _dbSet.Remove(entity);
++            await Save();
++        }
++
++        public async Task Delete(T entity)
++        {
++            if (entity == null)
++            {
++                throw new ArgumentNullException(nameof(entity));
++            }
++
++            _dbSet.Remove(entity);
++            await Save();
++        }
++
++        public async Task Save()
++        {
++            await _context.SaveChangesAsync();
++        }
++
++        public void Detach(IEnumerable<T> entities)
++        {
++            foreach (var entity in entities)
++            {
++                _context.Entry(entity).State = EntityState.Detached;
++            }
++        }
++
++        public void Detach(T entity)
++        {
++            _context.Entry(entity).State = EntityState.Detached;
++        }
++    }
++}
+\ No newline at end of file
+Index: Core.DomainServices/Core.DomainServices.csproj
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><Project Sdk=\"Microsoft.NET.Sdk\">\r\n\r\n    <PropertyGroup>\r\n        <TargetFramework>netcoreapp3.1</TargetFramework>\r\n    </PropertyGroup>\r\n\r\n</Project>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Core.DomainServices/Core.DomainServices.csproj b/Core.DomainServices/Core.DomainServices.csproj
+--- a/Core.DomainServices/Core.DomainServices.csproj	(revision af7b7ac502a52474e90facfce9f1d6236ecb2ba3)
++++ b/Core.DomainServices/Core.DomainServices.csproj	(date 1609763271837)
+@@ -4,4 +4,8 @@
+         <TargetFramework>netcoreapp3.1</TargetFramework>
+     </PropertyGroup>
+ 
++    <ItemGroup>
++      <ProjectReference Include="..\Core.Domain\Core.Domain.csproj" />
++    </ItemGroup>
++
+ </Project>
+Index: Core.Domain/IEntity.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Core.Domain/IEntity.cs b/Core.Domain/IEntity.cs
+new file mode 100644
+--- /dev/null	(date 1609763042120)
++++ b/Core.Domain/IEntity.cs	(date 1609763042120)
+@@ -0,0 +1,16 @@
++using System;
++using System.ComponentModel.DataAnnotations;
++
++namespace Core.Domain
++{
++    public interface IEntity
++    {
++        [Key] public int Id { get; set; }
++        public DateTime CreatedAt { get; set; }
++        public DateTime UpdatedAt { get; set; }
++        public DateTime DeletedAt { get; set; }
++        public DateTime CreatedBy { get; set; }
++        public DateTime UpdatedBy { get; set; }
++        public DateTime DeletedBy { get; set; }
++    }
++}
+\ No newline at end of file
+Index: Core.Domain/BaseEntity.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Core.Domain/BaseEntity.cs b/Core.Domain/BaseEntity.cs
+new file mode 100644
+--- /dev/null	(date 1609763063325)
++++ b/Core.Domain/BaseEntity.cs	(date 1609763063325)
+@@ -0,0 +1,16 @@
++using System;
++using System.ComponentModel.DataAnnotations;
++
++namespace Core.Domain
++{
++    public abstract class BaseEntity : IEntity
++    {
++        [Key] public int Id { get; set; }
++        public DateTime CreatedAt { get; set; } = DateTime.Now;
++        public DateTime UpdatedAt { get; set; }
++        public DateTime DeletedAt { get; set; }
++        public DateTime CreatedBy { get; set; }
++        public DateTime UpdatedBy { get; set; }
++        public DateTime DeletedBy { get; set; }
++    }
++}
+\ No newline at end of file
