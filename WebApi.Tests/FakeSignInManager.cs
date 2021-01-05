@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using Core.Domain;
 
 
-namespace Core.Domain.Tests
+namespace WebApi.Tests
 {
     public class FakeSignInManager : SignInManager<User>
     {

@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Domain.Tests
+namespace WebApi.Tests
 {
     public class TestFixture<TStartup> : IDisposable where TStartup : class
     {

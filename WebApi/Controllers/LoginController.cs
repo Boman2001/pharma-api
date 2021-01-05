@@ -33,6 +33,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> RegisterAsync([FromForm] User model, [FromForm] String password)
         {
             model.PasswordHash = password;
+            model.UserName = model.Email;
             try
             {
                 var Result = await _IdentityRepository.Create(model, model.PasswordHash);
@@ -50,6 +51,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> LoginAsync([FromForm] User model, [FromForm] String password)
         {
             model.PasswordHash = password;
+            model.UserName = model.Email;
             try
             {
                 var Result = await _IdentityRepository.login(model, model.PasswordHash);

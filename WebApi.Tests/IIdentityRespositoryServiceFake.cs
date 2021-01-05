@@ -4,12 +4,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Core.Domain;
 using Core.DomainServices;
 using Core.DomainServices.Helper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
-namespace Core.Domain.Tests
+namespace WebApi.Tests
 {
     class IIdentityRespositoryServiceFake : IIdentityRepository
     {
@@ -25,7 +26,7 @@ namespace Core.Domain.Tests
         }
         async public Task<JwtSecurityToken> Create(User user, string password)
         {
-            if (user.UserName == null) { throw new Exception("User not given"); }
+
             if (password == null) { throw new Exception("Password not given"); }
             if (user.Email == null) { throw new Exception("Email not given"); }
             _authHelper.IsValidEmail(user.Email);
@@ -39,7 +40,6 @@ namespace Core.Domain.Tests
         async public  Task<JwtSecurityToken> login(User user, string password)
         {
             _authHelper.IsValidEmail(user.Email);
-            if (user.UserName == null) { throw new Exception("User not given"); }
             if (password == null) { throw new Exception("Password not given"); }
             if (user.Email == null) { throw new Exception("Email not given"); }
             if (user.Email != "email@gmail.com") { throw new Exception("User doesnt exist"); }
