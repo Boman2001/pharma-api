@@ -58,7 +58,7 @@ namespace WebApi.Tests
             ObjectResult ObjectResult = (ObjectResult)Result;
             string StringCast = ObjectResult.Value.ToString();
 
-            Assert.Equal("{ message = The specified string is not in the form required for an e-mail address. }", StringCast);
+            Assert.Equal("{ message = Incorrect email }", StringCast);
             Assert.Equal(400, ObjectResult.StatusCode);
         }
 
@@ -73,7 +73,7 @@ namespace WebApi.Tests
             ObjectResult ObjectResult = (ObjectResult)Result;
             string StringCast = ObjectResult.Value.ToString();
 
-            Assert.Equal("{ message = Value cannot be null. (Parameter 'address') }", StringCast);
+            Assert.Equal("{ message = Incorrect email }", StringCast);
             Assert.Equal(400, ObjectResult.StatusCode);
         }
 
@@ -118,7 +118,7 @@ namespace WebApi.Tests
 
             
             string StringCast = ObjectResult.Value.ToString();
-            Assert.Equal("{ message = The specified string is not in the form required for an e-mail address. }", StringCast);
+            Assert.Equal("{ message = Incorrect email }", StringCast);
             Assert.Equal(400, ObjectResult.StatusCode);
         }
 
@@ -134,7 +134,7 @@ namespace WebApi.Tests
             ObjectResult ObjectResult = (ObjectResult)Result;
 
             string StringCast = ObjectResult.Value.ToString();
-            Assert.Equal("{ message = The specified string is not in the form required for an e-mail address. }", StringCast);
+            Assert.Equal("{ message = Incorrect email }", StringCast);
             Assert.Equal(400, ObjectResult.StatusCode);
         }
 

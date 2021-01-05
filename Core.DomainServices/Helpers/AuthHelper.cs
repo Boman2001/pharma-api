@@ -38,8 +38,15 @@ namespace Core.DomainServices.Helper
 
         public bool IsValidEmail(string Email)
         {
-            _ = new System.Net.Mail.MailAddress(Email);
-            return true;
+            try
+            {
+                _ = new System.Net.Mail.MailAddress(Email);
+                return true;
+            }
+            catch
+            {
+                throw new Exception("Incorrect email");
+            }
         }
 
 

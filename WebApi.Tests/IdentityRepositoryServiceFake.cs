@@ -23,7 +23,7 @@ namespace WebApi.Tests
         {
 
             if (Password == null) { throw new Exception("Password not given"); }
-            if (User.Email == null) { throw new Exception("The specified string is not in the form required for an e-mail address."); }
+            if (User.Email == null) { throw new Exception("Incorrect email"); }
             _authHelper.IsValidEmail(User.Email);
             IList<String> RolesList = new List<String>
             {
@@ -38,9 +38,9 @@ namespace WebApi.Tests
         {
             _authHelper.IsValidEmail(User.Email);
             if (Password == null) { throw new Exception("Password not given"); }
-            if (User.Email == null) { throw new Exception("The specified string is not in the form required for an e-mail address."); }
-            if (User.Email != "email@gmail.com") { throw new Exception("User doesnt exist"); }
-            if(Password != "bijen") { throw new Exception("Wrong password"); }
+            if (User.Email == null) { throw new Exception("Incorrect email"); }
+            if (User.Email != "email@gmail.com") { throw new Exception("User does not exist"); }
+            if(Password != "bijen") { throw new Exception("Incorrect Password"); }
             IList <String> roleslist = new List<String>
             {
                 "DOCTOR"
