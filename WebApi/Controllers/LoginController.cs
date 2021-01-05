@@ -25,6 +25,10 @@ namespace WebApi.Controllers
         {
             _IdentityRepository = identityRepository;
         }
+
+        
+
+
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync([FromForm] User Model, [FromForm] String Password)
         {
@@ -56,6 +60,17 @@ namespace WebApi.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
+        }
+
+
+        //Example off authorized route
+        //Header required:
+        //Authorization Bearer [Token]
+        [Authorize]
+        [HttpGet("get")]
+        public string Get()
+        {
+            return "value";
         }
 
     }

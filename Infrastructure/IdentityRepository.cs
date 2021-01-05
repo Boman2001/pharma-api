@@ -45,7 +45,7 @@ namespace Infrastructure
                 JwtSecurityToken Token = _authHelper.GenerateToken(User, RoleList);
                 return Token;
             } else {
-               throw new Exception("Wrong password");
+               throw new Exception("Password Incorrect");
             }
         }
 

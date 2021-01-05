@@ -22,9 +22,10 @@ namespace Core.DomainServices.Helper
 
             var claims = new List<Claim>{
                 new Claim(JwtRegisteredClaimNames.NameId, User.Id),
-                new Claim("role", roles[0])
+                new Claim("Role", roles[0]),
+                new Claim("Email", User.Email)
             };
-                
+           
             return new JwtSecurityToken(
               issuer: _configuration["JWT:ValidIssuer"],
               audience: _configuration["JWT:ValidAudience"],
@@ -35,17 +36,10 @@ namespace Core.DomainServices.Helper
         }
 
 
-        public bool IsValidEmail(string email)
+        public bool IsValidEmail(string Email)
         {
-            try
-            {
-                var addr = new System.Net.Mail.MailAddress(email);
-                return true;
-            }
-            catch
-            {
-                throw new Exception("Email isnt valid or set");
-            }
+            _ = new System.Net.Mail.MailAddress(Email);
+            return true;
         }
 
 

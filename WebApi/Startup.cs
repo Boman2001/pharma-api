@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace WebApi
 {
@@ -42,7 +43,23 @@ namespace WebApi
             services.AddAuthentication(x => {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(x => { x.TokenValidationParameters = new TokenValidationParameters(); });
+            }).AddJwtBearer(x => {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JWT:Secret"])),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                };
+            });
+
+            services.AddOptions();
+            services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                options.ValidationInterval = TimeSpan.FromMinutes(5);
+            });
 
             services.AddControllers();
             services.AddScoped<IIdentityRepository, IdentityRepository>();
