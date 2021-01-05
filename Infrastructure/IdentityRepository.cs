@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Core.Domain;
 using Core.DomainServices.Helper;
 using Core.DomainServices;
-using Core.DomainServices.Helper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
@@ -25,56 +24,42 @@ namespace Infrastructure
             _authHelper = new AuthHelper(configuration);
         }
 
-        async public Task<JwtSecurityToken> Create(User user, string password)
+        async public Task<JwtSecurityToken> Create(User User, string Password)
         {
-            _authHelper.IsValidEmail(user.Email);
-
-
-            var result = await _userManager.CreateAsync(user, password);
-            errorHandling(result);
-            await _userManager.AddToRoleAsync(user, "Doctor");
-            IList<String> roleslist = await _userManager.GetRolesAsync(user);
-            
-            JwtSecurityToken token = _authHelper.GenerateToken(user, roleslist);
-            return token;
+            _authHelper.IsValidEmail(User.Email);
+            var Result = await _userManager.CreateAsync(User, Password);
+            ErrorHandling(Result);
+            await _userManager.AddToRoleAsync(User, "Doctor");
+            IList<String> RoleList = await _userManager.GetRolesAsync(User);
+            JwtSecurityToken Token = _authHelper.GenerateToken(User, RoleList);
+            return Token;
         }
 
-        public async Task<JwtSecurityToken> login(User user, string password)
+        public async Task<JwtSecurityToken> Login(User User, string Password)
         {
-            _authHelper.IsValidEmail(user.Email);
-            var result = await _userManager.FindByEmailAsync(user.Email);
-
-            //if(result == null) { throw new Exception("User doesnt exist");  }
-            //if(password == null) { throw new Exception("Password not given");  }
-
-            SignInResult resultlogin = await _signInManager.PasswordSignInAsync(user.UserName, password, false, false);
-            IList<String> roleslist = await _userManager.GetRolesAsync(result);
-
-            //iets beters voor dit bedenken? (HIERDONER)
-            if (resultlogin.Succeeded) {
-                JwtSecurityToken token = _authHelper.GenerateToken(user, roleslist);
-                return token;
+            _authHelper.IsValidEmail(User.Email);
+            var Result = await _userManager.FindByEmailAsync(User.Email);
+            SignInResult LoginResult = await _signInManager.PasswordSignInAsync(User.UserName, Password, false, false);
+            IList<String> RoleList = await _userManager.GetRolesAsync(Result);
+            if (LoginResult.Succeeded) {
+                JwtSecurityToken Token = _authHelper.GenerateToken(User, RoleList);
+                return Token;
             } else {
                throw new Exception("Wrong password");
             }
         }
 
-        public void errorHandling(IdentityResult result)
+        public static void ErrorHandling(IdentityResult Result)
         {
-            List<Exception> exceptions = new List<Exception>();
-            foreach (IdentityError error in result.Errors)
+            List<Exception> Exceptions = new List<Exception>();
+            foreach (IdentityError error in Result.Errors)
             {
-                exceptions.Add(new Exception(error.Description));
+                Exceptions.Add(new Exception(error.Description));
             }
-            if (exceptions.Count >= 1)
+            if (Exceptions.Count >= 1)
             {
-                throw new AggregateException("Encountered errors while trying to do something.", exceptions);
+                throw new AggregateException("Encountered errors while trying to do something.", Exceptions);
             }
         }
-
-
-     
-
-
     }
 }

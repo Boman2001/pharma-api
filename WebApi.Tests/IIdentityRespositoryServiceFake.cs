@@ -12,42 +12,41 @@ using Microsoft.Extensions.Configuration;
 
 namespace WebApi.Tests
 {
-    class IIdentityRespositoryServiceFake : IIdentityRepository
+    class IdentityRepositoryServiceFake : IIdentityRepository
     {
-        private readonly UserManager<User> _userManager;
         private readonly AuthHelper _authHelper;
-        private readonly SignInManager<User> _signInManager;
-        public IIdentityRespositoryServiceFake(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
+        public IdentityRepositoryServiceFake(IConfiguration configuration)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
             _authHelper = new AuthHelper(configuration);
-
         }
-        async public Task<JwtSecurityToken> Create(User user, string password)
+        async public Task<JwtSecurityToken> Create(User User, string Password)
         {
 
-            if (password == null) { throw new Exception("Password not given"); }
-            if (user.Email == null) { throw new Exception("Email not given"); }
-            _authHelper.IsValidEmail(user.Email);
-            IList<String> roleslist = new List<String>();
-            roleslist.Add("DOCTOR");
+            if (Password == null) { throw new Exception("Password not given"); }
+            if (User.Email == null) { throw new Exception("Email not given"); }
+            _authHelper.IsValidEmail(User.Email);
+            IList<String> RolesList = new List<String>
+            {
+                "DOCTOR"
+            };
 
-            JwtSecurityToken token = _authHelper.GenerateToken(user, roleslist);
-            return token;
+            JwtSecurityToken Token = _authHelper.GenerateToken(User, RolesList);
+            return Token;
         }
 
-        async public  Task<JwtSecurityToken> login(User user, string password)
+        async public  Task<JwtSecurityToken> Login(User User, string Password)
         {
-            _authHelper.IsValidEmail(user.Email);
-            if (password == null) { throw new Exception("Password not given"); }
-            if (user.Email == null) { throw new Exception("Email not given"); }
-            if (user.Email != "email@gmail.com") { throw new Exception("User doesnt exist"); }
-            if(password != "bijen") { throw new Exception("Wrong password"); }
+            _authHelper.IsValidEmail(User.Email);
+            if (Password == null) { throw new Exception("Password not given"); }
+            if (User.Email == null) { throw new Exception("Email not given"); }
+            if (User.Email != "email@gmail.com") { throw new Exception("User doesnt exist"); }
+            if(Password != "bijen") { throw new Exception("Wrong password"); }
 
-            IList<String> roleslist = new List<String>();
-            roleslist.Add("DOCTOR");
-                JwtSecurityToken token = _authHelper.GenerateToken(user, roleslist);
+            IList<String> roleslist = new List<String>
+            {
+                "DOCTOR"
+            };
+            JwtSecurityToken token = _authHelper.GenerateToken(User, roleslist);
                 return token;
         }
 

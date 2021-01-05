@@ -28,73 +28,53 @@ namespace WebApi.Tests
         
         public LoginControllerTests()
         {
-            string projectPath = AppDomain.CurrentDomain.BaseDirectory.Split(new String[] { @"bin\" }, StringSplitOptions.None)[0];
             IConfiguration config = new ConfigurationBuilder()
-            
                .AddJsonFile("appsettings.json")
                .Build();
-            var _FakeUserManager = new FakeUserManager();
-            var FakeSignInManager = new FakeSignInManager();
-
-            var userStore = new Mock<IUserStore<User>>();
-
-
-            //Setup DbContext and DbSet mock
-            var dbContextMock = new Mock<SecurityDbContext>();
-            var dbSetMock = new Mock<DbSet<User>>();
-            dbSetMock.Setup(s => s.FindAsync(It.IsAny<Guid>())).Returns(ValueTask.FromResult(new User()));
-            dbContextMock.Setup(s => s.Set<User>()).Returns(dbSetMock.Object);
-           
-           Service = new IIdentityRespositoryServiceFake(_FakeUserManager, FakeSignInManager, config);
-           Controller = new LoginController(_FakeUserManager, Service, config);
+            Service = new IdentityRepositoryServiceFake(config);
+            Controller = new LoginController(Service);
         }
-
-
 
         [Trait("Category", "Login")]
         [Fact]
         public async Task Login_Valid_Response()
         {
-            User a = new User
-            {
-                Email = "email@gmail.com"
-            };
-            String password = "bijen";
-            OkObjectResult result = (OkObjectResult)await Controller.LoginAsync(a, password);
-            Assert.Equal(result.StatusCode, 200);
+            User User = new User { Email = "email@gmail.com" };
+            String Password = "bijen";
+
+            OkObjectResult ObjectResult = (OkObjectResult)await Controller.LoginAsync(User, Password);
+
+            Assert.Equal( 200, ObjectResult.StatusCode);
         }
 
         [Trait("Category", "Login")]
         [Fact]
         public async Task Login_Non_Valid_Email_Response()
         {
-            User a = new User
-            {
-                Email = "email"
-            };
-            String password = "bijen";
-            BadRequestObjectResult result = (BadRequestObjectResult)await Controller.LoginAsync(a, password);
-            ObjectResult aa = (ObjectResult)result;
-            var ad = aa.Value;
-            string b = ad.ToString();
-            Assert.Equal("{ message = Email isnt valid or set }", b);
-            Assert.Equal(400, aa.StatusCode);
+            User User = new User { Email = "email" };
+            String Password = "bijen";
+
+            BadRequestObjectResult Result = (BadRequestObjectResult)await Controller.LoginAsync(User, Password);
+            ObjectResult ObjectResult = (ObjectResult)Result;
+            string StringCast = ObjectResult.Value.ToString();
+
+            Assert.Equal("{ message = Email isnt valid or set }", StringCast);
+            Assert.Equal(400, ObjectResult.StatusCode);
         }
 
         [Trait("Category", "Login")]
         [Fact]
         public async Task Login_No_Data_Response()
         {
-            User a = new User
-            {
-            };
-            String password = "bijen";
-            BadRequestObjectResult result = (BadRequestObjectResult)await Controller.LoginAsync(a, password);
-            ObjectResult aa = (ObjectResult)result;
-            var ad = aa.Value;
-            string b = ad.ToString();
-            Assert.Equal("{ message = Email isnt valid or set }", b);
-            Assert.Equal(400, aa.StatusCode);
+            User User = new User{};
+            String Password = "bijen";
+
+            BadRequestObjectResult Result = (BadRequestObjectResult)await Controller.LoginAsync(User, Password);
+            ObjectResult ObjectResult = (ObjectResult)Result;
+            string StringCast = ObjectResult.Value.ToString();
+
+            Assert.Equal("{ message = Email isnt valid or set }", StringCast);
+            Assert.Equal(400, ObjectResult.StatusCode);
         }
 
        
@@ -103,47 +83,43 @@ namespace WebApi.Tests
         [Fact]
         public async Task Login_Only_Username_Email_Response()
         {
-            User a = new User
-            {
-                Email = "email@gmail.com"
-            };
-            String password = null;
-            BadRequestObjectResult result = (BadRequestObjectResult)await Controller.LoginAsync(a, password);
-            ObjectResult aa = (ObjectResult)result;
-            var ad = aa.Value;
-            string b = ad.ToString();
-            Assert.Equal("{ message = Password not given }", b);
-            Assert.Equal(400, aa.StatusCode);
+            User User = new User { Email = "email@gmail.com" };
+            String Password = null;
+
+            BadRequestObjectResult Result = (BadRequestObjectResult)await Controller.LoginAsync(User, Password);
+            ObjectResult ObjectResult = (ObjectResult)Result;
+            string StringCast = ObjectResult.Value.ToString();
+
+            Assert.Equal("{ message = Password not given }", StringCast);
+            Assert.Equal(400, ObjectResult.StatusCode);
         }
 
         [Trait("Category", "Register")]
         [Fact]
         public async Task Register_Valid_Response()
         {
-            User a = new User
-            {
-                Email = "email@gmail.com"
-            };
-            String password = "bijen";
-            OkObjectResult result = (OkObjectResult)await Controller.RegisterAsync(a, password);
-            Assert.Equal(result.StatusCode, 200);
+            User User = new User { Email = "email@gmail.com" };
+            String Password = "bijen";
+
+            OkObjectResult Result = (OkObjectResult)await Controller.RegisterAsync(User, Password);
+
+            Assert.Equal(200, Result.StatusCode);
         }
 
         [Trait("Category", "Register")]
         [Fact]
         public async Task Register_Non_Valid_Email_Response()
         {
-            User a = new User
-            {
-                Email = "email"
-            };
-            String password = "bijen";
-            BadRequestObjectResult result = (BadRequestObjectResult)await Controller.RegisterAsync(a, password);
-            ObjectResult aa = (ObjectResult)result;
-            var ad = aa.Value;
-            string b = ad.ToString();
-            Assert.Equal("{ message = Email isnt valid or set }", b);
-            Assert.Equal(400, aa.StatusCode);
+            User User = new User { Email = "email" };
+            String Password = "bijen";
+
+            BadRequestObjectResult Result = (BadRequestObjectResult)await Controller.RegisterAsync(User, Password);
+            ObjectResult ObjectResult = (ObjectResult)Result;
+
+            
+            string StringCast = ObjectResult.Value.ToString();
+            Assert.Equal("{ message = Email isnt valid or set }", StringCast);
+            Assert.Equal(400, ObjectResult.StatusCode);
         }
 
 
@@ -151,33 +127,32 @@ namespace WebApi.Tests
         [Fact]
         public async Task Register_No_Data_Response()
         {
-            User a = new User
-            {
-            };
-            String password = "bijen";
-            BadRequestObjectResult result = (BadRequestObjectResult)await Controller.RegisterAsync(a, password);
-            ObjectResult aa = (ObjectResult)result;
-            var ad = aa.Value;
-            string b = ad.ToString();
-            Assert.Equal("{ message = Email not given }", b);
-            Assert.Equal(400, aa.StatusCode);
+            User User = new User {};
+            String Password = "bijen";
+
+            BadRequestObjectResult Result = (BadRequestObjectResult)await Controller.RegisterAsync(User, Password);
+            ObjectResult ObjectResult = (ObjectResult)Result;
+
+            string StringCast = ObjectResult.Value.ToString();
+            Assert.Equal("{ message = Email not given }", StringCast);
+            Assert.Equal(400, ObjectResult.StatusCode);
         }
 
         [Trait("Category", "Register")]
         [Fact]
         public async Task Register_Only_Username_Email_Response()
         {
-            User a = new User
+            User User = new User
             {
                 Email = "email@gmail.com"
             };
-            String password = null;
-            BadRequestObjectResult result = (BadRequestObjectResult)await Controller.RegisterAsync(a, password);
-            ObjectResult aa = (ObjectResult)result;
-            var ad = aa.Value;
-            string b = ad.ToString();
-            Assert.Equal("{ message = Password not given }", b);
-            Assert.Equal(400, aa.StatusCode);
+            String Password = null;
+            BadRequestObjectResult Result = (BadRequestObjectResult)await Controller.RegisterAsync(User, Password);
+            ObjectResult ObjectResult = (ObjectResult)Result;
+
+            string StringCast = ObjectResult.Value.ToString();
+            Assert.Equal("{ message = Password not given }", StringCast);
+            Assert.Equal(400, ObjectResult.StatusCode);
         }
 
     }

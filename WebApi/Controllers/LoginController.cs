@@ -20,46 +20,40 @@ namespace WebApi.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IIdentityRepository _IdentityRepository;
-        private readonly AuthHelper _tokenController;
 
-        public LoginController(UserManager<User> userManager, IIdentityRepository identityRepository, IConfiguration configuration)
+        public LoginController(IIdentityRepository identityRepository)
         {
-            _tokenController = new AuthHelper(configuration);
             _IdentityRepository = identityRepository;
         }
-       
-
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromForm] User model, [FromForm] String password)
+        public async Task<IActionResult> RegisterAsync([FromForm] User Model, [FromForm] String Password)
         {
-            model.PasswordHash = password;
-            model.UserName = model.Email;
+            Model.PasswordHash = Password;
+            Model.UserName = Model.Email;
             try
             {
-                var Result = await _IdentityRepository.Create(model, model.PasswordHash);
+                var Result = await _IdentityRepository.Create(Model, Model.PasswordHash);
 
                 return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(Result) });
             }
             catch (Exception ex)
             {
-                // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync([FromForm] User model, [FromForm] String password)
+        public async Task<IActionResult> LoginAsync([FromForm] User Model, [FromForm] String Password)
         {
-            model.PasswordHash = password;
-            model.UserName = model.Email;
+            Model.PasswordHash = Password;
+            Model.UserName = Model.Email;
             try
             {
-                var Result = await _IdentityRepository.login(model, model.PasswordHash);
+                var Result = await _IdentityRepository.Login(Model, Model.PasswordHash);
                 return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(Result) });
             }
             catch (Exception ex)
             {
-                // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
         }

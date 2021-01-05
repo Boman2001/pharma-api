@@ -26,19 +26,6 @@ namespace WebApi.Tests
                   new Mock<ILogger<UserManager<User>>>().Object)
         { }
 
-        public Task SetPasswordHashAsync(User user, string passwordHash)
-        {
-            user.PasswordHash = passwordHash;
-            return Task.FromResult(0);
-        }
-        public Task<string> GetPasswordHashAsync(User user)
-        {
-            return Task.FromResult<string>(user.PasswordHash);
-        }
-        public Task<bool> HasPasswordAsync(User user)
-        {
-            return Task.FromResult<bool>(!String.IsNullOrEmpty(user.PasswordHash));
-        }
 
     }
 }
