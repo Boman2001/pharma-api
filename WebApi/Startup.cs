@@ -1,5 +1,8 @@
+using Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,37 +30,14 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var identity = Configuration.GetSection("ConnectionIdentityDb").Value;
-            var connection = @identity;
-            services.AddDbContext<IdentityAppdbContext>(options => options.UseSqlServer(connection));
+            // Adds the Identity DB
+            services.AddDbContext<SecurityDbContext>(options => options.UseSqlServer(
+                Configuration.GetConnectionString("Security")));
 
-
-            services.AddIdentity<User, IdentityRole>(config => {
-                config.Password.RequireDigit = false;
-                config.Password.RequiredLength = 4;
-                config.Password.RequireNonAlphanumeric = false;
-                config.Password.RequireUppercase = false;
-                config.Password.RequiredUniqueChars = 0;
-                config.Password.RequireLowercase = false;
-
-                config.User.RequireUniqueEmail = true;
-            }).AddRoles<IdentityRole>().AddEntityFrameworkStores<IdentityAppdbContext>().AddDefaultTokenProviders();
-
-
-
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(x =>
-                {
-                    x.TokenValidationParameters = new TokenValidationParameters();
-                });
-
-
-
-            services.AddScoped<IIdentityRepository, IdentityRepository>();
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<SecurityDbContext>()
+                .AddDefaultTokenProviders();
+            
             services.AddControllers();
 
         }
