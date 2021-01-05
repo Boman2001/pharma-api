@@ -11,6 +11,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Core.Domain;
 using Microsoft.AspNetCore.Identity;
+using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -34,11 +35,33 @@ namespace WebApi
             services.AddDbContext<SecurityDbContext>(options => options.UseSqlServer(
                 Configuration.GetConnectionString("Security")));
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>(config => {
+                config.Password.RequireDigit = false;
+                config.Password.RequiredLength = 4;
+                config.Password.RequireNonAlphanumeric = false;
+                config.Password.RequireUppercase = false;
+                config.Password.RequiredUniqueChars = 0;
+                config.Password.RequireLowercase = false;
+
+                config.User.RequireUniqueEmail = true;
+            }).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<SecurityDbContext>()
                 .AddDefaultTokenProviders();
-            
+
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(x =>
+                {
+                    x.TokenValidationParameters = new TokenValidationParameters();
+                });
+
             services.AddControllers();
+            services.AddScoped<IIdentityRepository, IdentityRepository>();
+
 
         }
 

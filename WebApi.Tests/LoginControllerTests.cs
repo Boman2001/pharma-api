@@ -40,13 +40,10 @@ namespace WebApi.Tests
 
 
             //Setup DbContext and DbSet mock
-            var dbContextMock = new Mock<IdentityAppdbContext>();
+            var dbContextMock = new Mock<SecurityDbContext>();
             var dbSetMock = new Mock<DbSet<User>>();
             dbSetMock.Setup(s => s.FindAsync(It.IsAny<Guid>())).Returns(ValueTask.FromResult(new User()));
             dbContextMock.Setup(s => s.Set<User>()).Returns(dbSetMock.Object);
-
-            ////Execute method of SUT (ProductsRepository)
-            //Repository = new IdentityRepository(_FakeUserManager, FakeSignInManager, config);
            
            Service = new IIdentityRespositoryServiceFake(_FakeUserManager, FakeSignInManager, config);
            Controller = new LoginController(_FakeUserManager, Service, config);
