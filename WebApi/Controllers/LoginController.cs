@@ -66,12 +66,12 @@ namespace WebApi.Controllers
         //Example off authorized route
         //Header required:
         //Authorization Bearer [Token]
-        [Authorize]
-        [HttpGet("get")]
-        public string Get()
-        {
-            return "value";
-        }
+        //[Authorize]
+        //[HttpGet("get")]
+        //public string Get()
+        //{
+        //    return "value";
+        //}
 
     }
 }
