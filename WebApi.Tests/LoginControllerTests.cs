@@ -23,7 +23,7 @@ namespace WebApi.Tests
    public class LoginControllerTests
     {
         private IIdentityRepository Service { get; }
-        private LoginController Controller { get; }
+        private AuthController Controller { get; }
         public IConfiguration Configuration { get; }
         
         public LoginControllerTests()
@@ -32,7 +32,7 @@ namespace WebApi.Tests
                .AddJsonFile("appsettings.json")
                .Build();
             Service = new IdentityRepositoryServiceFake(config);
-            Controller = new LoginController(Service);
+            Controller = new AuthController(Service);
         }
 
         [Trait("Category", "Login")]

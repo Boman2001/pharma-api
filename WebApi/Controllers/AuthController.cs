@@ -15,13 +15,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace WebApi.Controllers
 {
-    [Route("api/")]
+    [Route("api/auth/")]
     [ApiController]
-    public class LoginController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly IIdentityRepository _IdentityRepository;
 
-        public LoginController(IIdentityRepository identityRepository)
+        public AuthController(IIdentityRepository identityRepository)
         {
             _IdentityRepository = identityRepository;
         }
@@ -36,7 +36,7 @@ namespace WebApi.Controllers
             Model.UserName = Model.Email;
             try
             {
-                var Result = await _IdentityRepository.Create(Model, Model.PasswordHash);
+                var Result = await _IdentityRepository.Register(Model, Model.PasswordHash);
 
                 return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(Result) });
             }

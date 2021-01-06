@@ -24,7 +24,7 @@ namespace Infrastructure
             _authHelper = new AuthHelper(configuration);
         }
 
-        async public Task<JwtSecurityToken> Create(IdentityUser User, string Password)
+        async public Task<JwtSecurityToken> Register(IdentityUser User, string Password)
         {
             _authHelper.IsValidEmail(User.Email);
             var Result = await _userManager.CreateAsync(User, Password);
