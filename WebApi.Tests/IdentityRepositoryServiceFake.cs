@@ -19,7 +19,7 @@ namespace WebApi.Tests
         {
             _authHelper = new AuthHelper(configuration);
         }
-        async public Task<JwtSecurityToken> Create(IdentityUser User, string Password)
+        async public Task<JwtSecurityToken> Register(IdentityUser User, string Password)
         {
 
             if (Password == null) { throw new Exception("Password not given"); }

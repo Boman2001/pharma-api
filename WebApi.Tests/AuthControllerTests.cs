@@ -20,13 +20,13 @@ using System.ComponentModel;
 
 namespace WebApi.Tests
 {
-   public class LoginControllerTests
+   public class AuthControllerTests
     {
         private IIdentityRepository Service { get; }
         private AuthController Controller { get; }
         public IConfiguration Configuration { get; }
         
-        public LoginControllerTests()
+        public AuthControllerTests()
         {
             IConfiguration config = new ConfigurationBuilder()
                .AddJsonFile("appsettings.json")
