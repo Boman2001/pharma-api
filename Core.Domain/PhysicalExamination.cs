@@ -1,4 +1,6 @@
-﻿namespace Core.Domain
+﻿using System;
+
+namespace Core.Domain
 {
     public class PhysicalExamination : BaseEntity
     {
