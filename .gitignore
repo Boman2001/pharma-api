@@ -359,3 +359,4 @@ FodyWeavers.xsd
 # Ryder .idea files
 .idea
 
+.editorconfig

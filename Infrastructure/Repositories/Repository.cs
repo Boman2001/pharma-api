@@ -46,7 +46,7 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            foreach (var includeProperty in includeProperties)
+            foreach (string includeProperty in includeProperties)
             {
                 query = query.Include(includeProperty);
             }
@@ -65,7 +65,7 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            foreach (var includeProperty in includeProperties)
+            foreach (string includeProperty in includeProperties)
             {
                 query = query.Include(includeProperty);
             }
@@ -83,7 +83,7 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            foreach (var includeProperty in includeProperties)
+            foreach (string includeProperty in includeProperties)
             {
                 query = query.Include(includeProperty);
             }
@@ -116,7 +116,7 @@ namespace Infrastructure.Repositories
 
         public async Task Delete(int id)
         {
-            var entity = await Get(id);
+            T entity = await Get(id);
 
             if (entity == null)
             {
@@ -145,7 +145,7 @@ namespace Infrastructure.Repositories
 
         public void Detach(IEnumerable<T> entities)
         {
-            foreach (var entity in entities)
+            foreach (T entity in entities)
             {
                 _context.Entry(entity).State = EntityState.Detached;
             }
