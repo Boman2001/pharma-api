@@ -28,7 +28,7 @@ namespace WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<SecurityDbContext>(options => options.UseSqlServer( Configuration.GetConnectionString("Security")));
-            services.AddIdentity<User, IdentityRole>(config => {
+            services.AddIdentity<IdentityUser, IdentityRole>(config => {
                 config.Password.RequireDigit = false;
                 config.Password.RequiredLength = 4;
                 config.Password.RequireNonAlphanumeric = false;

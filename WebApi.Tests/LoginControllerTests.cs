@@ -39,7 +39,7 @@ namespace WebApi.Tests
         [Fact]
         public async Task Login_Valid_Response()
         {
-            User User = new User { Email = "email@gmail.com" };
+            IdentityUser User = new IdentityUser { Email = "email@gmail.com" };
             String Password = "bijen";
 
             OkObjectResult ObjectResult = (OkObjectResult)await Controller.LoginAsync(User, Password);
@@ -51,7 +51,7 @@ namespace WebApi.Tests
         [Fact]
         public async Task Login_Non_Valid_Email_Response()
         {
-            User User = new User { Email = "email" };
+            IdentityUser User = new IdentityUser { Email = "email" };
             String Password = "bijen";
 
             BadRequestObjectResult Result = (BadRequestObjectResult)await Controller.LoginAsync(User, Password);
@@ -66,7 +66,7 @@ namespace WebApi.Tests
         [Fact]
         public async Task Login_No_Data_Response()
         {
-            User User = new User{};
+            IdentityUser User = new IdentityUser { };
             String Password = "bijen";
 
             BadRequestObjectResult Result = (BadRequestObjectResult)await Controller.LoginAsync(User, Password);
@@ -83,7 +83,7 @@ namespace WebApi.Tests
         [Fact]
         public async Task Login_Only_Username_Email_Response()
         {
-            User User = new User { Email = "email@gmail.com" };
+            IdentityUser User = new IdentityUser { Email = "email@gmail.com" };
             String Password = null;
 
             BadRequestObjectResult Result = (BadRequestObjectResult)await Controller.LoginAsync(User, Password);
@@ -98,7 +98,7 @@ namespace WebApi.Tests
         [Fact]
         public async Task Register_Valid_Response()
         {
-            User User = new User { Email = "email@gmail.com" };
+            IdentityUser User = new IdentityUser { Email = "email@gmail.com" };
             String Password = "bijen";
 
             OkObjectResult Result = (OkObjectResult)await Controller.RegisterAsync(User, Password);
@@ -110,7 +110,7 @@ namespace WebApi.Tests
         [Fact]
         public async Task Register_Non_Valid_Email_Response()
         {
-            User User = new User { Email = "email" };
+            IdentityUser User = new IdentityUser { Email = "email" };
             String Password = "bijen";
 
             BadRequestObjectResult Result = (BadRequestObjectResult)await Controller.RegisterAsync(User, Password);
@@ -127,7 +127,7 @@ namespace WebApi.Tests
         [Fact]
         public async Task Register_No_Data_Response()
         {
-            User User = new User {};
+            IdentityUser User = new IdentityUser { };
             String Password = "bijen";
 
             BadRequestObjectResult Result = (BadRequestObjectResult)await Controller.RegisterAsync(User, Password);
@@ -142,7 +142,7 @@ namespace WebApi.Tests
         [Fact]
         public async Task Register_Only_Username_Email_Response()
         {
-            User User = new User
+            IdentityUser User = new IdentityUser
             {
                 Email = "email@gmail.com"
             };

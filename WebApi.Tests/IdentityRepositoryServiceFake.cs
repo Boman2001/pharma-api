@@ -19,7 +19,7 @@ namespace WebApi.Tests
         {
             _authHelper = new AuthHelper(configuration);
         }
-        async public Task<JwtSecurityToken> Create(User User, string Password)
+        async public Task<JwtSecurityToken> Create(IdentityUser User, string Password)
         {
 
             if (Password == null) { throw new Exception("Password not given"); }
@@ -34,7 +34,7 @@ namespace WebApi.Tests
             return Token;
         }
 
-        async public  Task<JwtSecurityToken> Login(User User, string Password)
+        async public  Task<JwtSecurityToken> Login(IdentityUser User, string Password)
         {
             _authHelper.IsValidEmail(User.Email);
             if (Password == null) { throw new Exception("Password not given"); }

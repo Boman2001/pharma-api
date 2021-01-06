@@ -1,4 +1,5 @@
 ﻿using Core.Domain;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -16,7 +17,7 @@ namespace Core.DomainServices.Helper
             _configuration = configuration;
          }
 
-        public JwtSecurityToken GenerateToken(User User, IList<String> roles)
+        public JwtSecurityToken GenerateToken(IdentityUser User, IList<String> roles)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 

@@ -30,7 +30,7 @@ namespace WebApi.Controllers
 
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromForm] User Model, [FromForm] String Password)
+        public async Task<IActionResult> RegisterAsync([FromForm] IdentityUser Model, [FromForm] String Password)
         {
             Model.PasswordHash = Password;
             Model.UserName = Model.Email;
@@ -47,7 +47,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync([FromForm] User Model, [FromForm] String Password)
+        public async Task<IActionResult> LoginAsync([FromForm] IdentityUser Model, [FromForm] String Password)
         {
             Model.PasswordHash = Password;
             Model.UserName = Model.Email;

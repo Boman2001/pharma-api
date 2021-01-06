@@ -14,17 +14,17 @@ namespace Infrastructure
     public class IdentityRepository : IIdentityRepository
     {
 
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly AuthHelper _authHelper;
-        private readonly SignInManager<User> _signInManager;
-        public IdentityRepository(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
+        private readonly SignInManager<IdentityUser> _signInManager;
+        public IdentityRepository(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _authHelper = new AuthHelper(configuration);
         }
 
-        async public Task<JwtSecurityToken> Create(User User, string Password)
+        async public Task<JwtSecurityToken> Create(IdentityUser User, string Password)
         {
             _authHelper.IsValidEmail(User.Email);
             var Result = await _userManager.CreateAsync(User, Password);
@@ -35,7 +35,7 @@ namespace Infrastructure
             return Token;
         }
 
-        public async Task<JwtSecurityToken> Login(User User, string Password)
+        public async Task<JwtSecurityToken> Login(IdentityUser User, string Password)
         {
             _authHelper.IsValidEmail(User.Email);
             var Result = await _userManager.FindByEmailAsync(User.Email);
