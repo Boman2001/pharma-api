@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Core.Domain;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Infrastructure;
-using Core.DomainServices;
-using Core.DomainServices.Helper;
-using Microsoft.Extensions.Configuration;
-using System.IdentityModel.Tokens.Jwt;
+﻿using Core.DomainServices;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
@@ -26,19 +18,16 @@ namespace WebApi.Controllers
             _IdentityRepository = identityRepository;
         }
 
-        
-
-
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromForm] IdentityUser Model, [FromForm] String Password)
+        public async Task<IActionResult> RegisterAsync([FromForm] IdentityUser Model, [FromForm] string Password)
         {
             Model.PasswordHash = Password;
             Model.UserName = Model.Email;
             try
             {
-                var Result = await _IdentityRepository.Register(Model, Model.PasswordHash);
+                JwtSecurityToken Result = await _IdentityRepository.Register(Model, Model.PasswordHash);
 
-                return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(Result) });
+                return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(Result) });
             }
             catch (Exception ex)
             {
@@ -47,14 +36,14 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync([FromForm] IdentityUser Model, [FromForm] String Password)
+        public async Task<IActionResult> LoginAsync([FromForm] IdentityUser Model, [FromForm] string Password)
         {
             Model.PasswordHash = Password;
             Model.UserName = Model.Email;
             try
             {
-                var Result = await _IdentityRepository.Login(Model, Model.PasswordHash);
-                return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(Result) });
+                JwtSecurityToken Result = await _IdentityRepository.Login(Model, Model.PasswordHash);
+                return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(Result) });
             }
             catch (Exception ex)
             {

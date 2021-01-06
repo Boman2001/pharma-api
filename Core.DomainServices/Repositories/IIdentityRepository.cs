@@ -1,10 +1,5 @@
-﻿using Core.Domain;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Core.DomainServices

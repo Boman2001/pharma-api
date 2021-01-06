@@ -56,10 +56,7 @@ namespace WebApi
             });
 
             services.AddOptions();
-            services.Configure<SecurityStampValidatorOptions>(options =>
-            {
-                options.ValidationInterval = TimeSpan.FromMinutes(5);
-            });
+            services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromMinutes(5));
 
             services.AddControllers();
             services.AddScoped<IIdentityRepository, IdentityRepository>();
@@ -67,22 +64,22 @@ namespace WebApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
-            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+            if (env.IsDevelopment()) { app.UseDeveloperExceptionPage(); }
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
             CreateUserRoles(serviceProvider).Wait();
         }
         private static async Task CreateUserRoles(IServiceProvider serviceProvider)
         {
-            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            RoleManager<IdentityRole> RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             string[] roleNames = { "Admin", "Doctor" };
 
-            foreach (var roleName in roleNames)
+            foreach (string roleName in roleNames)
             {
-                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                bool roleExist = await RoleManager.RoleExistsAsync(roleName);
                 if (!roleExist)
                 {
                      await RoleManager.CreateAsync(new IdentityRole(roleName));

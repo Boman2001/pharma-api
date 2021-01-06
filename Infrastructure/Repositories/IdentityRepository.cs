@@ -27,10 +27,10 @@ namespace Infrastructure
         async public Task<JwtSecurityToken> Register(IdentityUser User, string Password)
         {
             _authHelper.IsValidEmail(User.Email);
-            var Result = await _userManager.CreateAsync(User, Password);
+            IdentityResult Result = await _userManager.CreateAsync(User, Password);
             ErrorHandling(Result);
             await _userManager.AddToRoleAsync(User, "Doctor");
-            IList<String> RoleList = await _userManager.GetRolesAsync(User);
+            IList<string> RoleList = await _userManager.GetRolesAsync(User);
             JwtSecurityToken Token = _authHelper.GenerateToken(User, RoleList);
             return Token;
         }
@@ -38,9 +38,9 @@ namespace Infrastructure
         public async Task<JwtSecurityToken> Login(IdentityUser User, string Password)
         {
             _authHelper.IsValidEmail(User.Email);
-            var Result = await _userManager.FindByEmailAsync(User.Email);
+            IdentityUser Result = await _userManager.FindByEmailAsync(User.Email);
             SignInResult LoginResult = await _signInManager.PasswordSignInAsync(User.UserName, Password, false, false);
-            IList<String> RoleList = await _userManager.GetRolesAsync(Result);
+            IList<string> RoleList = await _userManager.GetRolesAsync(Result);
             if (LoginResult.Succeeded) {
                 JwtSecurityToken Token = _authHelper.GenerateToken(User, RoleList);
                 return Token;
