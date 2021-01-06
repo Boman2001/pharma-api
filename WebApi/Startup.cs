@@ -27,6 +27,9 @@ namespace WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            //REMOVE THIS TO REMOVE CUSTOM VALIDATOR
+            //services.AddTransient<IUserValidator<IdentityUser>, Core.DomainServices.Helpers.UserDomainValidator<IdentityUser>>();
+
             services.AddDbContext<SecurityDbContext>(options => options.UseSqlServer( Configuration.GetConnectionString("Security")));
             services.AddIdentity<IdentityUser, IdentityRole>(config => {
                 config.Password.RequireDigit = false;
@@ -36,8 +39,10 @@ namespace WebApi
                 config.Password.RequiredUniqueChars = 0;
                 config.Password.RequireLowercase = false;
                 config.User.RequireUniqueEmail = true;
+                
             }).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<SecurityDbContext>()
+                
                 .AddDefaultTokenProviders();
 
             services.AddAuthentication(x => {
@@ -55,6 +60,7 @@ namespace WebApi
                 };
             });
 
+        
             services.AddOptions();
             services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromMinutes(5));
 
