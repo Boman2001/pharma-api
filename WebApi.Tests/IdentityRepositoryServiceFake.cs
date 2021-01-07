@@ -60,9 +60,10 @@ namespace WebApi.Tests
             throw new NotImplementedException();
         }
 
-        public Task<IdentityUser> GetUserByEmail(string email)
+        async public Task<IdentityUser> GetUserByEmail(string email)
         {
-            throw new NotImplementedException();
+            IdentityUser User = new IdentityUser { Email = "email@gmail.com" };
+            return User;
         }
     }
 }
