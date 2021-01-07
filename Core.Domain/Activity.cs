@@ -1,6 +1,6 @@
 ﻿namespace Core.Domain
 {
-    public class Activity : BaseEntity
+    public class Activity : BaseEntitySoftDeletes
     {
         public string Description { get; set; }
         public string Properties { get; set; }

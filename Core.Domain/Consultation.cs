@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Core.Domain
 {
-    public class Consultation : BaseEntity
+    public class Consultation : BaseEntitySoftDeletes
     {
         public DateTime Date { get; set; }
         
