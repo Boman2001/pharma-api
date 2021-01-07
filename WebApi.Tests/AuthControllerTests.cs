@@ -4,19 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using Infrastructure;
 using Core.DomainServices;
-using Core.Domain;
 using WebApi.Controllers;
-using WebApi;
-using Moq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.IdentityModel.Tokens.Jwt;
-using System.ComponentModel;
 
 namespace WebApi.Tests
 {

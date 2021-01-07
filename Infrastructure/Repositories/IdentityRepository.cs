@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Core.Domain;
 using Core.DomainServices.Helper;
@@ -24,35 +25,35 @@ namespace Infrastructure
             _authHelper = new AuthHelper(configuration);
         }
 
-        async public Task<JwtSecurityToken> Register(IdentityUser User, string Password)
+        async public Task<JwtSecurityToken> Register(IdentityUser user, string password)
         {
-            _authHelper.IsValidEmail(User.Email);
-            IdentityResult Result = await _userManager.CreateAsync(User, Password);
+            _authHelper.IsValidEmail(user.Email);
+            IdentityResult Result = await _userManager.CreateAsync(user, password);
             ErrorHandling(Result);
-            await _userManager.AddToRoleAsync(User, "Doctor");
-            IList<string> RoleList = await _userManager.GetRolesAsync(User);
-            JwtSecurityToken Token = _authHelper.GenerateToken(User, RoleList);
+            await _userManager.AddToRoleAsync(user, "Doctor");
+            IList<string> RoleList = await _userManager.GetRolesAsync(user);
+            JwtSecurityToken Token = _authHelper.GenerateToken(user, RoleList);
             return Token;
         }
 
-        public async Task<JwtSecurityToken> Login(IdentityUser User, string Password)
+        public async Task<JwtSecurityToken> Login(IdentityUser user, string password)
         {
-            _authHelper.IsValidEmail(User.Email);
-            IdentityUser Result = await _userManager.FindByEmailAsync(User.Email);
-            SignInResult LoginResult = await _signInManager.PasswordSignInAsync(User.UserName, Password, false, false);
-            IList<string> RoleList = await _userManager.GetRolesAsync(Result);
+            _authHelper.IsValidEmail(user.Email);
+            IdentityUser Result = await _userManager.FindByEmailAsync(user.Email);
+            SignInResult LoginResult = await _signInManager.PasswordSignInAsync(user.UserName, password, false, false);
             if (LoginResult.Succeeded) {
-                JwtSecurityToken Token = _authHelper.GenerateToken(User, RoleList);
+                IList<string> RoleList = await _userManager.GetRolesAsync(Result);
+                JwtSecurityToken Token = _authHelper.GenerateToken(user, RoleList);
                 return Token;
             } else {
                throw new Exception("Password Incorrect");
             }
         }
 
-        public static void ErrorHandling(IdentityResult Result)
+        public static void ErrorHandling(IdentityResult result)
         {
             List<Exception> Exceptions = new List<Exception>();
-            foreach (IdentityError error in Result.Errors)
+            foreach (IdentityError error in result.Errors)
             {
                 Exceptions.Add(new Exception(error.Description));
             }
@@ -60,6 +61,30 @@ namespace Infrastructure
             {
                 throw new AggregateException("Encountered errors while trying to do something.", Exceptions);
             }
+        }
+
+        public Task<IdentityUser> GetCurrentuser(ClaimsPrincipal user)
+        {
+            var userEmail = user.FindFirstValue(ClaimTypes.Email);
+            var result = _userManager.FindByEmailAsync(userEmail);
+            return result;
+        }
+
+        public async Task<IdentityResult> Update(UserInformation oldUserInformation, IdentityUser user)
+        {
+            IdentityUser result = await _userManager.FindByEmailAsync(user.Email);
+
+
+            result.Email = user.Email;
+            result.UserName = result.UserName;
+            result.PasswordHash = user.PasswordHash;
+
+            return await _userManager.UpdateAsync(result);
+        }
+
+        public async Task<IdentityUser> GetUserByEmail(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
         }
     }
 }
