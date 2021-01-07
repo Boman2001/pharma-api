@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApi.Controllers
 {
@@ -11,21 +12,21 @@ namespace WebApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IIdentityRepository _IdentityRepository;
+        private readonly IIdentityRepository _identityRepository;
 
         public AuthController(IIdentityRepository identityRepository)
         {
-            _IdentityRepository = identityRepository;
+            _identityRepository = identityRepository;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromForm] IdentityUser Model, [FromForm] string Password)
+        public async Task<IActionResult> RegisterAsync([FromForm] IdentityUser model, [FromForm] string password)
         {
-            Model.PasswordHash = Password;
-            Model.UserName = Model.Email;
+            model.PasswordHash = password;
+            model.UserName = model.Email;
             try
             {
-                JwtSecurityToken Result = await _IdentityRepository.Register(Model, Model.PasswordHash);
+                JwtSecurityToken Result = await _identityRepository.Register(model, model.PasswordHash);
 
                 return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(Result) });
             }
@@ -36,13 +37,13 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync([FromForm] IdentityUser Model, [FromForm] string Password)
+        public async Task<IActionResult> LoginAsync([FromForm] IdentityUser model, [FromForm] string password)
         {
-            Model.PasswordHash = Password;
-            Model.UserName = Model.Email;
+            model.PasswordHash = password;
+            model.UserName = model.Email;
             try
             {
-                JwtSecurityToken Result = await _IdentityRepository.Login(Model, Model.PasswordHash);
+                JwtSecurityToken Result = await _identityRepository.Login(model, model.PasswordHash);
                 return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(Result) });
             }
             catch (Exception ex)
@@ -56,10 +57,11 @@ namespace WebApi.Controllers
         //Header required:
         //Authorization Bearer [Token]
         //[Authorize]
-        //[HttpGet("get")]
-        //public string Get()
+        //[HttpGet]
+        //public async Task<IActionResult> Get()
         //{
-        //    return "value";
+        //    var user =  await _IdentityRepository.GetCurrentuser(User);
+        //    return Ok(user);
         //}
 
     }

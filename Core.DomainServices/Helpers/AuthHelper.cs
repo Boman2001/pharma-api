@@ -17,14 +17,14 @@ namespace Core.DomainServices.Helper
             _configuration = configuration;
          }
 
-        public JwtSecurityToken GenerateToken(IdentityUser User, IList<String> roles)
+        public JwtSecurityToken GenerateToken(IdentityUser user, IList<String> roles)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Email, User.Email),
-                new Claim(ClaimTypes.NameIdentifier, User.Id),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
             };
 
             return new JwtSecurityToken(
@@ -37,11 +37,11 @@ namespace Core.DomainServices.Helper
         }
 
 
-        public bool IsValidEmail(string Email)
+        public bool IsValidEmail(string email)
         {
             try
             {
-                _ = new System.Net.Mail.MailAddress(Email);
+                _ = new System.Net.Mail.MailAddress(email);
                 return true;
             }
             catch
