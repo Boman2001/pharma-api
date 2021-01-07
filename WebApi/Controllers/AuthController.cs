@@ -43,8 +43,10 @@ namespace WebApi.Controllers
             model.UserName = model.Email;
             try
             {
-                JwtSecurityToken Result = await _identityRepository.Login(model, model.PasswordHash);
-                return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(Result) });
+                var result = await _identityRepository.Login(model, model.PasswordHash);
+                var user = await _identityRepository.GetUserByEmail(model.Email);
+
+                return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(result), User = user });
             }
             catch (Exception ex)
             {

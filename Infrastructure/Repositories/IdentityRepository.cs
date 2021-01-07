@@ -41,8 +41,8 @@ namespace Infrastructure
             _authHelper.IsValidEmail(user.Email);
             IdentityUser Result = await _userManager.FindByEmailAsync(user.Email);
             SignInResult LoginResult = await _signInManager.PasswordSignInAsync(user.UserName, password, false, false);
-            IList<string> RoleList = await _userManager.GetRolesAsync(Result);
             if (LoginResult.Succeeded) {
+                IList<string> RoleList = await _userManager.GetRolesAsync(Result);
                 JwtSecurityToken Token = _authHelper.GenerateToken(user, RoleList);
                 return Token;
             } else {
@@ -68,6 +68,23 @@ namespace Infrastructure
             var userEmail = user.FindFirstValue(ClaimTypes.Email);
             var result = _userManager.FindByEmailAsync(userEmail);
             return result;
+        }
+
+        public async Task<IdentityResult> Update(UserInformation oldUserInformation, IdentityUser user)
+        {
+            IdentityUser result = await _userManager.FindByEmailAsync(user.Email);
+
+
+            result.Email = user.Email;
+            result.UserName = result.UserName;
+            result.PasswordHash = user.PasswordHash;
+
+            return await _userManager.UpdateAsync(result);
+        }
+
+        public async Task<IdentityUser> GetUserByEmail(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
         }
     }
 }

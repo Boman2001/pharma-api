@@ -54,5 +54,15 @@ namespace WebApi.Tests
         {
             throw new NotImplementedException();
         }
+
+        public Task<IdentityResult> Update(UserInformation oldUserInformation, IdentityUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IdentityUser> GetUserByEmail(string email)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
