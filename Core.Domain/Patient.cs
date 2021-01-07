@@ -2,7 +2,7 @@
 
 namespace Core.Domain
 {
-    public class Patient : BaseEntity
+    public class Patient : BaseEntitySoftDeletes
     {
         public string Name { get; set; }
         public string Bsn { get; set; }

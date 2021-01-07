@@ -2,7 +2,7 @@
 
 namespace Core.Domain
 {
-    public class Intolerance : BaseEntity
+    public class Intolerance : BaseEntitySoftDeletes
     {
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
