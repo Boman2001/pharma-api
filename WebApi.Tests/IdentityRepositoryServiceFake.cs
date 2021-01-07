@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Domain;
@@ -49,6 +50,9 @@ namespace WebApi.Tests
                 return token;
         }
 
-
+        public Task<IdentityUser> GetCurrentuser(ClaimsPrincipal user)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
