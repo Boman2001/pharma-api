@@ -21,19 +21,19 @@ namespace Core.DomainServices.Helper
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
-            var claims = new List<Claim>{
-                new Claim(JwtRegisteredClaimNames.NameId, User.Id),
-                new Claim("Role", roles[0]),
-                new Claim("Email", User.Email)
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Email, User.Email),
+                new Claim(ClaimTypes.NameIdentifier, User.Id),
             };
-           
+
             return new JwtSecurityToken(
-              issuer: _configuration["JWT:ValidIssuer"],
-              audience: _configuration["JWT:ValidAudience"],
-              expires: DateTime.Now.AddHours(3),
-              claims: claims,
-              signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-              ); 
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.Now.AddHours(3),
+                claims: claims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+            );
         }
 
 
