@@ -59,7 +59,7 @@ namespace Core.DomainServices.Tests
             Assert.Equal(true, result);
         }
 
-        [Trait("Category", "Email Validation")]
+        [Trait("Category", "Jwt validation test")]
         [Fact]
         public async Task Returns_Jwt()
         {
