@@ -14,7 +14,7 @@ namespace Core.DomainServices.Helpers
     public class UserDomainValidator<TUser> : IUserValidator<TUser>
        where TUser : IdentityUser
     {
-        List<IdentityError> Errors = new List<IdentityError>();
+        List<IdentityError> _errors = new List<IdentityError>();
 
 
         public Task<IdentityResult> ValidateAsync(IdentityUser user)
@@ -32,13 +32,13 @@ namespace Core.DomainServices.Helpers
             {
                 IdentityError inuse = new IdentityError();
                 inuse.Description = "Mail Already in use";
-                Errors.Add(inuse);
+                _errors.Add(inuse);
             }
 
 
-            if (Errors.Count >= 1)
+            if (_errors.Count >= 1)
             {
-                return Task.FromResult(IdentityResult.Failed(Errors.ToArray()));
+                return Task.FromResult(IdentityResult.Failed(_errors.ToArray()));
             }
             else
             {

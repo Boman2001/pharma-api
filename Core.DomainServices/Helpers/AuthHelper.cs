@@ -17,31 +17,31 @@ namespace Core.DomainServices.Helper
             _configuration = configuration;
          }
 
-        public JwtSecurityToken GenerateToken(IdentityUser User, IList<String> roles)
+        public JwtSecurityToken GenerateToken(IdentityUser user, IList<String> roles)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
-            var claims = new List<Claim>{
-                new Claim(JwtRegisteredClaimNames.NameId, User.Id),
-                new Claim("Role", roles[0]),
-                new Claim("Email", User.Email)
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
             };
-           
+
             return new JwtSecurityToken(
-              issuer: _configuration["JWT:ValidIssuer"],
-              audience: _configuration["JWT:ValidAudience"],
-              expires: DateTime.Now.AddHours(3),
-              claims: claims,
-              signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-              ); 
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.Now.AddHours(3),
+                claims: claims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+            );
         }
 
 
-        public bool IsValidEmail(string Email)
+        public bool IsValidEmail(string email)
         {
             try
             {
-                _ = new System.Net.Mail.MailAddress(Email);
+                _ = new System.Net.Mail.MailAddress(email);
                 return true;
             }
             catch
