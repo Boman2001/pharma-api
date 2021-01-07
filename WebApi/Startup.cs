@@ -13,6 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Threading.Tasks;
 using System.Text;
+using Core.DomainServices.Repositories;
+using Infrastructure.Repositories;
 
 namespace WebApi
 {
