@@ -356,3 +356,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+# Ryder .idea files
+.idea
+
+.editorconfig
