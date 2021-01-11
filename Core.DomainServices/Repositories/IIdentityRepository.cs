@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -12,10 +13,16 @@ namespace Core.DomainServices
 
         Task<JwtSecurityToken> Login(IdentityUser user, string password);
 
-        Task<IdentityUser> GetCurrentuser(ClaimsPrincipal user);
+        Task<IdentityUser> GetCurrentUser(ClaimsPrincipal user);
 
-        Task<IdentityResult> Update(UserInformation oldUserInformation, IdentityUser user);
+        Task<IdentityResult> Update(IdentityUser user, UserInformation i);
 
         Task<IdentityUser> GetUserByEmail(string email);
+
+        void Detach(IEnumerable<IdentityUser> entities);
+
+        Task<IdentityResult> DeleteUser(IdentityUser user);
+
+        Task<IdentityUser> GetUserById(string id);
     }
 }

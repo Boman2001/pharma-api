@@ -46,7 +46,7 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            foreach (string includeProperty in includeProperties)
+            foreach (var includeProperty in includeProperties)
             {
                 query = query.Include(includeProperty);
             }
@@ -65,7 +65,7 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            foreach (string includeProperty in includeProperties)
+            foreach (var includeProperty in includeProperties)
             {
                 query = query.Include(includeProperty);
             }
@@ -83,7 +83,7 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            foreach (string includeProperty in includeProperties)
+            foreach (var includeProperty in includeProperties)
             {
                 query = query.Include(includeProperty);
             }
@@ -116,7 +116,7 @@ namespace Infrastructure.Repositories
 
         public async Task Delete(int id)
         {
-            T entity = await Get(id);
+            var entity = await Get(id);
 
             if (entity == null)
             {
@@ -138,6 +138,30 @@ namespace Infrastructure.Repositories
             await Save();
         }
 
+        public async Task ForceDelete(int id)
+        {
+            var entity = await Get(id);
+
+            if (entity == null)
+            {
+                return;
+            }
+
+            _dbSet.Remove(entity);
+            await Save();
+        }
+
+        public async Task ForceDelete(T entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            _dbSet.Remove(entity);
+            await Save();
+        }
+
         public async Task Save()
         {
             await _context.SaveChangesAsync();
@@ -145,7 +169,7 @@ namespace Infrastructure.Repositories
 
         public void Detach(IEnumerable<T> entities)
         {
-            foreach (T entity in entities)
+            foreach (var entity in entities)
             {
                 _context.Entry(entity).State = EntityState.Detached;
             }

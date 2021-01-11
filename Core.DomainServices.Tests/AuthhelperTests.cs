@@ -35,17 +35,9 @@ namespace Core.DomainServices.Tests
         public async Task Email_Invalled()
         {
             var falseEmaile = "not a valid email";
-            Exception result = null;
-            try
-            {
-                _authHelper.IsValidEmail(falseEmaile);
-            }
-            catch (Exception e)
-            {
-                result = e;
-            }
-
-            Assert.Equal("Incorrect email", result.Message);
+            bool result = AuthHelper.IsValidEmail(falseEmaile);
+           
+            Assert.False(result);
         }
 
         [Trait("Category", "Email Validation")]
@@ -54,7 +46,7 @@ namespace Core.DomainServices.Tests
         {
             var validEmail = "maartendonkersloot@gmail.com";
            
-            bool result = _authHelper.IsValidEmail(validEmail);
+            bool result = AuthHelper.IsValidEmail(validEmail);
          
             Assert.Equal(true, result);
         }

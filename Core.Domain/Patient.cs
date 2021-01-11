@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Core.Domain
 {
@@ -16,5 +17,13 @@ namespace Core.Domain
         public string HouseNumberAddon { get; set; }
         public string PostalCode { get; set; }
         public string Country { get; set; }
+        
+        public List<AdditionalExaminationResult> AdditionalExaminationResults { get; set; }
+        public List<Consultation> Consultations { get; set; }
+        public List<Episode> Episodes { get; set; }
+        public List<Intolerance> Intolerances { get; set; }
+        public List<PhysicalExamination> PhysicalExaminations { get; set; }
+        public List<Prescription> Prescriptions { get; set; }
+        public List<UserJournal> UserJournals { get; set; }
     }
 }
