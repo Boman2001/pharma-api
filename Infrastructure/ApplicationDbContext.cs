@@ -32,6 +32,10 @@ namespace Infrastructure
         public DbSet<UserInformation> UserInformation { get; set; }
         public DbSet<UserJournal> UserJournals { get; set; }
 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> contextOptions) : base(contextOptions)
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
