@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
 namespace Core.Domain
 {
     public class UserInformation : BaseEntity
     {
+        public string Name { get; set; }
         public string Bsn { get; set; }
         public DateTime Dob { get; set; }
         public Gender Gender { get; set; }
@@ -16,7 +18,8 @@ namespace Core.Domain
         public string PostalCode { get; set; }
         public string Country { get; set; }
 
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
+        [NotMapped]
         public IdentityUser User { get; set; }
     }
 }

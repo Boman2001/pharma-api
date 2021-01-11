@@ -2,11 +2,11 @@
 
 namespace Core.Domain
 {
-    public class AdditionalExaminationType: BaseEntitySoftDeletes
+    public class PhysicalExaminationType: BaseEntitySoftDeletes
     {
         public string Name { get; set; }
         public string Unit { get; set; }
 
-        public List<AdditionalExaminationResult> AdditionalExaminationResults { get; set; }
+        public List<PhysicalExamination> PhysicalExaminations { get; set; }
     }
 }
