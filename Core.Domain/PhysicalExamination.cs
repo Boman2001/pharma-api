@@ -14,6 +14,6 @@ namespace Core.Domain
         public Patient Patient { get; set; }
         
         public int ExaminationTypeId { get; set; }
-        public ExaminationType ExaminationType { get; set; }
+        public PhysicalExaminationType PhysicalExaminationType { get; set; }
     }
 }

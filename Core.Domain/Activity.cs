@@ -1,4 +1,8 @@
-﻿namespace Core.Domain
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
+
+namespace Core.Domain
 {
     public class Activity : BaseEntitySoftDeletes
     {
@@ -8,7 +12,8 @@
         public int SubjectId { get; set; }
         public BaseEntity SubjectType { get; set; }
         
-        public int CauserId { get; set; }
-        public BaseEntity CauserType { get; set; }
+        public Guid CauserId { get; set; }
+        [NotMapped]
+        public IdentityUser CauserType { get; set; }
     }
 }
