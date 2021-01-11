@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Domain;
+using Core.DomainServices;
 using Core.DomainServices.QueryExtensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +18,6 @@ namespace Infrastructure
 {
     public class ApplicationDbContext : DbContext
     {
-        private SignInManager<IdentityUser> _signInManager;
-        private UserManager<IdentityUser> _userManager;
-
         public DbSet<Activity> Activities { get; set; }
         public DbSet<AdditionalExaminationResult> AdditionalExaminationResults { get; set; }
         public DbSet<AdditionalExaminationType> AdditionalExaminationTypes { get; set; }
@@ -31,13 +31,6 @@ namespace Infrastructure
         public DbSet<Prescription> Prescriptions { get; set; }
         public DbSet<UserInformation> UserInformation { get; set; }
         public DbSet<UserJournal> UserJournals { get; set; }
-
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> contextOptions,
-            UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager) : base(contextOptions)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -92,48 +85,6 @@ namespace Infrastructure
                 if (typeof(IBaseEntitySoftDeletes).IsAssignableFrom(entityType.ClrType))
                 {
                     entityType.AddSoftDeleteQueryFilter();
-                }
-            }
-        }
-
-        public override int SaveChanges()
-        {
-            UpdateSoftDeleteStatuses();
-
-            return base.SaveChanges();
-        }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
-        {
-            UpdateSoftDeleteStatuses();
-
-            return base.SaveChangesAsync(cancellationToken);
-        }
-
-        private void UpdateSoftDeleteStatuses()
-        {
-            foreach (var entry in ChangeTracker.Entries())
-            {
-                if (entry.Entity is BaseEntity)
-                {
-                    switch (entry.State)
-                    {
-                        case EntityState.Modified:
-                            // entry.CurrentValues["UpdatedBy"] = _userManager.GetUserId(User);
-                            entry.CurrentValues["UpdatedAt"] = DateTime.Now;
-                            break;
-                        case EntityState.Deleted:
-                            entry.State = EntityState.Modified;
-                            // entry.CurrentValues["DeletedBy"] = _userManager.GetUserId();
-                            entry.CurrentValues["DeletedAt"] = DateTime.Now;
-                            break;
-                        case EntityState.Detached:
-                        case EntityState.Unchanged:
-                        case EntityState.Added:
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
                 }
             }
         }

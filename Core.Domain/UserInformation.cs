@@ -6,6 +6,7 @@ namespace Core.Domain
 {
     public class UserInformation : BaseEntity
     {
+        public string Name { get; set; }
         public string Bsn { get; set; }
         public DateTime Dob { get; set; }
         public Gender Gender { get; set; }
