@@ -211,7 +211,7 @@ namespace WebApi.Tests
         //        User = _fakeUser
         //    };
 
-        //    var okResult = (OkResult) await FakeController.PutDoctor(7, putUserDto);
+        //    var okResult = (OkResult)await FakeController.PutDoctor(7, putUserDto);
 
         //    Assert.Equal(200, okResult.StatusCode);
         //    Assert.Equal(_fakeIdentityUser.Email, putUserDto.Email);
@@ -223,13 +223,12 @@ namespace WebApi.Tests
         //{
         //    var putUserDto = new UserDto
         //    {
-        //        Id = 13232,
+        //        Id = 1,
         //        Email = "email@gmail.com",
         //        Password = "password",
-        //        User = _fakeUser
         //    };
 
-        //    var badRequestObjectResult = (BadRequestObjectResult) await FakeController.PutDoctor(2, putUserDto);
+        //    var badRequestObjectResult = (BadRequestObjectResult)await FakeController.PutDoctor(3, putUserDto);
 
         //    Assert.Equal(400, badRequestObjectResult.StatusCode);
         //    Assert.Equal("{ message = Email already in use }", badRequestObjectResult.Value.ToString());
@@ -267,7 +266,6 @@ namespace WebApi.Tests
             };
             var akeIdentityUser = new IdentityUser
             {
-                Id = "!#!@#!@!#@#@2",
                 PasswordHash = "genericUsername",
                 Email = "email2@gmail.com",
                 UserName = "email@gmail.com"
