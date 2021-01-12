@@ -75,7 +75,7 @@ namespace WebApi
             services.AddControllers();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider, ApplicationDbContext databaseContext, SecurityDbContext identityDbContext)
         {
             if (env.IsDevelopment()) { app.UseDeveloperExceptionPage(); }
             app.UseHttpsRedirection();
@@ -84,6 +84,8 @@ namespace WebApi
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
             CreateUserRoles(serviceProvider).Wait();
+            databaseContext.Database.Migrate();
+            identityDbContext.Database.Migrate();
         }
         private static async Task CreateUserRoles(IServiceProvider serviceProvider)
         {
