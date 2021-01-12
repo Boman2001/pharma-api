@@ -50,9 +50,6 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
 
-                    b.Property<string>("SubjectType")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -565,9 +562,6 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HouseNumberAddon")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
