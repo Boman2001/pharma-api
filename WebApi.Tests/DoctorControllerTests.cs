@@ -199,40 +199,57 @@ namespace WebApi.Tests
         }
 
 
-        //[Trait("Category", "Doctor")]
-        //[Fact]
-        //public async Task Put_Doctor_Already_Existing_User()
-        //{
-        //    var putUserDto = new UserDto
-        //    {
-        //        Id = 13232,
-        //        Email = "email@gmail.com",
-        //        Password = "password",
-        //        User = _fakeUser
-        //    };
+        [Trait("Category", "Doctor")]
+        [Fact]
+        public async Task Put_Doctore_Already_existing()
+        {
+            var putUserDto = new UserDto
+            {
+                Id = 7,
+                Email = "emaiel@gmail.com",
+                Password = "test",
+                User = _fakeUser
+            };
 
-        //    var okResult = (OkResult)await FakeController.PutDoctor(7, putUserDto);
+            var badRequestObjectResult = (OkResult)await FakeController.PutDoctor(1, putUserDto);
 
-        //    Assert.Equal(200, okResult.StatusCode);
-        //    Assert.Equal(_fakeIdentityUser.Email, putUserDto.Email);
-        //}
+            Assert.Equal(200, badRequestObjectResult.StatusCode);
+            Assert.Equal(putUserDto.Email, _fakeUsersInformation[2].User.Email);
+        }
 
-        //[Trait("Category", "Doctor")]
-        //[Fact]
-        //public async Task Put_Doctor_Email_Already_In_Use()
-        //{
-        //    var putUserDto = new UserDto
-        //    {
-        //        Id = 1,
-        //        Email = "email@gmail.com",
-        //        Password = "password",
-        //    };
+        [Trait("Category", "Doctor")]
+        [Fact]
+        public async Task Put_Doctor_Email_Already_In_Usee()
+        {
+            var putUserDto = new UserDto
+            {
+                Id = 1,
+                Email = "email2@gmail.com",
+                Password = "password",
+            };
 
-        //    var badRequestObjectResult = (BadRequestObjectResult)await FakeController.PutDoctor(3, putUserDto);
+            var badRequestObjectResult = (BadRequestObjectResult)await FakeController.PutDoctor(2, putUserDto);
 
-        //    Assert.Equal(400, badRequestObjectResult.StatusCode);
-        //    Assert.Equal("{ message = Email already in use }", badRequestObjectResult.Value.ToString());
-        //}
+            Assert.Equal(400, badRequestObjectResult.StatusCode);
+            Assert.Equal("{ message = Email already in use }", badRequestObjectResult.Value.ToString());
+        }
+
+        [Trait("Category", "Doctor")]
+        [Fact]
+        public async Task Put_doctor_not_existing()
+        {
+            var putUserDto = new UserDto
+            {
+                Id = 1,
+                Email = "email2@gmail.com",
+                Password = "password",
+            };
+
+            var badRequestObjectResult = (BadRequestObjectResult)await FakeController.PutDoctor(5, putUserDto);
+
+            Assert.Equal(400, badRequestObjectResult.StatusCode);
+            Assert.Equal("{ message = This userId doesn't correspond to an existing user }", badRequestObjectResult.Value.ToString());
+        }
 
         //[Trait("Category", "Doctor")]
         //[Fact]
@@ -259,7 +276,6 @@ namespace WebApi.Tests
             };
             _fakeIdentityUser = new IdentityUser
             {
-                Id = "!#!@#!@!#@#@",
                 PasswordHash = "genericUsername",
                 Email = "email@gmail.com",
                 UserName = "email@gmail.com"
@@ -274,19 +290,20 @@ namespace WebApi.Tests
             _fakeUsersInformation = new List<UserInformation>();
             _userInformation = new UserInformation
             {
-                Id = 1,
                 User = _fakeUser,
                 CreatedAt = new DateTime(2000, 10, 10).Date
             };
             var userInformationSecond = new UserInformation
             {
                 Id = 2,
+                UserId = Guid.Parse(_fakeIdentityUser.Id),
                 User = _fakeUser
             };
             var userInformationThird = new UserInformation
             {
-                Id = 3,
-                User = _fakeUser
+                Id = 1,
+                UserId = Guid.Parse(akeIdentityUser.Id),
+                User = akeIdentityUser
             };
             _fakeUsersInformation.AddRange(new List<UserInformation>
             {

@@ -31,11 +31,20 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UserInformation>> GetDoctors()
+        public async Task<ActionResult<IEnumerable<UserInformation>>> GetDoctorsAsync()
         {
             try
             {
-                return Ok(_userInformationRepository.GetAll());
+                var userinformations = _userInformationRepository.GetAll();
+                foreach (var var in userinformations)
+                {
+                    if (var.UserId != null)
+                    {
+                        var.User = await _identityRepository.GetUserById(var.UserId.ToString());
+                    }
+                }
+
+                return Ok(userinformations);
             }
             catch (Exception ex)
             {
@@ -58,14 +67,15 @@ namespace WebApi.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-
-        [Authorize]
+        
         [HttpGet("{id}")]
         public async Task<ActionResult<UserInformation>> GetDoctor(int id)
         {
-            var result = _userInformationRepository.Get(s =>  s.Id == id);
+            var result = _userInformationRepository.Get(s =>  s.Id == id).SingleOrDefault();
+            var user = await _identityRepository.GetUserById(result.UserId.ToString());
+            result.User = user;
             
-            return result == null || !result.Any() ? StatusCode(204) : (ActionResult<UserInformation>) Ok(result);
+            return result == null  ? StatusCode(204) : (ActionResult<UserInformation>) Ok(result);
         }
 
         [HttpPut("{id}")]
