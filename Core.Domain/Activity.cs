@@ -10,8 +10,10 @@ namespace Core.Domain
         public string Properties { get; set; }
         
         public int SubjectId { get; set; }
-        public string SubjectType { get; set; }
+        public BaseEntity SubjectType { get; set; }
         
         public Guid CauserId { get; set; }
+        [NotMapped]
+        public IdentityUser CauserType { get; set; }
     }
 }

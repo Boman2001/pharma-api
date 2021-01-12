@@ -75,10 +75,9 @@ namespace Infrastructure
                 .HasOne(a => a.Consultation)
                 .WithMany(c => c.AdditionalExaminationResults)
                 .OnDelete(DeleteBehavior.Restrict);
-
+            
             foreach (var entityType in builder.Model.GetEntityTypes())
             {
-                var test = entityType.ClrType;
                 if (typeof(IBaseEntitySoftDeletes).IsAssignableFrom(entityType.ClrType))
                 {
                     entityType.AddSoftDeleteQueryFilter();
