@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Domain;
+using Core.Domain.Interfaces;
+using Core.Domain.Models;
 using Core.DomainServices.QueryExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -75,10 +77,9 @@ namespace Infrastructure
                 .HasOne(a => a.Consultation)
                 .WithMany(c => c.AdditionalExaminationResults)
                 .OnDelete(DeleteBehavior.Restrict);
-
+            
             foreach (var entityType in builder.Model.GetEntityTypes())
             {
-                var test = entityType.ClrType;
                 if (typeof(IBaseEntitySoftDeletes).IsAssignableFrom(entityType.ClrType))
                 {
                     entityType.AddSoftDeleteQueryFilter();

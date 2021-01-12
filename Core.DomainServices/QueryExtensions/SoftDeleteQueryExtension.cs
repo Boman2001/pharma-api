@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using Core.Domain;
+using Core.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
