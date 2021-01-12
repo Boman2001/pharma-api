@@ -14,7 +14,7 @@ namespace WebApi.Tests.Mocks
         {
             var repository = new Mock<IRepository<T>>();
 
-            repository.Setup(x => x.GetAll())
+            repository.Setup(x => x.Get())
                 .Returns(usersInformationList);
 
             repository.Setup(t => t.Get(It.IsAny<int>()))

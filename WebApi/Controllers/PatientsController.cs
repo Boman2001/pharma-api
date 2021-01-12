@@ -28,7 +28,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<Patient>> Get()
         {
-            return Ok(_patientRepository.GetAll());
+            return Ok(_patientRepository.Get());
         }
 
         [HttpGet("{id}")]
@@ -60,6 +60,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] Patient patient)
         {
+            patient.Id = id;
             var updatedPatient = await _patientRepository.Update(patient);
 
             return Ok(updatedPatient);

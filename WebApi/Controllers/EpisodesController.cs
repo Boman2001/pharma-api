@@ -28,7 +28,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<Episode>> Get()
         {
-            return Ok(_episodeRepository.GetAll());
+            return Ok(_episodeRepository.Get());
         }
 
         [HttpGet("{id}")]

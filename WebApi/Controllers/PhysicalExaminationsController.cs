@@ -28,7 +28,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<PhysicalExamination>> Get()
         {
-            return Ok(_physicalExaminationRepository.GetAll());
+            return Ok(_physicalExaminationRepository.Get());
         }
 
         [HttpGet("{id}")]

@@ -10,7 +10,7 @@ namespace Core.DomainServices.Repositories
 {
     public interface IRepository<T> where T : BaseEntity
     {
-        IEnumerable<T> GetAll();
+        IEnumerable<T> Get();
         Task<T> Get(int id);
         IEnumerable<T> Get(Expression<Func<T, bool>> filter);
         IEnumerable<T> Get(IEnumerable<string> includeProperties);

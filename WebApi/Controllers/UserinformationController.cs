@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Core.Domain.Models;
 using Core.DomainServices;
 using Microsoft.AspNetCore.Authorization;
 using WebApi.Mappings;
@@ -40,7 +41,7 @@ namespace WebApi.Controllers
             try
             {
                 List<UserInformationDto> userInformationDtos = new List<UserInformationDto>();
-                var userinformations = _userInformationRepository.GetAll();
+                var userinformations = _userInformationRepository.Get();
                 foreach (var var in userinformations)
                 {
                     var p = _mapper.Map<UserInformationDto>(var);

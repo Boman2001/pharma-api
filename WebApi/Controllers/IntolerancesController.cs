@@ -28,7 +28,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<Intolerance>> Get()
         {
-            return Ok(_intoleranceRepository.GetAll());
+            return Ok(_intoleranceRepository.Get());
         }
 
         [HttpGet("{id}")]

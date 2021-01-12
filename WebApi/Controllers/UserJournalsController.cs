@@ -28,7 +28,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<UserJournal>> Get()
         {
-            return Ok(_userJournalRepository.GetAll());
+            return Ok(_userJournalRepository.Get());
         }
 
         [HttpGet("{id}")]

@@ -28,7 +28,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<IcpcCode>> Get()
         {
-            return Ok(_icpcCodeRepository.GetAll());
+            return Ok(_icpcCodeRepository.Get());
         }
 
         [HttpGet("{id}")]

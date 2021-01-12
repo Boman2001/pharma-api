@@ -28,7 +28,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<AdditionalExaminationResult>> Get()
         {
-            return Ok(_additionalExaminationResultRepository.GetAll());
+            return Ok(_additionalExaminationResultRepository.Get());
         }
 
         [HttpGet("{id}")]

@@ -68,7 +68,6 @@ namespace WebApi
             services.AddOptions();
             services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromMinutes(5));
 
-            services.AddControllers();
             services.AddScoped<IIdentityRepository, IdentityRepository>();
 
             services.AddScoped<DbContext, ApplicationDbContext>();

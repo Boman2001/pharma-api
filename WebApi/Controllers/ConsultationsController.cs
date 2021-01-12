@@ -28,7 +28,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<Consultation>> Get()
         {
-            return Ok(_consultationRepository.GetAll());
+            return Ok(_consultationRepository.Get());
         }
 
         [HttpGet("{id}")]
