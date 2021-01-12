@@ -176,7 +176,6 @@ namespace Infrastructure.Tests
         [Fact]
         public async Task Update()
         {
-
             var identityUser = new IdentityUser()
             {
                 UserName = "GenericUsername",
@@ -185,7 +184,7 @@ namespace Infrastructure.Tests
             };
             var userInformation = new UserInformation
             {
-                UserId  = Guid.Parse(_fakeIdentityUsers[0].Id),
+                UserId = Guid.Parse(_fakeIdentityUsers[0].Id),
                 Id = 1,
                 User = _fakeUser
             };

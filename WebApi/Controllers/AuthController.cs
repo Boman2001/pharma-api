@@ -3,7 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Core.Domain;
+using Core.Domain.DataTransferObject;
+using Core.DomainServices.Repositories;
 
 namespace WebApi.Controllers
 {
@@ -12,10 +17,14 @@ namespace WebApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
+        private readonly IRepository<UserInformation> _userInformationRepository;
+        private readonly IMapper _mapper;
 
-        public AuthController(IIdentityRepository identityRepository)
+        public AuthController(IMapper autoMapper, IIdentityRepository identityRepository, IRepository<UserInformation> userInformationRepository )
         {
             _identityRepository = identityRepository;
+            _userInformationRepository = userInformationRepository;
+            _mapper = autoMapper;
         }
 
         [HttpPost("register")]
@@ -45,7 +54,15 @@ namespace WebApi.Controllers
                 var result = await _identityRepository.Login(model, model.PasswordHash);
                 var user = await _identityRepository.GetUserByEmail(model.Email);
 
-                return Ok(new {Token = new JwtSecurityTokenHandler().WriteToken(result), User = user});
+                var b = _userInformationRepository.Get(d => d.UserId == Guid.Parse(user.Id)).FirstOrDefault();
+                
+                var p = _mapper.Map<UserInformationDto>(b);
+                p.Email = user.Email;
+
+                p.StringId = user.Id.ToString();
+
+
+                return Ok(new {Token = new JwtSecurityTokenHandler().WriteToken(result), User = p });
             }
             catch (Exception ex)
             {

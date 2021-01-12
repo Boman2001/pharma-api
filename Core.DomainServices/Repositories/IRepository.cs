@@ -17,8 +17,8 @@ namespace Core.DomainServices.Repositories
         IEnumerable<T> Get(Expression<Func<T, bool>> filter, IEnumerable<string> includeProperties);
         IEnumerable<T> Get(Expression<Func<T, bool>> filter, IEnumerable<string> includeProperties,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy);
-        Task Add(T model);
-        Task Update(T model);
+        Task<T> Add(T model);
+        Task<T> Update(T model);
         Task Delete(int id);
         Task Delete(T model);
         Task ForceDelete(int id);
