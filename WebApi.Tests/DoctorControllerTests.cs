@@ -54,12 +54,11 @@ namespace WebApi.Tests
 
         [Trait("Category", "Doctor")]
         [Fact]
-        public void Get_all()
+        public async Task Get_allAsync()
         {
-            var objectResult = (ObjectResult) FakeController.GetDoctors().Result;
-            var objectResultValue = (List<UserInformation>) objectResult.Value;
-
-            Assert.Equal(200, objectResult.StatusCode);
+            var objectResult = await  FakeController.GetDoctorsAsync();
+            var ok = (OkObjectResult)objectResult.Result;
+            var objectResultValue = (List<UserInformation>) ok.Value;
             Assert.Equal(_userInformation, objectResultValue[0]);
             Assert.Equal(3, objectResultValue.Count);
         }
