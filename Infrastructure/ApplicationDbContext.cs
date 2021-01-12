@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Core.Domain;
 using Core.DomainServices.QueryExtensions;
 using Microsoft.EntityFrameworkCore;
@@ -73,12 +75,59 @@ namespace Infrastructure
                 .HasOne(a => a.Consultation)
                 .WithMany(c => c.AdditionalExaminationResults)
                 .OnDelete(DeleteBehavior.Restrict);
-            
+
             foreach (var entityType in builder.Model.GetEntityTypes())
             {
+                var test = entityType.ClrType;
                 if (typeof(IBaseEntitySoftDeletes).IsAssignableFrom(entityType.ClrType))
                 {
                     entityType.AddSoftDeleteQueryFilter();
+                }
+            }
+        }
+
+        public override int SaveChanges()
+        {
+            UpdateSoftDeleteStatuses();
+
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
+        {
+            UpdateSoftDeleteStatuses();
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void UpdateSoftDeleteStatuses()
+        {
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                if (entry.Entity is BaseEntity)
+                {
+                    switch (entry.State)
+                    {
+                        case EntityState.Modified:
+                            entry.CurrentValues["UpdatedBy"] = 0;
+                            entry.CurrentValues["UpdatedAt"] = DateTime.Now;
+                            break;
+                        case EntityState.Deleted:
+                            if (entry.Entity is BaseEntitySoftDeletes)
+                            {
+                                entry.State = EntityState.Modified;
+                                entry.CurrentValues["DeletedBy"] = 0;
+                                entry.CurrentValues["DeletedAt"] = DateTime.Now;
+                            }
+
+                            break;
+                        case EntityState.Detached:
+                        case EntityState.Unchanged:
+                        case EntityState.Added:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
         }
