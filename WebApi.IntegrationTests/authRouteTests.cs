@@ -99,9 +99,9 @@ namespace WebApi.IntegrationTests
                 "application/x-www-form-urlencoded");
 
             var defaultPage = await _client.PostAsync("/api/auth/login", content);
-            var contesnt = defaultPage.Content.ReadAsStringAsync();
+            var contenTask = defaultPage.Content.ReadAsStringAsync();
 
-            var json = contesnt.Result;
+            var json = contenTask.Result;
             var message = JObject.Parse(json)["message"];
             Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
             Assert.NotNull(message);

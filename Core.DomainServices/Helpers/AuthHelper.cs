@@ -9,11 +9,12 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Core.DomainServices.Helper
+namespace Core.DomainServices.Helpers
 {
     public class AuthHelper
     {
         private readonly IConfiguration _configuration;
+
         public AuthHelper( IConfiguration configuration){
             _configuration = configuration;
          }
@@ -71,6 +72,5 @@ namespace Core.DomainServices.Helper
             Buffer.BlockCopy(buffer2, 0, dst, 0x11, 0x20);
             return Convert.ToBase64String(dst);
         }
-
     }
 }

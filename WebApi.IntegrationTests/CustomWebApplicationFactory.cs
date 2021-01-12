@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Core.Domain;
-using Core.DomainServices.Helper;
 using Core.DomainServices.Helpers;
 using Microsoft.AspNetCore.Identity;
 
@@ -104,9 +103,9 @@ namespace WebApi.IntegrationTests
                 new UserInformation {Id = 1, UserId = new Guid("###1")},
                 new UserInformation {Id = 2, UserId = new Guid("###2")},
                 new UserInformation {Id = 3, UserId = new Guid("###3")},
-                new UserInformation { UserId = new Guid("###3")},
-                new UserInformation { UserId = new Guid("###3")},
-                new UserInformation { UserId = new Guid("###3")},
+                new UserInformation {UserId = new Guid("###3")},
+                new UserInformation {UserId = new Guid("###3")},
+                new UserInformation {UserId = new Guid("###3")},
             };
         }
     }

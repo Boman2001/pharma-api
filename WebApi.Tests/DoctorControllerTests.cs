@@ -56,8 +56,8 @@ namespace WebApi.Tests
         [Fact]
         public async Task Get_allAsync()
         {
-            var objectResult = await  FakeController.GetDoctorsAsync();
-            var ok = (OkObjectResult)objectResult.Result;
+            var objectResult = await FakeController.GetDoctorsAsync();
+            var ok = (OkObjectResult) objectResult.Result;
             var objectResultValue = (List<UserInformation>) ok.Value;
             Assert.Equal(_userInformation, objectResultValue[0]);
             Assert.Equal(3, objectResultValue.Count);
@@ -172,7 +172,7 @@ namespace WebApi.Tests
                 Password = "test",
                 User = _fakeUser
             };
-            var d = await FakeController.Post(postUserDto);
+            await FakeController.Post(postUserDto);
 
             var doctor = (OkResult) await FakeController.PutDoctor(7, putUserDto);
      
@@ -210,7 +210,7 @@ namespace WebApi.Tests
                 User = _fakeUser
             };
 
-            var badRequestObjectResult = (OkResult)await FakeController.PutDoctor(1, putUserDto);
+            var badRequestObjectResult = (OkResult) await FakeController.PutDoctor(1, putUserDto);
 
             Assert.Equal(200, badRequestObjectResult.StatusCode);
             Assert.Equal(putUserDto.Email, _fakeUsersInformation[2].User.Email);
@@ -227,7 +227,7 @@ namespace WebApi.Tests
                 Password = "password",
             };
 
-            var badRequestObjectResult = (BadRequestObjectResult)await FakeController.PutDoctor(2, putUserDto);
+            var badRequestObjectResult = (BadRequestObjectResult) await FakeController.PutDoctor(2, putUserDto);
 
             Assert.Equal(400, badRequestObjectResult.StatusCode);
             Assert.Equal("{ message = Email already in use }", badRequestObjectResult.Value.ToString());
@@ -244,7 +244,7 @@ namespace WebApi.Tests
                 Password = "password",
             };
 
-            var badRequestObjectResult = (BadRequestObjectResult)await FakeController.PutDoctor(5, putUserDto);
+            var badRequestObjectResult = (BadRequestObjectResult) await FakeController.PutDoctor(5, putUserDto);
 
             Assert.Equal(400, badRequestObjectResult.StatusCode);
             Assert.Equal("{ message = This userId doesn't correspond to an existing user }", badRequestObjectResult.Value.ToString());

@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Core.DomainServices;
-using Core.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -33,8 +32,9 @@ namespace WebApi
                 Configuration.GetConnectionString("Default")
             ));
             
-            services.AddDbContext<SecurityDbContext>(options => options.UseSqlServer( Configuration.GetConnectionString("Security")));
-            services.AddIdentity<IdentityUser, IdentityRole>(config => {
+            services.AddDbContext<SecurityDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Security")));
+            services.AddIdentity<IdentityUser, IdentityRole>(config => 
+                {
                 config.Password.RequireDigit = false;
                 config.Password.RequiredLength = 4;
                 config.Password.RequireNonAlphanumeric = false;
@@ -42,16 +42,16 @@ namespace WebApi
                 config.Password.RequiredUniqueChars = 0;
                 config.Password.RequireLowercase = false;
                 config.User.RequireUniqueEmail = true;
-                
             }).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<SecurityDbContext>()
-                
                 .AddDefaultTokenProviders();
 
-            services.AddAuthentication(x => {
+            services.AddAuthentication(x =>
+            {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(x => {
+            }).AddJwtBearer(x =>
+            {
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
                 x.TokenValidationParameters = new TokenValidationParameters
@@ -77,7 +77,11 @@ namespace WebApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider, ApplicationDbContext databaseContext, SecurityDbContext identityDbContext)
         {
-            if (env.IsDevelopment()) { app.UseDeveloperExceptionPage(); }
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
@@ -87,17 +91,18 @@ namespace WebApi
             databaseContext.Database.Migrate();
             identityDbContext.Database.Migrate();
         }
+
         private static async Task CreateUserRoles(IServiceProvider serviceProvider)
         {
-            RoleManager<IdentityRole> RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            string[] roleNames = { "Admin", "Doctor" };
+            RoleManager<IdentityRole> getRoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            string[] roleNames = {"Admin", "Doctor"};
 
             foreach (string roleName in roleNames)
             {
-                bool roleExist = await RoleManager.RoleExistsAsync(roleName);
+                bool roleExist = await getRoleManager.RoleExistsAsync(roleName);
                 if (!roleExist)
                 {
-                     await RoleManager.CreateAsync(new IdentityRole(roleName));
+                     await getRoleManager.CreateAsync(new IdentityRole(roleName));
                 }
             }
         }
