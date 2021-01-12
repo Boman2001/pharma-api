@@ -19,14 +19,14 @@ namespace WebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class DoctorsController : ControllerBase
+    public class UserinformationController : ControllerBase
     {
         private readonly IRepository<UserInformation> _userInformationRepository;
         private readonly IIdentityRepository _identityRepository;
         private readonly IMapper _mapper;
 
 
-        public DoctorsController(IMapper autoMapper,IRepository<UserInformation> userInformationRepository, IIdentityRepository identityRepository)
+        public UserinformationController(IMapper autoMapper,IRepository<UserInformation> userInformationRepository, IIdentityRepository identityRepository)
         {
             _userInformationRepository = userInformationRepository;
             _identityRepository = identityRepository;
