@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
-namespace Core.Domain
+namespace Core.Domain.Models
 {
     public class Activity : BaseEntitySoftDeletes
     {

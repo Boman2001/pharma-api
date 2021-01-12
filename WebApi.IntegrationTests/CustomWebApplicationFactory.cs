@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Core.Domain;
+using Core.Domain.Models;
 using Core.DomainServices.Helpers;
 using Microsoft.AspNetCore.Identity;
 

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Domain;
+using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Moq;
 

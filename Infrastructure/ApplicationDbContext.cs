@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Domain;
+using Core.Domain.Interfaces;
+using Core.Domain.Models;
 using Core.DomainServices.QueryExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;

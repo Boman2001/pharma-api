@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Core.Domain.Interfaces;
 
-namespace Core.Domain
+namespace Core.Domain.Models
 {
     [NotMapped]
     public abstract class BaseEntity : IEntity

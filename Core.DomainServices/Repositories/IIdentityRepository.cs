@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Core.Domain;
+using Core.Domain.Models;
+using Microsoft.AspNetCore.Identity;
 
-namespace Core.DomainServices
+namespace Core.DomainServices.Repositories
 {
     public interface IIdentityRepository
     {

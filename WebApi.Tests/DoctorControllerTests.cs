@@ -11,6 +11,7 @@ using Moq;
 using WebApi.Controllers;
 using Xunit;
 using Core.Domain.DataTransferObject;
+using Core.Domain.Models;
 using Microsoft.Extensions.Configuration;
 using WebApi.Tests.Mocks;
 using WebApi.Tests.Mocks.Extends;

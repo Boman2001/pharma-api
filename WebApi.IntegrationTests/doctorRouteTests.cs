@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.Domain;
 using Core.Domain.DataTransferObject;
+using Core.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json.Linq;

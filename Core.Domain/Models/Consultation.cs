@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
-namespace Core.Domain
+namespace Core.Domain.Models
 {
     public class Consultation : BaseEntitySoftDeletes
     {

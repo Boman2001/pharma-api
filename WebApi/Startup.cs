@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Threading.Tasks;
 using System.Text;
+using AutoMapper;
 using Core.DomainServices.Repositories;
 using Infrastructure.Repositories;
 

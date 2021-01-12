@@ -1,8 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using Core.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 
-namespace Core.Domain
+namespace Core.Domain.Models
 {
     public class UserInformation : BaseEntity
     {

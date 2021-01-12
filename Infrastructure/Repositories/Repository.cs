@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Core.Domain;
+using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -101,17 +102,26 @@ namespace Infrastructure.Repositories
             return query.ToList();
         }
 
-        public async Task Add(T entity)
+        public async Task<T> Add(T entity)
         {
             await _dbSet.AddAsync(entity);
+            
             await Save();
+
+            _context.Entry(entity).GetDatabaseValues();
+
+            return entity;
         }
 
-        public async Task Update(T entity)
+        public async Task<T> Update(T entity)
         {
             _dbSet.Update(entity);
 
             await Save();
+
+            _context.Entry(entity).GetDatabaseValues();
+
+            return entity;
         }
 
         public async Task Delete(int id)
