@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Core.Domain;
+using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +21,7 @@ namespace Infrastructure.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        public IEnumerable<T> GetAll()
+        public IEnumerable<T> Get()
         {
             return _dbSet.ToList();
         }
@@ -104,7 +105,7 @@ namespace Infrastructure.Repositories
         public async Task<T> Add(T entity)
         {
             await _dbSet.AddAsync(entity);
-
+            
             await Save();
 
             _context.Entry(entity).GetDatabaseValues();

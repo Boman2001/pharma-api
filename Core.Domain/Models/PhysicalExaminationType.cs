@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Core.Domain
+namespace Core.Domain.Models
 {
     public class PhysicalExaminationType: BaseEntitySoftDeletes
     {

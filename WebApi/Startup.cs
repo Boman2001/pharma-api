@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Threading.Tasks;
 using System.Text;
+using AutoMapper;
 using Core.DomainServices.Repositories;
 using Infrastructure.Repositories;
 using AutoMapper;
@@ -67,7 +68,6 @@ namespace WebApi
             services.AddOptions();
             services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromMinutes(5));
 
-            services.AddControllers();
             services.AddScoped<IIdentityRepository, IdentityRepository>();
 
             services.AddScoped<DbContext, ApplicationDbContext>();

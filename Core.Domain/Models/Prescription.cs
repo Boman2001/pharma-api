@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Core.Domain
+namespace Core.Domain.Models
 {
-    public class Intolerance : BaseEntitySoftDeletes
+    public class Prescription : BaseEntitySoftDeletes
     {
         public string Description { get; set; }
         public DateTime StartDate { get; set; }

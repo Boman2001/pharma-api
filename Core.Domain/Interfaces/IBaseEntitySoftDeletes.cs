@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Core.Domain
+namespace Core.Domain.Interfaces
 {
-    public abstract class BaseEntitySoftDeletes : BaseEntity, IBaseEntitySoftDeletes
+    public interface IBaseEntitySoftDeletes
     {
         public DateTime? DeletedAt { get; set; }
         public int? DeletedBy { get; set; }

@@ -12,6 +12,7 @@ using Moq;
 using WebApi.Controllers;
 using Xunit;
 using Core.Domain.DataTransferObject;
+using Core.Domain.Models;
 using Microsoft.Extensions.Configuration;
 using WebApi.Mappings;
 using WebApi.Tests.Mocks;
@@ -28,7 +29,7 @@ namespace WebApi.Tests
         private List<UserInformation> _fakeUsersInformation;
         private IdentityUser _fakeUser;
 
-        private UserinformationController FakeController { get; }
+        private UsersController FakeController { get; }
 
         public DoctorControllerTests()
         {
@@ -56,7 +57,7 @@ namespace WebApi.Tests
             var userManager = MockUserManager.GetMockUserManager(_fakeIdentityUsers).Object;
             var signInManager = MockSigninManager.GetSignInManager<IdentityUser>(userManager).Object;
             var fakeIdentityRepository = new Mock<IdentityRepository>(userManager, signInManager, config, fakeSecurityDbContext).Object;
-            FakeController = new UserinformationController(mapper, fakeGenericRepo.Object, fakeIdentityRepository);
+            FakeController = new UsersController(mapper, fakeGenericRepo.Object, fakeIdentityRepository);
         }
 
 

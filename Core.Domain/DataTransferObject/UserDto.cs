@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Core.Domain.Models;
 
 namespace Core.Domain.DataTransferObject
 {
@@ -13,5 +14,3 @@ namespace Core.Domain.DataTransferObject
         public string Email { get; set; }
     }
 }
-
-

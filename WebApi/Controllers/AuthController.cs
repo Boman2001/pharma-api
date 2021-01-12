@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Core.Domain;
 using Core.Domain.DataTransferObject;
+using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 
 namespace WebApi.Controllers

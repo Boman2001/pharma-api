@@ -4,12 +4,13 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Core.Domain;
+using Core.Domain.Models;
 
 namespace Core.DomainServices.Repositories
 {
     public interface IRepository<T> where T : BaseEntity
     {
-        IEnumerable<T> GetAll();
+        IEnumerable<T> Get();
         Task<T> Get(int id);
         IEnumerable<T> Get(Expression<Func<T, bool>> filter);
         IEnumerable<T> Get(IEnumerable<string> includeProperties);
