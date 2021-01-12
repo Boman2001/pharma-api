@@ -98,7 +98,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDoctor(int id, [FromForm] UserDto userDto)
+        public async Task<IActionResult> PutDoctor(int id, [FromBody] UserDto userDto)
         {
             userDto.UserId = new Guid();
             userDto.Id = id;
@@ -141,7 +141,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserDto>> Post([FromForm] UserDto userDto)
+        public async Task<ActionResult<UserDto>> Post([FromBody] UserDto userDto)
         {
             userDto.UserId = new Guid();
             var identityUser = new IdentityUser
