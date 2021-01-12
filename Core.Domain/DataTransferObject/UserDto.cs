@@ -5,6 +5,8 @@ namespace Core.Domain.DataTransferObject
 {
     public class UserDto : UserInformation
     {
+        public string id;
+
         [Required]
         public string Password { get; set; }
 

@@ -8,41 +8,54 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Domain.Models;
+using AutoMapper;
 using Core.DomainServices;
+using Microsoft.AspNetCore.Authorization;
+using WebApi.Mappings;
+
 
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class DoctorsController : ControllerBase
+    public class UserinformationController : ControllerBase
     {
         private readonly IRepository<UserInformation> _userInformationRepository;
         private readonly IIdentityRepository _identityRepository;
+        private readonly IMapper _mapper;
 
 
-        public DoctorsController(IRepository<UserInformation> userInformationRepository, IIdentityRepository identityRepository)
+        public UserinformationController(IMapper autoMapper,IRepository<UserInformation> userInformationRepository, IIdentityRepository identityRepository)
         {
             _userInformationRepository = userInformationRepository;
             _identityRepository = identityRepository;
+            _mapper = autoMapper;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserInformation>>> GetDoctorsAsync()
         {
             try
             {
+                List<UserInformationDto> userInformationDtos = new List<UserInformationDto>();
                 var userinformations = _userInformationRepository.GetAll();
                 foreach (var var in userinformations)
                 {
-                    if (var.UserId == Guid.Empty)
+                    var p = _mapper.Map<UserInformationDto>(var);
+                    if (var.UserId != Guid.Empty)
                     {
                         var.User = await _identityRepository.GetUserById(var.UserId.ToString());
+                        p.Email = var.User.Email.ToString();
                     }
+
+                   
+                    p.StringId = var.Id.ToString();
+                    userInformationDtos.Add(p);
                 }
-
-                return Ok(userinformations);
+                
+                return Ok(userInformationDtos);
             }
             catch (Exception ex)
             {
@@ -50,35 +63,41 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpGet("filter")]
-        public ActionResult<IEnumerable<UserInformation>> GetDoctorsFilter([FromQuery] UserInformation userInformation)
-        {
-            try
-            {
-                var filter = _userInformationRepository.Get(dr =>
-                        dr.User.UserName.Contains(userInformation.User.UserName));
+        //[HttpGet("filter")]
+        //public ActionResult<IEnumerable<UserInformation>> GetDoctorsFilter([FromQuery] UserInformation userInformation)
+        //{
+        //    try
+        //    {
+        //        var filter = _userInformationRepository.Get(dr =>
+        //                dr.User.UserName.Contains(userInformation.User.UserName));
 
-                return Ok(filter);
-            }
-            catch (Exception ex)
-            {   
-                return BadRequest(new {message = ex.Message});
-            }
-        }
-        
+        //        return Ok(filter);
+        //    }
+        //    catch (Exception ex)
+        //    {   
+        //        return BadRequest(new {message = ex.Message});
+        //    }
+        //}
+
+        [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserInformation>> GetDoctor(int id)
+        public async Task<ActionResult<UserInformationDto>> GetDoctor(int id)
         {
                     var result = _userInformationRepository.Get(s => s.Id == id).SingleOrDefault();
+
                     if (result != null)
                     {
                         var user = await _identityRepository.GetUserById(result.UserId.ToString());
-                        result.User = user;
+                        var p = _mapper.Map<UserInformationDto>(result);
+                        p.StringId = result.Id.ToString();
+                        p.Email = user.Email.ToString();
+                        return result == null ? StatusCode(204) : (ActionResult<UserInformationDto>) Ok(p);
                     }
 
-                    return result == null ? StatusCode(204) : (ActionResult<UserInformation>) Ok(result);
+                    return StatusCode(204);
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDoctor(int id, [FromForm] UserDto userDto)
         {
@@ -104,7 +123,8 @@ namespace WebApi.Controllers
                 return BadRequest(new {message = ex.Message});
             }
         }
-        
+
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDoctor(int id)
         {
@@ -137,13 +157,19 @@ namespace WebApi.Controllers
             {
                 var result = await _identityRepository.Register(identityUser, identityUser.PasswordHash);
                 var user = await _identityRepository.GetUserByEmail(identityUser.Email);
-                userDto.User = user;
+               
                 userDto.UserId = Guid.Parse(user.Id);
-                await _userInformationRepository.Add(userDto);
+                var a = await _userInformationRepository.Add(userDto);
+              
+
+                var p = _mapper.Map<UserInformationDto>(a);
+                p.StringId = user.Id.ToString();
+                p.Email = user.Email;
+
                 return Ok(new
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(result),
-                    User = user
+                    User = p
                 });
             }
             catch (Exception ex)

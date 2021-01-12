@@ -15,6 +15,7 @@ using System.Text;
 using AutoMapper;
 using Core.DomainServices.Repositories;
 using Infrastructure.Repositories;
+using AutoMapper;
 
 namespace WebApi
 {
@@ -72,6 +73,8 @@ namespace WebApi
 
             services.AddScoped<DbContext, ApplicationDbContext>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddControllers();
         }

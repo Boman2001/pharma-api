@@ -16,7 +16,6 @@ namespace Infrastructure.Migrations.ApplicationDb
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Properties = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SubjectId = table.Column<int>(type: "int", nullable: false),
-                    SubjectType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CauserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),

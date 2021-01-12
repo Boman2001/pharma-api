@@ -564,6 +564,9 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<string>("HouseNumberAddon")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
