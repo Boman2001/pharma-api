@@ -19,22 +19,22 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class UserinformationController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IRepository<UserInformation> _userInformationRepository;
         private readonly IIdentityRepository _identityRepository;
         private readonly IMapper _mapper;
 
-
-        public UserinformationController(IMapper autoMapper,IRepository<UserInformation> userInformationRepository, IIdentityRepository identityRepository)
+        public UsersController(IMapper autoMapper, IRepository<UserInformation> userInformationRepository,
+            IIdentityRepository identityRepository)
         {
             _userInformationRepository = userInformationRepository;
             _identityRepository = identityRepository;
             _mapper = autoMapper;
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserInformation>>> GetDoctorsAsync()
         {
@@ -51,11 +51,11 @@ namespace WebApi.Controllers
                         p.Email = var.User.Email.ToString();
                     }
 
-                   
+
                     p.StringId = var.Id.ToString();
                     userInformationDtos.Add(p);
                 }
-                
+
                 return Ok(userInformationDtos);
             }
             catch (Exception ex)
@@ -80,25 +80,23 @@ namespace WebApi.Controllers
         //    }
         //}
 
-        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserInformationDto>> GetDoctor(int id)
         {
-                    var result = _userInformationRepository.Get(s => s.Id == id).SingleOrDefault();
+            var result = _userInformationRepository.Get(s => s.Id == id).SingleOrDefault();
 
-                    if (result != null)
-                    {
-                        var user = await _identityRepository.GetUserById(result.UserId.ToString());
-                        var p = _mapper.Map<UserInformationDto>(result);
-                        p.StringId = result.Id.ToString();
-                        p.Email = user.Email.ToString();
-                        return result == null ? StatusCode(204) : (ActionResult<UserInformationDto>) Ok(p);
-                    }
+            if (result != null)
+            {
+                var user = await _identityRepository.GetUserById(result.UserId.ToString());
+                var p = _mapper.Map<UserInformationDto>(result);
+                p.StringId = result.Id.ToString();
+                p.Email = user.Email.ToString();
+                return result == null ? StatusCode(204) : (ActionResult<UserInformationDto>) Ok(p);
+            }
 
-                    return StatusCode(204);
+            return StatusCode(204);
         }
 
-        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDoctor(int id, [FromForm] UserDto userDto)
         {
@@ -110,8 +108,8 @@ namespace WebApi.Controllers
                 UserName = userDto.Email,
                 PasswordHash = userDto.Password
             };
-            try     
-            { 
+            try
+            {
                 var userInformation = await _userInformationRepository.Get(id);
                 await _identityRepository.Update(identityUser, userInformation);
                 _userInformationRepository.Detach(userInformation);
@@ -125,7 +123,6 @@ namespace WebApi.Controllers
             }
         }
 
-        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDoctor(int id)
         {
@@ -158,10 +155,10 @@ namespace WebApi.Controllers
             {
                 var result = await _identityRepository.Register(identityUser, identityUser.PasswordHash);
                 var user = await _identityRepository.GetUserByEmail(identityUser.Email);
-               
+
                 userDto.UserId = Guid.Parse(user.Id);
                 var a = await _userInformationRepository.Add(userDto);
-              
+
 
                 var p = _mapper.Map<UserInformationDto>(a);
                 p.StringId = user.Id.ToString();
