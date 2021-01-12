@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Domain;
 using Core.DomainServices.QueryExtensions;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -15,9 +10,6 @@ namespace Infrastructure
 {
     public class ApplicationDbContext : DbContext
     {
-        private SignInManager<IdentityUser> _signInManager;
-        private UserManager<IdentityUser> _userManager;
-
         public DbSet<Activity> Activities { get; set; }
         public DbSet<AdditionalExaminationResult> AdditionalExaminationResults { get; set; }
         public DbSet<AdditionalExaminationType> AdditionalExaminationTypes { get; set; }
@@ -32,11 +24,8 @@ namespace Infrastructure
         public DbSet<UserInformation> UserInformation { get; set; }
         public DbSet<UserJournal> UserJournals { get; set; }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> contextOptions,
-            UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager) : base(contextOptions)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> contextOptions) : base(contextOptions)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -119,13 +108,17 @@ namespace Infrastructure
                     switch (entry.State)
                     {
                         case EntityState.Modified:
-                            // entry.CurrentValues["UpdatedBy"] = _userManager.GetUserId(User);
+                            entry.CurrentValues["UpdatedBy"] = 0;
                             entry.CurrentValues["UpdatedAt"] = DateTime.Now;
                             break;
                         case EntityState.Deleted:
-                            entry.State = EntityState.Modified;
-                            // entry.CurrentValues["DeletedBy"] = _userManager.GetUserId();
-                            entry.CurrentValues["DeletedAt"] = DateTime.Now;
+                            if (entry.Entity is BaseEntitySoftDeletes)
+                            {
+                                entry.State = EntityState.Modified;
+                                entry.CurrentValues["DeletedBy"] = 0;
+                                entry.CurrentValues["DeletedAt"] = DateTime.Now;
+                            }
+
                             break;
                         case EntityState.Detached:
                         case EntityState.Unchanged:
