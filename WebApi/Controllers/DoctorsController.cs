@@ -71,11 +71,14 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserInformation>> GetDoctor(int id)
         {
-            var result = _userInformationRepository.Get(s =>  s.Id == id).SingleOrDefault();
-            var user = await _identityRepository.GetUserById(result.UserId.ToString());
-            result.User = user;
-            
-            return result == null  ? StatusCode(204) : (ActionResult<UserInformation>) Ok(result);
+                    var result = _userInformationRepository.Get(s =>  s.Id == id).SingleOrDefault();
+                    if (result != null)
+                    {
+                        var user = await _identityRepository.GetUserById(result.UserId.ToString());
+                        result.User = user;
+                    }
+
+                    return result == null  ? StatusCode(204) : (ActionResult<UserInformation>) Ok(result);
         }
 
         [HttpPut("{id}")]
