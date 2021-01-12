@@ -6,9 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Core.Domain;
 using Core.DomainServices;
-using Core.DomainServices.Helper;
 using Core.DomainServices.Helpers;
-using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -176,7 +174,5 @@ namespace Infrastructure.Repositories
 
             return await _userManager.UpdateAsync(result);
         }
-
-
     }
 }

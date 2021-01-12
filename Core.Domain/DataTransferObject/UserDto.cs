@@ -8,7 +8,7 @@ namespace Core.Domain.DataTransferObject
         public string Password { get; set; }
 
         [Required]
-        public new string Email { get; set; }
+        public string Email { get; set; }
     }
 }
 

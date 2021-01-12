@@ -9,9 +9,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.DomainServices;
-using Core.DomainServices.Helpers;
-using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json.Linq;
 
 namespace WebApi.Controllers
 {
@@ -38,7 +35,7 @@ namespace WebApi.Controllers
                 var userinformations = _userInformationRepository.GetAll();
                 foreach (var var in userinformations)
                 {
-                    if (var.UserId != null)
+                    if (var.UserId == Guid.Empty)
                     {
                         var.User = await _identityRepository.GetUserById(var.UserId.ToString());
                     }
@@ -64,21 +61,21 @@ namespace WebApi.Controllers
             }
             catch (Exception ex)
             {   
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new {message = ex.Message});
             }
         }
         
         [HttpGet("{id}")]
         public async Task<ActionResult<UserInformation>> GetDoctor(int id)
         {
-                    var result = _userInformationRepository.Get(s =>  s.Id == id).SingleOrDefault();
+                    var result = _userInformationRepository.Get(s => s.Id == id).SingleOrDefault();
                     if (result != null)
                     {
                         var user = await _identityRepository.GetUserById(result.UserId.ToString());
                         result.User = user;
                     }
 
-                    return result == null  ? StatusCode(204) : (ActionResult<UserInformation>) Ok(result);
+                    return result == null ? StatusCode(204) : (ActionResult<UserInformation>) Ok(result);
         }
 
         [HttpPut("{id}")]
@@ -118,7 +115,7 @@ namespace WebApi.Controllers
                 await _userInformationRepository.Delete(userInformation);
                 return Ok();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(new {message = e});
             }

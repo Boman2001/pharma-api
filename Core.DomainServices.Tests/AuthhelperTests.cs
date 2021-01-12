@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
 using Core.DomainServices;
-using Core.DomainServices.Helper;
+using Core.DomainServices.Helpers;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using Xunit;
@@ -21,7 +21,7 @@ namespace Core.DomainServices.Tests
 {
     public class AuthhelperTests
     {
-        private AuthHelper _authHelper;
+        readonly private AuthHelper _authHelper;
         public AuthhelperTests()
         {
             IConfiguration config = new ConfigurationBuilder()
@@ -32,7 +32,7 @@ namespace Core.DomainServices.Tests
 
         [Trait("Category", "Email Validation")]
         [Fact]
-        public async Task Email_Invalled()
+        public void Email_Invalled()
         {
             var falseEmaile = "not a valid email";
             bool result = AuthHelper.IsValidEmail(falseEmaile);
@@ -42,7 +42,7 @@ namespace Core.DomainServices.Tests
 
         [Trait("Category", "Email Validation")]
         [Fact]
-        public async Task Email_valid()
+        public void Email_valid()
         {
             var validEmail = "maartendonkersloot@gmail.com";
            
@@ -53,20 +53,19 @@ namespace Core.DomainServices.Tests
 
         [Trait("Category", "Jwt validation test")]
         [Fact]
-        public async Task Returns_Jwt()
+        public void Returns_Jwt()
         {
             IdentityUser identityUser = new IdentityUser();
             identityUser.Email = "maartendonkersloot@gmail.com";
             identityUser.UserName = identityUser.Email;
             identityUser.PasswordHash = "password";
 
-            IList<string> RoleList = new List<string>();
-            RoleList.Add("DOCTOR");
+            IList<string> roleList = new List<string>();
+            roleList.Add("DOCTOR");
 
-            JwtSecurityToken result = _authHelper.GenerateToken(identityUser, RoleList);
+            JwtSecurityToken result = _authHelper.GenerateToken(identityUser, roleList);
 
             Assert.Equal(5,result.Claims.Count());
         }
-
     }
 }

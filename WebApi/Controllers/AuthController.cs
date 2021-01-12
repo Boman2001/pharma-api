@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 
 namespace WebApi.Controllers
 {
@@ -26,13 +25,13 @@ namespace WebApi.Controllers
             model.UserName = model.Email;
             try
             {
-                JwtSecurityToken Result = await _identityRepository.Register(model, model.PasswordHash);
+                var resultJwtSecurityToken = await _identityRepository.Register(model, model.PasswordHash);
 
-                return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(Result) });
+                return Ok(new {Token = new JwtSecurityTokenHandler().WriteToken(resultJwtSecurityToken)});
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new {message = ex.Message});
             }
         }
 
@@ -46,11 +45,11 @@ namespace WebApi.Controllers
                 var result = await _identityRepository.Login(model, model.PasswordHash);
                 var user = await _identityRepository.GetUserByEmail(model.Email);
 
-                return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(result), User = user });
+                return Ok(new {Token = new JwtSecurityTokenHandler().WriteToken(result), User = user});
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new {message = ex.Message});
             }
         }
 
@@ -65,6 +64,5 @@ namespace WebApi.Controllers
         //    var user =  await _IdentityRepository.GetCurrentuser(User);
         //    return Ok(user);
         //}
-
     }
 }

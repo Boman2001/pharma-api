@@ -58,12 +58,10 @@ namespace WebApi.IntegrationTests
 
             var defaultPage = await _client.PostAsync("/api/doctors", content);
             var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
-            var json = readAsStringAsync.Result;
-            var sd = JObject.Parse(readAsStringAsync.Result);
             _token = JObject.Parse(readAsStringAsync.Result)["token"];
             var jToken = JObject.Parse(readAsStringAsync.Result)["user"];
             var user = jToken.ToObject<IdentityUser>();
-            System.Environment.SetEnvironmentVariable("Token", _token.ToString());
+            Environment.SetEnvironmentVariable("Token", _token.ToString());
             Assert.Equal(HttpStatusCode.OK, defaultPage.StatusCode);
             Assert.NotNull(_token);
             Assert.Equal("de@LEander.com", user.Email);
