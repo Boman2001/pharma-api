@@ -34,6 +34,16 @@ namespace WebApi
                 Configuration.GetConnectionString("Default")
             ));
             
+            services.AddCors(options => 
+                options.AddDefaultPolicy(builder => builder
+                    .WithOrigins(Configuration["AppUrl"])
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .AllowAnyHeader()
+                    .Build()
+                )
+            );
+            
             services.AddDbContext<SecurityDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Security")));
             services.AddIdentity<IdentityUser, IdentityRole>(config => 
                 {
@@ -87,6 +97,7 @@ namespace WebApi
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
