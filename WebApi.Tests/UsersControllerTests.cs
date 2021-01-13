@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Core.Domain;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +12,7 @@ using Moq;
 using WebApi.Controllers;
 using Xunit;
 using Core.Domain.Models;
+using Core.DomainServices.Repositories;
 using Microsoft.Extensions.Configuration;
 using WebApi.Mappings;
 using WebApi.Models.Users;
@@ -22,6 +24,7 @@ namespace WebApi.Tests
     [Collection("UsersTest")]
     public class UsersControllerTests
     {
+        private UserInformation _userInformation;
         private IdentityUser _fakeIdentityUser;
         private List<IdentityUser> _fakeIdentityUsers;
         private List<UserInformation> _fakeUsersInformation;
@@ -55,6 +58,7 @@ namespace WebApi.Tests
             var userManager = MockUserManager.GetMockUserManager(_fakeIdentityUsers).Object;
             var signInManager = MockSigninManager.GetSignInManager<IdentityUser>(userManager).Object;
             var fakeIdentityRepository = new Mock<IdentityRepository>(userManager, signInManager, config, fakeSecurityDbContext).Object;
+            var fakeUserInformationRepository = new Mock<IRepository<UserInformation>>().Object;
             FakeController = new UsersController(mapper, fakeGenericRepo.Object, fakeIdentityRepository, userManager);
         }
 
@@ -64,8 +68,8 @@ namespace WebApi.Tests
         public void Get_All_Users()
         {
             var objectResult = FakeController.Get();
-            var ok = (OkObjectResult) objectResult.Result;
-            var objectResultValue = (List<UserDto>) ok.Value;
+            var ok = (OkObjectResult)objectResult.Result;
+            var objectResultValue = (List<UserDto>)ok.Value;
             Assert.Equal(_fakeIdentityUsers.Count, objectResultValue.Count);
         }
 
@@ -75,7 +79,7 @@ namespace WebApi.Tests
         {
             var actionResult = await FakeController.Get("invalid");
             ActionResult<UserInformation> result = actionResult.Result;
-            var statusCodeResult = (StatusCodeResult) result.Result;
+            var statusCodeResult = (StatusCodeResult)result.Result;
 
             Assert.Equal(404, statusCodeResult.StatusCode);
         }
@@ -91,7 +95,7 @@ namespace WebApi.Tests
             };
 
             var post = await FakeController.Post(user);
-            var okObjectResult = (OkObjectResult) post.Result;
+            var okObjectResult = (OkObjectResult)post.Result;
 
             Assert.Equal(200, okObjectResult.StatusCode);
             Assert.NotNull(okObjectResult.Value);
@@ -105,7 +109,7 @@ namespace WebApi.Tests
             var user = new NewUserDto();
 
             var post = await FakeController.Post(user);
-            var badRequestObjectResult = (BadRequestObjectResult) post.Result;
+            var badRequestObjectResult = (BadRequestObjectResult)post.Result;
 
             Assert.Equal(400, badRequestObjectResult.StatusCode);
             Assert.NotNull(badRequestObjectResult.Value);
@@ -122,7 +126,7 @@ namespace WebApi.Tests
             };
 
             var post = await FakeController.Post(user);
-            var badRequestObjectResult = (BadRequestObjectResult) post.Result;
+            var badRequestObjectResult = (BadRequestObjectResult)post.Result;
 
             Assert.Equal(400, badRequestObjectResult.StatusCode);
             Assert.NotNull(badRequestObjectResult.Value);
@@ -131,14 +135,22 @@ namespace WebApi.Tests
 
         [Trait("Category", "User")]
         [Fact]
-        public void Put_User()
+        public async Task Put_User()
         {
             var count = _fakeIdentityUsers.Count;
+            var postUserDto = new NewUserDto
+            {
+                Email = "emailTwo@gmail.com",
+                Password = "test"
+            };
             var putUserDto = new UpdateUserDto
             {
                 Email = "emaiel@gmail.com",
                 Password = "test"
             };
+           var a = await FakeController.Post(postUserDto);
+
+            var doctor = await FakeController.Put(_fakeIdentityUsers[count].Id, putUserDto);
 
             Assert.Equal(count + 1, _fakeIdentityUsers.Count);
             Assert.Equal(putUserDto.Email, _fakeIdentityUsers[count].Email);
@@ -159,12 +171,14 @@ namespace WebApi.Tests
 
         [Trait("Category", "User")]
         [Fact]
-        public void Put_Usere_Already_existing()
+        public async Task Put_Usere_Already_existing()
         {
             var putUserDto = new UpdateUserDto
             {
                 Email = "emaiel@gmail.com"
             };
+
+            var badRequestObjectResult = await FakeController.Put( _fakeIdentityUsers[0].Id, putUserDto);
 
             Assert.Equal(putUserDto.Email, _fakeIdentityUsers[0].Email);
         }
@@ -178,7 +192,7 @@ namespace WebApi.Tests
                 Email = "email2@gmail.com",
             };
 
-            var badRequestObjectResult = (BadRequestObjectResult) await FakeController.Put(_fakeIdentityUsers[0].Id, putUserDto);
+            var badRequestObjectResult = (BadRequestObjectResult)await FakeController.Put(_fakeIdentityUsers[0].Id, putUserDto);
 
             Assert.IsType<NotFoundResult>(badRequestObjectResult);
         }
@@ -192,17 +206,20 @@ namespace WebApi.Tests
                 Email = "email2@gmail.com",
             };
 
-            var badRequestObjectResult = (NotFoundResult) await FakeController.Put(5.ToString(), putUserDto);
+            var badRequestObjectResult = (NotFoundResult)await FakeController.Put(5.ToString(), putUserDto);
 
             Assert.IsType<NotFoundResult>(badRequestObjectResult);
         }
 
         [Trait("Category", "User")]
         [Fact]
-        //Z is necessary because it needs to be run last
-        public async Task Z_Delete_User()
+        public async Task zDelete_User()
         {
-            var badRequestObjectResult = (NoContentResult) await FakeController.Delete(_fakeIdentityUsers[1].Id);
+            var lengthBefore = _fakeUsersInformation.Count;
+            var userLengthBefore = _fakeIdentityUsers.Count;
+
+
+            var badRequestObjectResult = (NoContentResult)await FakeController.Delete(_fakeIdentityUsers[1].Id);
 
             Assert.IsType<NoContentResult>(badRequestObjectResult);
         }
@@ -227,7 +244,7 @@ namespace WebApi.Tests
                 Email = "email2@gmail.com",
                 UserName = "email@gmail.com"
             };
-            _fakeIdentityUsers = new List<IdentityUser> {_fakeIdentityUser, akeIdentityUser, _fakeUser};
+            _fakeIdentityUsers = new List<IdentityUser> { _fakeIdentityUser, akeIdentityUser, _fakeUser };
             _fakeUsersInformation = new List<UserInformation>();
             var userInformation = new UserInformation
             {
