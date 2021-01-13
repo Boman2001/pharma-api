@@ -78,7 +78,7 @@ namespace WebApi
             services.AddControllers();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider, ApplicationDbContext databaseContext, SecurityDbContext identityDbContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -91,8 +91,7 @@ namespace WebApi
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
             CreateUserRoles(serviceProvider).Wait();
-            databaseContext.Database.Migrate();
-            identityDbContext.Database.Migrate();
+            UpdateDatabase(app);
         }
 
         private static async Task CreateUserRoles(IServiceProvider serviceProvider)
@@ -106,6 +105,24 @@ namespace WebApi
                 if (!roleExist)
                 {
                      await getRoleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+        }
+
+        private static void UpdateDatabase(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope())
+            {
+                using (var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>())
+                {
+                    context.Database.Migrate();
+                }
+
+                using (var context = serviceScope.ServiceProvider.GetService<SecurityDbContext>())
+                {
+                    context.Database.Migrate();
                 }
             }
         }
