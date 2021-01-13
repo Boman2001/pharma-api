@@ -14,6 +14,7 @@ namespace WebApi.Tests
     public class PatientsControllerTests
     {
         private List<Patient> _fakeUsersPatient;
+        private PatientsController FakeController { get; }
 
         public PatientsControllerTests()
         {
@@ -26,43 +27,54 @@ namespace WebApi.Tests
             FakeController = new PatientsController(fakeGenericRepo.Object, config);
         }
 
-        private PatientsController FakeController { get; }
+        //Get Tests
 
-        [Trait("Category", "Patient")]
+        [Trait("Category", "Get Tests")]
         [Fact]
-        public void Get_All()
+        public void Get_All_Patients_With_200_code()
         {
-            var objectResult = FakeController.Get();
-            var ok = (OkObjectResult) objectResult.Result;
-            var objectResultValue = (List<Patient>) ok.Value;
+            var result = FakeController.Get();
+            var objectResult = (OkObjectResult) result.Result;
+            var patients = (List<Patient>) objectResult.Value;
 
-            Assert.Equal(_fakeUsersPatient.Count, objectResultValue.Count);
-            Assert.Equal(200, ok.StatusCode);
-            Assert.Equal(objectResultValue[0], _fakeUsersPatient[0]);
-            Assert.IsType<Patient>(objectResultValue[0]);
+            Assert.Equal(_fakeUsersPatient.Count, patients.Count);
+            Assert.Equal(200, objectResult.StatusCode);
+            Assert.Equal(patients[0], _fakeUsersPatient[0]);
+            Assert.IsType<Patient>(patients[0]);
         }
 
-        [Trait("Category", "Patient")]
+        [Trait("Category", "Get Tests")]
         [Fact]
-        public async Task Get_By_Id_Async()
+        public async Task Given_Id_Returns_Patient()
         {
-            var objectResult = await FakeController.Get(_fakeUsersPatient[0].Id);
-            var ok = (OkObjectResult) objectResult.Result;
-            var objectResultValue = (Patient) ok.Value;
+            var result = await FakeController.Get(_fakeUsersPatient[0].Id);
+            var objectResult = (OkObjectResult) result.Result;
+            var patient = (Patient) objectResult.Value;
 
-            Assert.Equal(200, ok.StatusCode);
-            Assert.Equal(objectResultValue, _fakeUsersPatient[0]);
-            Assert.IsType<Patient>(objectResultValue);
+            Assert.Equal(200, objectResult.StatusCode);
+            Assert.Equal(patient, _fakeUsersPatient[0]);
+            Assert.IsType<Patient>(patient);
         }
 
-        [Trait("Category", "Patient")]
+        [Trait("Category", "Get Tests")]
         [Fact]
-        public async Task Post_Patient()
+        public async Task Given_Non_Existing_Id_Returns_Null()
+        {
+            var result = await FakeController.Get(23);
+            var notFound = (NotFoundResult) result.Result;
+            Assert.Equal(404, notFound.StatusCode);
+        }
+
+        //Post Tests
+
+        [Trait("Category", "Post Tests")]
+        [Fact]
+        public async Task Given_Patient_Posts_And_Returns_201_Code()
         {
             var patient = new Patient
             {
-                Name = "tedst",
-                Bsn = "tyest",
+                Name = "name",
+                Bsn = "Bsn",
                 Email = "test",
                 Dob = DateTime.Now,
                 Gender = Gender.Male,
@@ -75,21 +87,37 @@ namespace WebApi.Tests
             };
             var lengthBefore = _fakeUsersPatient.Count;
 
-            var objectResult = await FakeController.Post(patient);
-            var created = (CreatedAtActionResult) objectResult.Result;
+            var result = await FakeController.Post(patient);
+            var objActionResult = (CreatedAtActionResult) result.Result;
 
             Assert.Equal(lengthBefore + 1, _fakeUsersPatient.Count);
-            Assert.Equal(201, created.StatusCode);
+            Assert.Equal(201, objActionResult.StatusCode);
             Assert.Equal(patient, _fakeUsersPatient[lengthBefore]);
         }
 
-        [Trait("Category", "Patient")]
+        [Trait("Category", "Post Tests")]
         [Fact]
-        public async Task Put_Patient()
+        public async Task Given_Empty_Patient_Returns_Bad_Request()
+        {
+            var patient = new Patient();
+            var lengthBefore = _fakeUsersPatient.Count;
+
+            var result = await FakeController.Post(patient);
+            var objectResult = (BadRequestObjectResult) result.Result;
+
+            Assert.Equal(lengthBefore, _fakeUsersPatient.Count);
+            Assert.Equal(400, objectResult.StatusCode);
+        }
+
+        //Update Tests
+
+        [Trait("Category", "Update Tests")]
+        [Fact]
+        public async Task Given_Patient_To_Update_returns_200()
         {
             var patient = new Patient
             {
-                Name = "tedst",
+                Name = "Name",
                 Bsn = "BEST",
                 Email = "test",
                 Dob = DateTime.Now,
@@ -101,21 +129,37 @@ namespace WebApi.Tests
                 PostalCode = "23",
                 Country = "qwe"
             };
-            var objectResult = await FakeController.Put(_fakeUsersPatient.Count, patient);
-            var ok = (OkObjectResult) objectResult;
+            var result = await FakeController.Put(_fakeUsersPatient.Count, patient);
+            var objectResult = (OkObjectResult) result;
 
-            Assert.Equal(200, ok.StatusCode);
+            Assert.Equal(200, objectResult.StatusCode);
         }
 
-        [Trait("Category", "Patient")]
-        [Fact]
-        public async Task Delete_Patient()
-        {
-            var objectResult = await FakeController.Delete(_fakeUsersPatient[0].Id);
-            var ok = (NoContentResult) objectResult;
 
-            Assert.Equal(204, ok.StatusCode);
-            Assert.Empty(_fakeUsersPatient);
+        [Trait("Category", "Update Tests")]
+        [Fact]
+        public async Task Given__Empty_Patient_To_Update_Returns_Error()
+        {
+            var patient = new Patient();
+            var result = await FakeController.Put(_fakeUsersPatient.Count, patient);
+            var objectResult = (OkObjectResult) result;
+
+            Assert.Equal(200, objectResult.StatusCode);
+        }
+
+        //Delete Tests
+
+        [Trait("Category", "Delete Tests")]
+        [Fact]
+        public async Task Given_Id_To_Delete_Deletes_Patient()
+        {
+            var lengthBefore = _fakeUsersPatient.Count;
+
+            var result = await FakeController.Delete(_fakeUsersPatient[0].Id);
+            var objContentResult = (NoContentResult) result;
+
+            Assert.Equal(204, objContentResult.StatusCode);
+            Assert.Equal(lengthBefore - 1, _fakeUsersPatient.Count);
         }
 
         private void SeedData()
@@ -123,8 +167,22 @@ namespace WebApi.Tests
             _fakeUsersPatient = new List<Patient>();
             var patient = new Patient
             {
-                Name = "tedst",
-                Bsn = "tyest",
+                Name = "Name",
+                Bsn = "Bsn",
+                Email = "test",
+                Dob = DateTime.Now,
+                Gender = Gender.Male,
+                PhoneNumber = "1321",
+                City = "hank",
+                Street = "lepelaarstraat20",
+                HouseNumber = "20",
+                PostalCode = "23",
+                Country = "qwe"
+            };
+            var patient02 = new Patient
+            {
+                Name = "Name",
+                Bsn = "Bsn",
                 Email = "test",
                 Dob = DateTime.Now,
                 Gender = Gender.Male,
@@ -137,7 +195,8 @@ namespace WebApi.Tests
             };
             _fakeUsersPatient.AddRange(new List<Patient>
             {
-                patient
+                patient,
+                patient02
             });
         }
     }

@@ -10,7 +10,7 @@ namespace WebApi.Tests.Mocks
         public static Mock<UserManager<IdentityUser>> GetMockUserManager(List<IdentityUser> ls)
         {
             var store = new Mock<IUserStore<IdentityUser>>();
-            var mgr = new Mock<UserManager<IdentityUser>>(store.Object, null, null, null, null, null, null, null, null);
+            var mgr = new Mock<UserManager<IdentityUser>>(store.Object, null, new PasswordHasher<IdentityUser>(), null, null, null, null, null, null);
 
             mgr.Object.UserValidators.Add(new UserValidator<IdentityUser>());
             mgr.Object.PasswordValidators.Add(new PasswordValidator<IdentityUser>());
@@ -35,6 +35,10 @@ namespace WebApi.Tests.Mocks
             mgr.Setup(x => x.FindByIdAsync(It.IsAny<string>()))
                 .ReturnsAsync((string b) => ls.FirstOrDefault(f => f.Id == b));
 
+            mgr.Setup(x => x.CheckPasswordAsync(It.IsAny<IdentityUser>(), It.IsAny<string>())).ReturnsAsync(true
+                );
+
+           
             mgr.Setup(x => x.Users).Returns(ls.AsQueryable());
             return mgr;
         }

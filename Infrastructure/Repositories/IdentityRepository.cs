@@ -63,7 +63,7 @@ namespace Infrastructure.Repositories
 
                 if (!passwordCheck) throw new ArgumentException("Wachtwoord is ongeldig.");
 
-                result.PasswordHash = _userManager.PasswordHasher.HashPassword(user, password);
+                    result.PasswordHash = _userManager.PasswordHasher.HashPassword(user, password);
             }
 
             return await _userManager.UpdateAsync(result);

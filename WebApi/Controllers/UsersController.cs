@@ -96,8 +96,13 @@ namespace WebApi.Controllers
                 PhoneNumber = newUserDto.PhoneNumber,
                 PasswordHash = newUserDto.Password
             };
-
+            
             identityUser = await _identityRepository.GetUserByEmail(identityUser.Email);
+
+            //if (identityUser != null)
+            //{
+            //    return BadRequest("E-mailadres is al in gebruik.");
+            //}
 
             var userInformation = new UserInformation
             {

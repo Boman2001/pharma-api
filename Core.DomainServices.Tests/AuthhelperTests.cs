@@ -7,11 +7,11 @@ using Xunit;
 
 namespace Core.DomainServices.Tests
 {
-    public class AuthhelperTests
+    public class AuthHelperTests
     {
-        [Trait("Category", "Jwt validation test")]
+        [Trait("Category", "Jwt Tests")]
         [Fact]
-        public void Returns_Jwt()
+        public void Given_User_Returns_Jwt_With_roles()
         {
             IConfiguration config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
@@ -33,6 +33,27 @@ namespace Core.DomainServices.Tests
             var result = authHelper.GenerateToken(identityUser, roleList);
 
             Assert.Equal(6, result.Claims.Count());
+        }
+
+        [Trait("Category", "Jwt Tests")]
+        [Fact]
+        public void Given_User_Returns_Jwt_Without_Roles()
+        {
+            IConfiguration config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+            var authHelper = new AuthHelper(config);
+
+            var identityUser = new IdentityUser
+            {
+                Email = "maartendonkersloot@gmail.com",
+                UserName = "maartendonkersloot@gmail.com",
+                PasswordHash = "password"
+            };
+
+            var result = authHelper.GenerateToken(identityUser, null);
+
+            Assert.Equal(5, result.Claims.Count());
         }
     }
 }

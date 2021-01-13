@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Domain.Models;
-using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using WebApi.Controllers;
@@ -30,16 +28,9 @@ namespace WebApi.Tests
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var options = new DbContextOptionsBuilder<SecurityDbContext>()
-                .UseInMemoryDatabase("PharmaPartnersIdentityDb")
-                .Options;
-
-            var fakeSecurityDbContext = new Mock<SecurityDbContext>(options).Object;
             var userManager = MockUserManager.GetMockUserManager(_fakeIdentityUsers).Object;
             var signInManager = MockSigninManager.GetSignInManager<IdentityUser>(userManager).Object;
-            var fakeIdentityRepository =
-                new Mock<IdentityRepository>(userManager, signInManager, config, fakeSecurityDbContext).Object;
-
+            var fakeIdentityRepository = new Mock<IdentityRepository>(userManager, signInManager, config).Object;
             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_userInformations);
 
             Controller = new AuthController(fakeIdentityRepository, fakeGenericRepo.Object);
@@ -49,7 +40,7 @@ namespace WebApi.Tests
 
         [Trait("Category", "Login")]
         [Fact]
-        public async Task Login_Non_Valid_Email_Response()
+        public async Task Given_Non_Acceptable_Login_Details_Returns_Error_Message()
         {
             var user = new LoginDto
             {
@@ -66,7 +57,7 @@ namespace WebApi.Tests
 
         [Trait("Category", "Login")]
         [Fact]
-        public async Task Login_No_Data_Response()
+        public async Task Given_No_Email_Returns_Error_Message()
         {
             var user = new LoginDto
             {
@@ -81,16 +72,33 @@ namespace WebApi.Tests
             Assert.Equal(400, objectResult.StatusCode);
         }
 
+        [Trait("Category", "Login")]
+        [Fact]
+        public async Task Given_No_Password_Returns_Error_Message()
+        {
+            var user = new LoginDto
+            {
+                Email = "Email@gmail.com"
+            };
+
+            var result = (BadRequestObjectResult) await Controller.Login(user);
+            var objectResult = (ObjectResult) result;
+            var stringCast = objectResult.Value.ToString();
+
+            Assert.Equal("{ message = Deze combinatie van e-mailadres en wachtwoord is incorrect. }", stringCast);
+            Assert.Equal(400, objectResult.StatusCode);
+        }
+
         [Trait("Category", "Register")]
         [Fact]
-        public async Task Login_Valid_Response()
+        public async Task Given_Correct_Login_Details_Returns_200_Code()
         {
             var user = new LoginDto
             {
                 Email = "email@gmail.com", Password = "password"
             };
-            var actionResult = await Controller.Login(user);
-            var okObjectResult = (OkObjectResult) actionResult;
+            var result = await Controller.Login(user);
+            var okObjectResult = (OkObjectResult)result;
 
             Assert.Equal(200, okObjectResult.StatusCode);
         }
@@ -113,8 +121,8 @@ namespace WebApi.Tests
             _userInformations = new List<UserInformation>();
             var userInformation = new UserInformation
             {
-                Name = "tedst",
-                Bsn = "tyest",
+                Name = "name",
+                Bsn = "bsn",
                 City = "hank",
                 Street = "lepelaarstraat20",
                 HouseNumber = "20",
