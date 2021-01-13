@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Core.Domain;
 using Core.Domain.Models;
@@ -27,6 +29,10 @@ namespace WebApi.Tests.Mocks
             repository.Setup(x => x.Delete(It.IsAny<int>()))
                 .Callback((int t) => usersInformationList.RemoveAt(t))
                 .Returns(Task.FromResult(0));
+
+            repository.Setup(t => t.Get(It.IsAny<Expression<Func<T, bool>>>()))
+                .Returns((Expression<Func<T,bool>> query) => usersInformationList.AsQueryable().Where(query).ToList());
+
 
             return repository;
         }

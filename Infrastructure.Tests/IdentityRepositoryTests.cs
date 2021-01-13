@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Core.Domain;
-using Core.Domain.Models;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -46,31 +44,19 @@ namespace Infrastructure.Tests
         [Fact]
         public async Task Register()
         {
+           var identityUser = new IdentityUser
+            {
+                UserName = "GenericUsername",
+                PasswordHash = "GenericUsername",
+                Email = "email1d@gmail.com"
+            };
             var count = _fakeIdentityUsers.Count;
 
-            var register = await Controller.Register(_fakeUser, _fakeUser.PasswordHash);
+            var register = await Controller.Register(identityUser, identityUser.PasswordHash);
 
             Assert.IsType<JwtSecurityToken>(register);
             Assert.Equal(count + 1, _fakeIdentityUsers.Count);
-            Assert.Equal(_fakeIdentityUsers[count], _fakeUser);
-        }
-
-        [Trait("Category", "Identity Register")]
-        [Fact]
-        public async Task Register_Invalid_Mail()
-        {
-            _fakeUser.Email = "";
-
-            await Assert.ThrowsAsync<Exception>(() => Controller.Register(_fakeUser, _fakeUser.PasswordHash));
-        }
-
-        [Trait("Category", "Identity Register")]
-        [Fact]
-        public async Task Register_Invalid_Password()
-        {
-            _fakeUser.PasswordHash = "";
-
-            await Assert.ThrowsAsync<Exception>(() => Controller.Register(_fakeUser, _fakeUser.PasswordHash));
+            Assert.Equal(_fakeIdentityUsers[count].Email, identityUser.Email);
         }
 
         [Trait("Category", "Identity Register")]
@@ -79,7 +65,7 @@ namespace Infrastructure.Tests
         {
             var emptyUser = new IdentityUser();
 
-            await Assert.ThrowsAsync<Exception>(() => Controller.Register(emptyUser, _fakeUser.PasswordHash));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => Controller.Register(emptyUser, _fakeUser.PasswordHash));
         }
 
         [Trait("Category", "Identity Register")]
@@ -89,8 +75,6 @@ namespace Infrastructure.Tests
             await Assert.ThrowsAsync<Exception>(() => Controller.Register(_fakeIdentityUsers[0], _fakeUser.PasswordHash));
         }
 
-        //Er moet nog wel een beter mocklogin zijn, nu returned hij altijd true
-        //maar linq wilden niet meewerken, dus kijk later naar
         [Trait("Category", "Identity Login")]
         [Fact]
         public async Task Login()
@@ -98,24 +82,6 @@ namespace Infrastructure.Tests
             var login = await Controller.Login(_fakeIdentityUsers[0], _fakeIdentityUsers[0].PasswordHash);
 
             Assert.IsType<JwtSecurityToken>(login);
-        }
-
-        [Trait("Category", "Identity Login")]
-        [Fact]
-        public async Task Login_Invalid_Mail()
-        {
-            _fakeUser.Email = "";
-
-            await Assert.ThrowsAsync<Exception>(() => Controller.Login(_fakeUser, _fakeUser.PasswordHash));
-        }
-
-        [Trait("Category", "Identity Login")]
-        [Fact]
-        public async Task Login_Invalid_Password()
-        {
-            _fakeUser.PasswordHash = "";
-
-            await Assert.ThrowsAsync<Exception>(() => Controller.Login(_fakeUser, _fakeUser.PasswordHash));
         }
 
         [Trait("Category", "Identity Login")]
@@ -164,6 +130,17 @@ namespace Infrastructure.Tests
             Assert.Equal(_fakeIdentityUsers[0], result);
         }
 
+
+        [Trait("Category", "Id")]
+        [Fact]
+        public async Task Get_Current_User_From_Id()
+        {
+            var result = await Controller.GetUserById(_fakeIdentityUsers[0].Id);
+
+            Assert.Equal(_fakeIdentityUsers[0], result);
+        }
+
+
         [Trait("Category", "Email")]
         [Fact]
         public async Task Get_Current_User_From_NonExisting_Email()
@@ -179,31 +156,23 @@ namespace Infrastructure.Tests
         {
             var identityUser = new IdentityUser()
             {
-                UserName = "GenericUsername",
-                PasswordHash = "GenericUsername",
-                Email = "newmail@newmail.com"
+                Id = _fakeIdentityUsers[0].Id,
+                UserName = _fakeIdentityUsers[0].UserName,
+                PasswordHash = _fakeIdentityUsers[0].PasswordHash,
+                Email = _fakeIdentityUsers[0].Email
             };
-            var userInformation = new UserInformation
-            {
-                UserId = Guid.Parse(_fakeIdentityUsers[0].Id),
-                Id = 1,
-                User = _fakeUser
-            };
+
+            identityUser.PhoneNumber = "nummer";
             var result = await Controller.Update(identityUser);
 
             Assert.True(result.Succeeded);
-            Assert.Equal(identityUser.Email, _fakeIdentityUsers[0].Email);
+            Assert.Equal(_fakeIdentityUsers[0].PhoneNumber, identityUser.PhoneNumber);
         }
 
         [Trait("Category", "Identity Update")]
         [Fact]
         public void Update_Non_Existing_Guid()
         {
-            var userInformation = new UserInformation
-            {
-                Id = 1,
-                User = _fakeUser
-            };
             var identityUser = new IdentityUser()
             {
                 UserName = "GenericUsername",
@@ -218,11 +187,6 @@ namespace Infrastructure.Tests
         [Fact]
         public void Update_Email_Already_Exists()
         {
-            var userInformation = new UserInformation
-            {
-                Id = 1,
-                User = _fakeUser
-            };
             var identityUser = new IdentityUser()
             {
                 UserName = "GenericUsername",
@@ -232,6 +196,16 @@ namespace Infrastructure.Tests
 
             Assert.ThrowsAsync<Exception>(() => Controller.Update(identityUser));
         }
+
+        [Trait("Category", "Identity Update")]
+        [Fact]
+        public void Delete_user()
+        {
+            var result = Controller.Delete(_fakeIdentityUsers[2]);
+
+            Assert.True(result.Result.Succeeded);
+        }
+
 
         internal void SeedData()
         {
@@ -247,14 +221,14 @@ namespace Infrastructure.Tests
                 Email = "email@gmail.com",
                 UserName = "email@gmail.com"
             };
-            var extrIdentityUser = new IdentityUser
+            var identityUser = new IdentityUser
             {
                 Id = "!#!@#!@!#@#@2",
                 PasswordHash = "GenericUsername",
                 Email = "email2@gmail.com",
                 UserName = "email@gmail.com"
             };
-            _fakeIdentityUsers = new List<IdentityUser> {_fakeIdentityUser, extrIdentityUser};
+            _fakeIdentityUsers = new List<IdentityUser> {_fakeIdentityUser, identityUser, _fakeUser};
         }
     }
 }

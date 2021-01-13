@@ -14,9 +14,9 @@ namespace WebApi.Tests.Mocks.Extends
         {
             repository.Setup(x => x.Update(It.IsAny<UserInformation>()))
                 .Returns((UserInformation a) => Task.FromResult(
-                    usersInformationList.Where(c => c.Id == a.Id).Select(d =>
+                    usersInformationList.Where(c => c.UserId.ToString() == a.UserId.ToString()).Select(d =>
                     {
-                        d.User.UserName = a.User.UserName;
+                        d.Name = a.Name;
                         return d;
                     }).Single()
                 ));

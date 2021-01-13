@@ -37,6 +37,8 @@ namespace WebApi.Tests.Mocks
 
             mgr.Setup(x => x.FindByIdAsync(It.IsAny<string>()))
                 .ReturnsAsync((string b) => ls.FirstOrDefault(f => f.Id == b));
+
+            mgr.Setup(x => x.Users).Returns(ls.AsQueryable());
             return mgr;
         }
     }
