@@ -14,9 +14,9 @@ namespace WebApi.Mappings
             CreateMap<UserInformation, UserInformationDto>();
             CreateMap<UserInformationDto, UserDto>();
             CreateMap<UserDto, UserInformationDto>();
-            CreateMap<NewUserDto, UserInformation>();
-            CreateMap<NewUserDto, UserDto>();
-            CreateMap<UpdateUserDto, UserInformation>();
+            CreateMap<UserDto, UserInformation>();
+            CreateMap<UserDto, UserDto>();
+            CreateMap<UserDto, UserInformation>();
             CreateMap<UserInformation, UserInformationDto>();
             CreateMap<LoginDto, IdentityUser>();
         }

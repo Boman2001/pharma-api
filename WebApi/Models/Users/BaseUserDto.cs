@@ -4,34 +4,46 @@ using Core.Domain.Enums;
 
 namespace WebApi.Models.Users
 {
-    public class NewUserDto
+    public class BaseUserDto
     {
         [Required(ErrorMessage = "E-mailadres is verplicht.")]
         [EmailAddress(ErrorMessage = "E-mailadres is geen geldig e-mailadres.")]
         public string Email { get; set; }
+
         [Required(ErrorMessage = "Wachtwoord is verplicht.")]
         public string Password { get; set; }
-        [Required(ErrorMessage = "PhoneNumber is verplicht")]
+
+        [Required(ErrorMessage = "Telefoonnummer is verplicht.")]
         public string PhoneNumber { get; set; }
-        [Required(ErrorMessage = "Name is verplicht")]
+
+        [Required(ErrorMessage = "Naam is verplicht.")]
         public string Name { get; set; }
-        [Required(ErrorMessage = "Bsn is verplicht")]
+
+        [Required(ErrorMessage = "BSN is verplicht.")]
         public string Bsn { get; set; }
-        [Required(ErrorMessage = "Dob is verplicht")]
+
+        [Required(ErrorMessage = "Geboortedatum is verplicht.")]
         public DateTime Dob { get; set; }
-        [Required(ErrorMessage = "Gender is verplicht")]
+
+        [Required(ErrorMessage = "Geslacht is verplicht.")]
         public Gender Gender { get; set; }
-        [Required(ErrorMessage = "City is verplicht")]
+
+        [Required(ErrorMessage = "Woonplaats is verplicht.")]
         public string City { get; set; }
-        [Required(ErrorMessage = "Street is verplicht")]
+
+        [Required(ErrorMessage = "Straat is verplicht.")]
         public string Street { get; set; }
-        [Required(ErrorMessage = "HouseNumber is verplicht")]
+
+        [Required(ErrorMessage = "Huisnummer is verplicht.")]
         public string HouseNumber { get; set; }
-        [Required(ErrorMessage = "HouseNumberAddon is verplicht")]
+
+        [Required(ErrorMessage = "Toevoeging is verplicht.")]
         public string HouseNumberAddon { get; set; }
-        [Required(ErrorMessage = "PostalCode is verplicht")]
+
+        [Required(ErrorMessage = "Postcode is verplicht.")]
         public string PostalCode { get; set; }
-        [Required(ErrorMessage = "Country is verplicht")]
+
+        [Required(ErrorMessage = "Land is verplicht.")]
         public string Country { get; set; }
     }
 }

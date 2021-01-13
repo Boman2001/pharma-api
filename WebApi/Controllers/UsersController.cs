@@ -88,7 +88,7 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<UserDto>> Post([FromBody] NewUserDto newUserDto)
+        public async Task<ActionResult<UserDto>> Post([FromBody] UserDto newUserDto)
         {
             var identityUser = new IdentityUser
             {
@@ -156,10 +156,15 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Put(string id, [FromBody] UpdateUserDto updateUserDto)
+        public async Task<IActionResult> Put(string id, [FromBody] UserDto updateUserDto)
         {
             var user = await _identityRepository.GetUserById(id);
 
+            if (user == null)
+            {
+                return NotFound();
+            }
+            
             user.Email = updateUserDto.Email;
             user.Email = updateUserDto.Email;
             user.PhoneNumber = updateUserDto.PhoneNumber;
