@@ -91,8 +91,6 @@ namespace WebApi
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
             CreateUserRoles(serviceProvider).Wait();
-            databaseContext.Database.Migrate();
-            identityDbContext.Database.Migrate();
         }
 
         private static async Task CreateUserRoles(IServiceProvider serviceProvider)
