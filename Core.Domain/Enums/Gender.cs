@@ -4,6 +4,6 @@
     {
         Male,
         Female,
-        Other,
+        Other
     }
 }

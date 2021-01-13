@@ -9,6 +9,8 @@ namespace Core.Domain.Models
     [NotMapped]
     public abstract class BaseEntity : IEntity
     {
+        [NotMapped] public List<Activity> Activities { get; set; }
+
         [Key] public int Id { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
@@ -16,8 +18,5 @@ namespace Core.Domain.Models
 
         public DateTime? UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }
-
-        [NotMapped]
-        public List<Activity> Activities { get; set; }
     }
 }

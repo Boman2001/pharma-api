@@ -2,7 +2,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Core.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Core.DomainServices.Repositories
@@ -13,9 +12,9 @@ namespace Core.DomainServices.Repositories
 
         Task<JwtSecurityToken> Login(IdentityUser user, string password);
 
-        Task<IdentityUser> GetCurrentUser(ClaimsPrincipal user);
+        Task<IdentityResult> Update(IdentityUser user, string password);
 
-        Task<IdentityResult> Update(IdentityUser user);
+        Task<IdentityUser> GetCurrentUser(ClaimsPrincipal user);
 
         Task<IdentityUser> GetUserByEmail(string email);
 

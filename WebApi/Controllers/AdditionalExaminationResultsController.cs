@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core.Domain;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +16,8 @@ namespace WebApi.controllers
     {
         private readonly IRepository<AdditionalExaminationResult> _additionalExaminationResultRepository;
 
-        public AdditionalExaminationResultsController(IRepository<AdditionalExaminationResult> additionalExaminationResultRepository)
+        public AdditionalExaminationResultsController(
+            IRepository<AdditionalExaminationResult> additionalExaminationResultRepository)
         {
             _additionalExaminationResultRepository = additionalExaminationResultRepository;
         }
@@ -47,9 +47,11 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<AdditionalExaminationResult>> Post([FromBody] AdditionalExaminationResult additionalExaminationResult)
+        public async Task<ActionResult<AdditionalExaminationResult>> Post(
+            [FromBody] AdditionalExaminationResult additionalExaminationResult)
         {
-            var createdAdditionalExaminationResult = await _additionalExaminationResultRepository.Add(additionalExaminationResult);
+            var createdAdditionalExaminationResult =
+                await _additionalExaminationResultRepository.Add(additionalExaminationResult);
 
             return CreatedAtAction(nameof(Post), null, createdAdditionalExaminationResult);
         }
@@ -60,7 +62,8 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] AdditionalExaminationResult additionalExaminationResult)
         {
-            var updatedAdditionalExaminationResult = await _additionalExaminationResultRepository.Update(additionalExaminationResult);
+            var updatedAdditionalExaminationResult =
+                await _additionalExaminationResultRepository.Update(additionalExaminationResult);
 
             return Ok(updatedAdditionalExaminationResult);
         }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Core.Domain;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -35,10 +34,7 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
+            if (filter != null) query = query.Where(filter);
 
             return query.ToList();
         }
@@ -47,10 +43,7 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            foreach (var includeProperty in includeProperties)
-            {
-                query = query.Include(includeProperty);
-            }
+            foreach (var includeProperty in includeProperties) query = query.Include(includeProperty);
 
             return query.ToList();
         }
@@ -66,15 +59,9 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            foreach (var includeProperty in includeProperties)
-            {
-                query = query.Include(includeProperty);
-            }
+            foreach (var includeProperty in includeProperties) query = query.Include(includeProperty);
 
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
+            if (filter != null) query = query.Where(filter);
 
             return query.ToList();
         }
@@ -84,20 +71,11 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            foreach (var includeProperty in includeProperties)
-            {
-                query = query.Include(includeProperty);
-            }
+            foreach (var includeProperty in includeProperties) query = query.Include(includeProperty);
 
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
+            if (filter != null) query = query.Where(filter);
 
-            if (orderBy != null)
-            {
-                return orderBy(query).ToList();
-            }
+            if (orderBy != null) return orderBy(query).ToList();
 
             return query.ToList();
         }
@@ -105,7 +83,7 @@ namespace Infrastructure.Repositories
         public async Task<T> Add(T entity)
         {
             await _dbSet.AddAsync(entity);
-            
+
             await Save();
 
             _context.Entry(entity).GetDatabaseValues();
@@ -128,10 +106,7 @@ namespace Infrastructure.Repositories
         {
             var entity = await Get(id);
 
-            if (entity == null)
-            {
-                return;
-            }
+            if (entity == null) return;
 
             _dbSet.Remove(entity);
             await Save();
@@ -139,10 +114,7 @@ namespace Infrastructure.Repositories
 
         public async Task Delete(T entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
 
             _dbSet.Remove(entity);
             await Save();
@@ -152,10 +124,7 @@ namespace Infrastructure.Repositories
         {
             var entity = await Get(id);
 
-            if (entity == null)
-            {
-                return;
-            }
+            if (entity == null) return;
 
             _dbSet.Remove(entity);
             await Save();
@@ -163,10 +132,7 @@ namespace Infrastructure.Repositories
 
         public async Task ForceDelete(T entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
 
             _dbSet.Remove(entity);
             await Save();
@@ -179,10 +145,7 @@ namespace Infrastructure.Repositories
 
         public void Detach(IEnumerable<T> entities)
         {
-            foreach (var entity in entities)
-            {
-                _context.Entry(entity).State = EntityState.Detached;
-            }
+            foreach (var entity in entities) _context.Entry(entity).State = EntityState.Detached;
         }
 
         public void Detach(T entity)

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core.Domain;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +16,8 @@ namespace WebApi.controllers
     {
         private readonly IRepository<PhysicalExaminationType> _physicalExaminationTypeRepository;
 
-        public PhysicalExaminationTypesController(IRepository<PhysicalExaminationType> physicalExaminationTypeRepository)
+        public PhysicalExaminationTypesController(
+            IRepository<PhysicalExaminationType> physicalExaminationTypeRepository)
         {
             _physicalExaminationTypeRepository = physicalExaminationTypeRepository;
         }
@@ -47,7 +47,8 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<PhysicalExaminationType>> Post([FromBody] PhysicalExaminationType physicalExaminationType)
+        public async Task<ActionResult<PhysicalExaminationType>> Post(
+            [FromBody] PhysicalExaminationType physicalExaminationType)
         {
             var createdPhysicalExaminationType = await _physicalExaminationTypeRepository.Add(physicalExaminationType);
 
@@ -60,7 +61,8 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] PhysicalExaminationType physicalExaminationType)
         {
-            var updatedPhysicalExaminationType = await _physicalExaminationTypeRepository.Update(physicalExaminationType);
+            var updatedPhysicalExaminationType =
+                await _physicalExaminationTypeRepository.Update(physicalExaminationType);
 
             return Ok(updatedPhysicalExaminationType);
         }

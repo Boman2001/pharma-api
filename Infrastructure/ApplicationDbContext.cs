@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Core.Domain;
 using Core.Domain.Interfaces;
 using Core.Domain.Models;
 using Core.DomainServices.QueryExtensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Infrastructure
 {
     public class ApplicationDbContext : DbContext
     {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> contextOptions) : base(contextOptions)
+        {
+        }
+
         public DbSet<Activity> Activities { get; set; }
         public DbSet<AdditionalExaminationResult> AdditionalExaminationResults { get; set; }
         public DbSet<AdditionalExaminationType> AdditionalExaminationTypes { get; set; }
@@ -25,10 +27,6 @@ namespace Infrastructure
         public DbSet<Prescription> Prescriptions { get; set; }
         public DbSet<UserInformation> UserInformation { get; set; }
         public DbSet<UserJournal> UserJournals { get; set; }
-
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> contextOptions) : base(contextOptions)
-        {
-        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -77,14 +75,10 @@ namespace Infrastructure
                 .HasOne(a => a.Consultation)
                 .WithMany(c => c.AdditionalExaminationResults)
                 .OnDelete(DeleteBehavior.Restrict);
-            
+
             foreach (var entityType in builder.Model.GetEntityTypes())
-            {
                 if (typeof(IBaseEntitySoftDeletes).IsAssignableFrom(entityType.ClrType))
-                {
                     entityType.AddSoftDeleteQueryFilter();
-                }
-            }
         }
 
         public override int SaveChanges()
@@ -104,9 +98,7 @@ namespace Infrastructure
         private void UpdateSoftDeleteStatuses()
         {
             foreach (var entry in ChangeTracker.Entries())
-            {
                 if (entry.Entity is BaseEntity)
-                {
                     switch (entry.State)
                     {
                         case EntityState.Modified:
@@ -129,8 +121,6 @@ namespace Infrastructure
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-                }
-            }
         }
     }
 }

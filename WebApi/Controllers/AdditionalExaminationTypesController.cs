@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core.Domain;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +16,8 @@ namespace WebApi.controllers
     {
         private readonly IRepository<AdditionalExaminationType> _additionalExaminationTypeRepository;
 
-        public AdditionalExaminationTypeController(IRepository<AdditionalExaminationType> additionalExaminationTypeRepository)
+        public AdditionalExaminationTypeController(
+            IRepository<AdditionalExaminationType> additionalExaminationTypeRepository)
         {
             _additionalExaminationTypeRepository = additionalExaminationTypeRepository;
         }
@@ -47,9 +47,11 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<AdditionalExaminationType>> Post([FromBody] AdditionalExaminationType additionalExaminationType)
+        public async Task<ActionResult<AdditionalExaminationType>> Post(
+            [FromBody] AdditionalExaminationType additionalExaminationType)
         {
-            var createdAdditionalExaminationType = await _additionalExaminationTypeRepository.Add(additionalExaminationType);
+            var createdAdditionalExaminationType =
+                await _additionalExaminationTypeRepository.Add(additionalExaminationType);
 
             return CreatedAtAction(nameof(Post), null, createdAdditionalExaminationType);
         }
@@ -60,7 +62,8 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] AdditionalExaminationType additionalExaminationType)
         {
-            var updatedAdditionalExaminationType = await _additionalExaminationTypeRepository.Update(additionalExaminationType);
+            var updatedAdditionalExaminationType =
+                await _additionalExaminationTypeRepository.Update(additionalExaminationType);
 
             return Ok(updatedAdditionalExaminationType);
         }

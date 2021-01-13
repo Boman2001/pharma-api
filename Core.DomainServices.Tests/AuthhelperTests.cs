@@ -30,32 +30,11 @@ namespace Core.DomainServices.Tests
             _authHelper = new AuthHelper(config);
         }
 
-        [Trait("Category", "Email Validation")]
-        [Fact]
-        public void Email_Invalled()
-        {
-            var falseEmaile = "not a valid email";
-            bool result = AuthHelper.IsValidEmail(falseEmaile);
-           
-            Assert.False(result);
-        }
-
-        [Trait("Category", "Email Validation")]
-        [Fact]
-        public void Email_valid()
-        {
-            var validEmail = "maartendonkersloot@gmail.com";
-           
-            bool result = AuthHelper.IsValidEmail(validEmail);
-         
-            Assert.Equal(true, result);
-        }
-
         [Trait("Category", "Jwt validation test")]
         [Fact]
         public void Returns_Jwt()
         {
-            IdentityUser identityUser = new IdentityUser();
+            var identityUser = new IdentityUser();
             identityUser.Email = "maartendonkersloot@gmail.com";
             identityUser.UserName = identityUser.Email;
             identityUser.PasswordHash = "password";
@@ -63,7 +42,7 @@ namespace Core.DomainServices.Tests
             IList<string> roleList = new List<string>();
             roleList.Add("DOCTOR");
 
-            JwtSecurityToken result = _authHelper.GenerateToken(identityUser, roleList);
+            var result = _authHelper.GenerateToken(identityUser, roleList);
 
             Assert.Equal(5,result.Claims.Count());
         }

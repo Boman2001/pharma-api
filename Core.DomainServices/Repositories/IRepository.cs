@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Core.Domain;
 using Core.Domain.Models;
 
 namespace Core.DomainServices.Repositories
@@ -16,8 +15,10 @@ namespace Core.DomainServices.Repositories
         IEnumerable<T> Get(IEnumerable<string> includeProperties);
         IEnumerable<T> Get(Func<IQueryable<T>, IOrderedQueryable<T>> orderBy);
         IEnumerable<T> Get(Expression<Func<T, bool>> filter, IEnumerable<string> includeProperties);
+
         IEnumerable<T> Get(Expression<Func<T, bool>> filter, IEnumerable<string> includeProperties,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy);
+
         Task<T> Add(T model);
         Task<T> Update(T model);
         Task Delete(int id);

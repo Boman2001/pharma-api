@@ -9,16 +9,15 @@ using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using IdentityResult = Microsoft.AspNetCore.Identity.IdentityResult;
 
 namespace Infrastructure.Repositories
 {
     public class IdentityRepository : IIdentityRepository
     {
-        private readonly UserManager<IdentityUser> _userManager;
         private readonly AuthHelper _authHelper;
-        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly SecurityDbContext _dbContext;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
         public IdentityRepository(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
             IConfiguration configuration, SecurityDbContext dbContext)
@@ -32,7 +31,7 @@ namespace Infrastructure.Repositories
         public async Task<JwtSecurityToken> Register(IdentityUser user, string password)
         {
             var findByEmailAsync = await _userManager.FindByEmailAsync(user.Email);
-            
+
             if (findByEmailAsync != null)
             {
                 throw new Exception("E-mailadres is al in gebruik.");
@@ -40,27 +39,19 @@ namespace Infrastructure.Repositories
 
             var result = await _userManager.CreateAsync(user, password);
             ErrorHandling(result);
-            
+
             await _userManager.AddToRoleAsync(user, "Doctor");
             var roleList = await _userManager.GetRolesAsync(user);
             var token = _authHelper.GenerateToken(user, roleList);
-            
+
             return token;
         }
 
         public async Task<JwtSecurityToken> Login(IdentityUser user, string password)
         {
-            if (AuthHelper.IsValidEmail(user.Email) == false)
-            {
-                throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
-            }
-
             var result = await _userManager.FindByEmailAsync(user.Email);
 
-            if (result == null)
-            {
-                throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
-            }
+            if (result == null) throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
 
             var loginResult = await _signInManager.PasswordSignInAsync(user.UserName, password, false, false);
             var roleList = await _userManager.GetRolesAsync(result);
@@ -74,29 +65,7 @@ namespace Infrastructure.Repositories
             throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
         }
 
-        public async Task<IdentityResult> DeleteUser(IdentityUser user)
-        {
-            return await _userManager.DeleteAsync(user);
-        }
-
-        public static void ErrorHandling(IdentityResult result)
-        {
-            var exceptions = result.Errors.Select(error => new Exception(error.Description)).ToList();
-
-            if (exceptions.Count >= 1)
-            {
-                throw new AggregateException(exceptions);
-            }
-        }
-
-        public Task<IdentityUser> GetCurrentUser(ClaimsPrincipal user)
-        {
-            var userEmail = user.FindFirstValue(ClaimTypes.Email);
-            var result = _userManager.FindByEmailAsync(userEmail);
-            return result;
-        }
-
-        public async Task<IdentityResult> Update(IdentityUser user)
+        public async Task<IdentityResult> Update(IdentityUser user, string password = null)
         {
             var result = await _userManager.FindByIdAsync(user.Id);
 
@@ -105,8 +74,8 @@ namespace Infrastructure.Repositories
                 throw new Exception("Gebruiker bestaat niet.");
             }
 
-            var findByEmailAsync = await _userManager.FindByEmailAsync(user.Email);
-            if (findByEmailAsync != null && findByEmailAsync.Email == result.Email)
+            var findByEmailAsync = await _userManager.FindByEmailAsync(result.Email);
+            if (findByEmailAsync?.Id != result.Id && findByEmailAsync?.Email == result.Email)
             {
                 throw new Exception("E-mailadres is al in gebruik.");
             }
@@ -114,9 +83,25 @@ namespace Infrastructure.Repositories
             result.Email = user.Email;
             result.UserName = user.UserName;
             result.PhoneNumber = user.PhoneNumber;
-            result.PasswordHash = AuthHelper.HashPassword(user.PasswordHash);
-            
+
+            if (password != null)
+            {
+                result.PasswordHash = _userManager.PasswordHasher.HashPassword(user, password);
+            }
+
             return await _userManager.UpdateAsync(result);
+        }
+
+        public async Task<IdentityResult> DeleteUser(IdentityUser user)
+        {
+            return await _userManager.DeleteAsync(user);
+        }
+
+        public Task<IdentityUser> GetCurrentUser(ClaimsPrincipal user)
+        {
+            var userEmail = user.FindFirstValue(ClaimTypes.Email);
+            var result = _userManager.FindByEmailAsync(userEmail);
+            return result;
         }
 
         public async Task<IdentityUser> GetUserByEmail(string email)
@@ -131,10 +116,14 @@ namespace Infrastructure.Repositories
 
         public void Detach(IEnumerable<IdentityUser> entities)
         {
-            foreach (var entity in entities)
-            {
-                _dbContext.Entry(entity).State = EntityState.Detached;
-            }
+            foreach (var entity in entities) _dbContext.Entry(entity).State = EntityState.Detached;
+        }
+
+        public static void ErrorHandling(IdentityResult result)
+        {
+            var exceptions = result.Errors.Select(error => new Exception(error.Description)).ToList();
+
+            if (exceptions.Count >= 1) throw new AggregateException(exceptions);
         }
     }
 }

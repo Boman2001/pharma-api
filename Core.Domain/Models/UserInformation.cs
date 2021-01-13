@@ -19,7 +19,7 @@ namespace Core.Domain.Models
         public string Country { get; set; }
 
         public Guid UserId { get; set; }
-        [NotMapped]
-        public IdentityUser User { get; set; }
+
+        [NotMapped] public IdentityUser User { get; set; }
     }
 }

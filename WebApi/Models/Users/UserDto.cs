@@ -1,5 +1,4 @@
 ﻿using System;
-using Core.Domain.Enums;
 
 namespace WebApi.Models.Users
 {

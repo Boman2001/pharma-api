@@ -1,16 +1,15 @@
-﻿using Core.Domain.DataTransferObject;
-using Core.DomainServices.Repositories;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Core.Domain.DataTransferObject;
 using Core.Domain.Models;
-using Microsoft.AspNetCore.Authorization;
+using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using WebApi.Models.Users;
 
 namespace WebApi.Controllers
@@ -20,10 +19,10 @@ namespace WebApi.Controllers
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class UsersController : ControllerBase
     {
-        private readonly IRepository<UserInformation> _userInformationRepository;
         private readonly IIdentityRepository _identityRepository;
-        private readonly UserManager<IdentityUser> _userManager;
         private readonly IMapper _mapper;
+        private readonly IRepository<UserInformation> _userInformationRepository;
+        private readonly UserManager<IdentityUser> _userManager;
 
         public UsersController(IMapper autoMapper, IRepository<UserInformation> userInformationRepository,
             IIdentityRepository identityRepository, UserManager<IdentityUser> userManager)
@@ -69,10 +68,7 @@ namespace WebApi.Controllers
         {
             var result = await _identityRepository.GetUserById(id);
 
-            if (result == null)
-            {
-                return NotFound();
-            }
+            if (result == null) return NotFound();
 
             var user = _mapper.Map<IdentityUser, UserDto>(result);
             var userInformation = _userInformationRepository.Get(u => u.UserId == user.Id)
@@ -88,14 +84,14 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<UserDto>> Post([FromBody] UserDto newUserDto)
+        public async Task<ActionResult<UserDto>> Post([FromBody] NewUserDto newUserDto)
         {
             var identityUser = new IdentityUser
             {
                 Email = newUserDto.Email,
                 UserName = newUserDto.Email,
                 PhoneNumber = newUserDto.PhoneNumber,
-                PasswordHash = newUserDto.Password,
+                PasswordHash = newUserDto.Password
             };
 
             JwtSecurityToken result;
@@ -142,7 +138,7 @@ namespace WebApi.Controllers
                 HouseNumber = userInformation.HouseNumber,
                 HouseNumberAddon = userInformation.HouseNumberAddon,
                 PostalCode = userInformation.PostalCode,
-                Country = userInformation.Country,
+                Country = userInformation.Country
             };
 
             return Ok(new
@@ -156,7 +152,7 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Put(string id, [FromBody] UserDto updateUserDto)
+        public async Task<IActionResult> Put(string id, [FromBody] UpdateUserDto updateUserDto)
         {
             var user = await _identityRepository.GetUserById(id);
 
@@ -164,15 +160,14 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
-            
+
             user.Email = updateUserDto.Email;
             user.Email = updateUserDto.Email;
             user.PhoneNumber = updateUserDto.PhoneNumber;
-            user.PasswordHash = updateUserDto.Password;
 
             try
             {
-                await _identityRepository.Update(user);
+                await _identityRepository.Update(user, updateUserDto.Password);
             }
             catch (Exception e)
             {
@@ -181,10 +176,7 @@ namespace WebApi.Controllers
 
             var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == id).FirstOrDefault();
 
-            if (userInformation == null)
-            {
-                return NotFound();
-            }
+            if (userInformation == null) return NotFound();
 
             userInformation.Name = updateUserDto.Name;
             userInformation.Bsn = updateUserDto.Bsn;
@@ -223,10 +215,7 @@ namespace WebApi.Controllers
         {
             var user = await _identityRepository.GetUserById(id);
 
-            if (user == null)
-            {
-                return NotFound();
-            }
+            if (user == null) return NotFound();
 
             await _identityRepository.DeleteUser(user);
 

@@ -1,46 +1,34 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using IdentityResult = Microsoft.AspNetCore.Identity.IdentityResult;
-using System.Threading;
+using Microsoft.AspNetCore.Identity;
 
 namespace Core.DomainServices.Helpers
 {
-    public class UserDomainValidator<TUser> : IUserValidator<TUser>
-       where TUser : IdentityUser
+    public class UserDomainValidator<TUser> : IUserValidator<TUser> where TUser : IdentityUser
     {
-        readonly List<IdentityError> _errors = new List<IdentityError>();
+        private readonly List<IdentityError> _errors = new();
 
-
-        public Task<IdentityResult> ValidateAsync(IdentityUser user)
-        {
-            return Task.FromResult(IdentityResult.Failed());
-        }
-
-        public Task<IdentityResult> ValidateAsync(Microsoft.AspNetCore.Identity.UserManager<TUser> manager, TUser user)
+        public Task<IdentityResult> ValidateAsync(UserManager<TUser> manager, TUser user)
         {
             var resultByEmailAsync = manager.FindByEmailAsync(user.Email);
-           
+
             if (resultByEmailAsync.Result != null)
             {
-                IdentityError inuse = new IdentityError();
-                inuse.Description = "Mail Already in use";
+                var inuse = new IdentityError {Description = "Mail Already in use"};
                 _errors.Add(inuse);
             }
-
 
             if (_errors.Count >= 1)
             {
                 return Task.FromResult(IdentityResult.Failed(_errors.ToArray()));
             }
-            else
-            {
-                return Task.FromResult(IdentityResult.Success);
-            }
+
+            return Task.FromResult(IdentityResult.Success);
+        }
+
+        public Task<IdentityResult> ValidateAsync(IdentityUser user)
+        {
+            return Task.FromResult(IdentityResult.Failed());
         }
     }
 }
