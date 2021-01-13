@@ -9,7 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : BaseEntity
+    public class Repository<T> : IRepository<T>
+        where T : BaseEntity
     {
         private readonly DbContext _context;
         private readonly DbSet<T> _dbSet;
@@ -34,7 +35,9 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            if (filter != null) query = query.Where(filter);
+            if (filter == null) return query.ToList();
+
+            query = query.Where(filter);
 
             return query.ToList();
         }
@@ -61,12 +64,16 @@ namespace Infrastructure.Repositories
 
             foreach (var includeProperty in includeProperties) query = query.Include(includeProperty);
 
-            if (filter != null) query = query.Where(filter);
+            if (filter == null) return query.ToList();
+
+            query = query.Where(filter);
 
             return query.ToList();
         }
 
-        public IEnumerable<T> Get(Expression<Func<T, bool>> filter, IEnumerable<string> includeProperties,
+        public IEnumerable<T> Get(
+            Expression<Func<T, bool>> filter,
+            IEnumerable<string> includeProperties,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy)
         {
             IQueryable<T> query = _dbSet;
@@ -86,7 +93,7 @@ namespace Infrastructure.Repositories
 
             await Save();
 
-            _context.Entry(entity).GetDatabaseValues();
+            await _context.Entry(entity).GetDatabaseValuesAsync();
 
             return entity;
         }
@@ -97,7 +104,7 @@ namespace Infrastructure.Repositories
 
             await Save();
 
-            _context.Entry(entity).GetDatabaseValues();
+            await _context.Entry(entity).GetDatabaseValuesAsync();
 
             return entity;
         }

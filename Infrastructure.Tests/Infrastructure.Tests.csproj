@@ -37,4 +37,8 @@
     <ProjectReference Include="..\WebApi.Tests\WebApi.Tests.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="IdentityRepositoryTests.cs" />
+  </ItemGroup>
+
 </Project>

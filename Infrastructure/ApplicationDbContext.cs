@@ -10,7 +10,8 @@ namespace Infrastructure
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> contextOptions) : base(contextOptions)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> contextOptions)
+            : base(contextOptions)
         {
         }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -25,8 +24,11 @@ namespace WebApi.Controllers
         private readonly IRepository<UserInformation> _userInformationRepository;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public UsersController(IMapper autoMapper, IRepository<UserInformation> userInformationRepository,
-            IIdentityRepository identityRepository, UserManager<IdentityUser> userManager)
+        public UsersController(
+            IMapper autoMapper,
+            IRepository<UserInformation> userInformationRepository,
+            IIdentityRepository identityRepository,
+            UserManager<IdentityUser> userManager)
         {
             _userInformationRepository = userInformationRepository;
             _identityRepository = identityRepository;
@@ -95,17 +97,6 @@ namespace WebApi.Controllers
                 PasswordHash = newUserDto.Password
             };
 
-            JwtSecurityToken result;
-
-            try
-            {
-                result = await _identityRepository.Register(identityUser, identityUser.PasswordHash);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(new {message = e.Message});
-            }
-
             identityUser = await _identityRepository.GetUserByEmail(identityUser.Email);
 
             var userInformation = new UserInformation
@@ -142,11 +133,7 @@ namespace WebApi.Controllers
                 Country = userInformation.Country
             };
 
-            return Ok(new
-            {
-                Token = new JwtSecurityTokenHandler().WriteToken(result),
-                user
-            });
+            return Ok(user);
         }
 
         [HttpPut("{id}")]
@@ -157,13 +144,10 @@ namespace WebApi.Controllers
         {
             var user = await _identityRepository.GetUserById(id);
 
-            if (user == null)
-            {
-                return NotFound();
-            }
+            if (user == null) return NotFound();
 
             user.Email = updateUserDto.Email;
-            user.Email = updateUserDto.Email;
+            user.UserName = updateUserDto.Email;
             user.PhoneNumber = updateUserDto.PhoneNumber;
 
             try
@@ -172,15 +156,15 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(new {message = e.Message});
+                return BadRequest(new
+                {
+                    message = e.Message
+                });
             }
 
             var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == id).FirstOrDefault();
 
-            if (userInformation == null)
-            {
-                return NotFound();
-            }
+            if (userInformation == null) return NotFound();
 
             userInformation.Name = updateUserDto.Name;
             userInformation.Bsn = updateUserDto.Bsn;
@@ -199,7 +183,10 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(new {message = e.Message});
+                return BadRequest(new
+                {
+                    message = e.Message
+                });
             }
 
             var userDto = _mapper.Map<IdentityUser, UserDto>(user);

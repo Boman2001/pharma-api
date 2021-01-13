@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApi.controllers
+namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -63,7 +63,7 @@ namespace WebApi.controllers
         public async Task<IActionResult> Put(int id, [FromBody] AdditionalExaminationResult additionalExaminationResult)
         {
             additionalExaminationResult.Id = id;
-            
+
             var updatedAdditionalExaminationResult =
                 await _additionalExaminationResultRepository.Update(additionalExaminationResult);
 

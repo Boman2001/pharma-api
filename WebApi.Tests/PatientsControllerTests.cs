@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Domain.Enums;
 using Core.Domain.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using WebApi.controllers;
@@ -14,11 +13,7 @@ namespace WebApi.Tests
 {
     public class PatientsControllerTests
     {
-        private IdentityUser _fakeIdentityUser;
-
         private List<Patient> _fakeUsersPatient;
-
-        private PatientsController FakeController { get; }
 
         public PatientsControllerTests()
         {
@@ -31,6 +26,7 @@ namespace WebApi.Tests
             FakeController = new PatientsController(fakeGenericRepo.Object, config);
         }
 
+        private PatientsController FakeController { get; }
 
         [Trait("Category", "Patient")]
         [Fact]
@@ -46,7 +42,6 @@ namespace WebApi.Tests
             Assert.IsType<Patient>(objectResultValue[0]);
         }
 
-
         [Trait("Category", "Patient")]
         [Fact]
         public async Task Get_By_Id_Async()
@@ -59,7 +54,6 @@ namespace WebApi.Tests
             Assert.Equal(objectResultValue, _fakeUsersPatient[0]);
             Assert.IsType<Patient>(objectResultValue);
         }
-
 
         [Trait("Category", "Patient")]
         [Fact]
@@ -124,7 +118,7 @@ namespace WebApi.Tests
             Assert.Empty(_fakeUsersPatient);
         }
 
-        public void SeedData()
+        private void SeedData()
         {
             _fakeUsersPatient = new List<Patient>();
             var patient = new Patient

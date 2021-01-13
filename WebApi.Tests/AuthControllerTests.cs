@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using Core.Domain.Models;
-using Xunit;
-using WebApi.Controllers;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Mvc;
 using Infrastructure;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Moq;
-using WebApi.Mappings;
+using WebApi.Controllers;
 using WebApi.Models.Authentication;
 using WebApi.Tests.Mocks;
+using Xunit;
 
 namespace WebApi.Tests
 {
@@ -23,7 +21,6 @@ namespace WebApi.Tests
         private IdentityUser _fakeIdentityUser;
         private List<IdentityUser> _fakeIdentityUsers;
         private List<UserInformation> _userInformations;
-        private AuthController Controller { get; }
 
         public AuthControllerTests()
         {
@@ -34,32 +31,30 @@ namespace WebApi.Tests
                 .Build();
 
             var options = new DbContextOptionsBuilder<SecurityDbContext>()
-                .UseInMemoryDatabase(databaseName: "PharmaPartnersIdentityDb")
+                .UseInMemoryDatabase("PharmaPartnersIdentityDb")
                 .Options;
-
-
-            var mockMapper = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new MappingProfile()); 
-            });
-            var mapper = mockMapper.CreateMapper();
 
             var fakeSecurityDbContext = new Mock<SecurityDbContext>(options).Object;
             var userManager = MockUserManager.GetMockUserManager(_fakeIdentityUsers).Object;
             var signInManager = MockSigninManager.GetSignInManager<IdentityUser>(userManager).Object;
-            var fakeIdentityRepository = new Mock<IdentityRepository>(userManager, signInManager, config, fakeSecurityDbContext).Object;
+            var fakeIdentityRepository =
+                new Mock<IdentityRepository>(userManager, signInManager, config, fakeSecurityDbContext).Object;
 
-           
             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_userInformations);
 
-            Controller = new AuthController(fakeIdentityRepository, fakeGenericRepo.Object, mapper);
+            Controller = new AuthController(fakeIdentityRepository, fakeGenericRepo.Object);
         }
+
+        private AuthController Controller { get; }
 
         [Trait("Category", "Login")]
         [Fact]
         public async Task Login_Non_Valid_Email_Response()
         {
-            var user = new LoginDto {Email = "email", Password = "password"};
+            var user = new LoginDto
+            {
+                Email = "email", Password = "password"
+            };
 
             var result = (BadRequestObjectResult) await Controller.Login(user);
             var objectResult = (ObjectResult) result;
@@ -73,7 +68,10 @@ namespace WebApi.Tests
         [Fact]
         public async Task Login_No_Data_Response()
         {
-            var user = new LoginDto{Password = "password"};
+            var user = new LoginDto
+            {
+                Password = "password"
+            };
 
             var result = (BadRequestObjectResult) await Controller.Login(user);
             var objectResult = (ObjectResult) result;
@@ -87,29 +85,30 @@ namespace WebApi.Tests
         [Fact]
         public async Task Login_Valid_Response()
         {
-            var user = new LoginDto {Email = "email@gmail.com", Password = "password"};
+            var user = new LoginDto
+            {
+                Email = "email@gmail.com", Password = "password"
+            };
             var actionResult = await Controller.Login(user);
             var okObjectResult = (OkObjectResult) actionResult;
 
             Assert.Equal(200, okObjectResult.StatusCode);
         }
 
-        internal void SeedData()
+        private void SeedData()
         {
             _fakeIdentityUser = new IdentityUser
             {
-                PasswordHash = "password",
-                Email = "email@gmail.com",
-                UserName = "email@gmail.com"
+                PasswordHash = "password", Email = "email@gmail.com", UserName = "email@gmail.com"
             };
             var extraIdentityUser = new IdentityUser
             {
-                PasswordHash = "password",
-                Email = "email2@gmail.com",
-                UserName = "email@gmail.com"
+                PasswordHash = "password", Email = "email2@gmail.com", UserName = "email@gmail.com"
             };
-            _fakeIdentityUsers = new List<IdentityUser> {_fakeIdentityUser, extraIdentityUser};
-
+            _fakeIdentityUsers = new List<IdentityUser>
+            {
+                _fakeIdentityUser, extraIdentityUser
+            };
 
             _userInformations = new List<UserInformation>();
             var userInformation = new UserInformation

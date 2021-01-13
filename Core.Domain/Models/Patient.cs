@@ -28,6 +28,5 @@ namespace Core.Domain.Models
         public List<PhysicalExamination> PhysicalExaminations { get; set; }
         public List<Prescription> Prescriptions { get; set; }
         public List<UserJournal> UserJournals { get; set; }
-        
     }
 }

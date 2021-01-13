@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -8,8 +7,6 @@ namespace Core.DomainServices.Repositories
 {
     public interface IIdentityRepository
     {
-        Task<JwtSecurityToken> Register(IdentityUser user, string password);
-
         Task<JwtSecurityToken> Login(IdentityUser user, string password);
 
         Task<IdentityResult> Update(IdentityUser user, string password);
@@ -21,7 +18,5 @@ namespace Core.DomainServices.Repositories
         Task<IdentityUser> GetUserById(string id);
 
         Task<IdentityUser> GetUserByEmail(string email);
-
-        void Detach(IEnumerable<IdentityUser> entities);
     }
 }

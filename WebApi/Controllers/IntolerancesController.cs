@@ -60,7 +60,7 @@ namespace WebApi.controllers
         public async Task<IActionResult> Put(int id, [FromBody] Intolerance intolerance)
         {
             intolerance.Id = id;
-            
+
             var updatedIntolerance = await _intoleranceRepository.Update(intolerance);
 
             return Ok(updatedIntolerance);

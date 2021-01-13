@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Xunit;
-using Microsoft.Extensions.Configuration;
 using Core.DomainServices.Helpers;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Xunit;
 
 namespace Core.DomainServices.Tests
 {
@@ -25,7 +25,10 @@ namespace Core.DomainServices.Tests
                 PasswordHash = "password"
             };
 
-            var roleList = new List<string> {"Doctor"};
+            var roleList = new List<string>
+            {
+                "Doctor"
+            };
 
             var result = authHelper.GenerateToken(identityUser, roleList);
 

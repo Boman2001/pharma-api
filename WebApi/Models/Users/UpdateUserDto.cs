@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using Core.Domain.Enums;
-
-namespace WebApi.Models.Users
+﻿namespace WebApi.Models.Users
 {
     public class UpdateUserDto : BaseUserDto
     {

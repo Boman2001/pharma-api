@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using Core.Domain.Enums;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebApi.Models.Users
 {

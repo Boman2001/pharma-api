@@ -62,7 +62,7 @@ namespace WebApi.controllers
         public async Task<IActionResult> Put(int id, [FromBody] PhysicalExaminationType physicalExaminationType)
         {
             physicalExaminationType.Id = id;
-            
+
             var updatedPhysicalExaminationType =
                 await _physicalExaminationTypeRepository.Update(physicalExaminationType);
 

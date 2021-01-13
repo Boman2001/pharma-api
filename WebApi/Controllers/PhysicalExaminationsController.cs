@@ -60,7 +60,7 @@ namespace WebApi.controllers
         public async Task<IActionResult> Put(int id, [FromBody] PhysicalExamination physicalExamination)
         {
             physicalExamination.Id = id;
-            
+
             var updatedPhysicalExamination = await _physicalExaminationRepository.Update(physicalExamination);
 
             return Ok(updatedPhysicalExamination);

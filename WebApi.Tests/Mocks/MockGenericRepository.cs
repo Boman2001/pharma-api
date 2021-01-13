@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Core.Domain;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Moq;
 
 namespace WebApi.Tests.Mocks
 {
-   public static class MockGenericRepository
+    public static class MockGenericRepository
     {
         public static Mock<IRepository<T>> GetUserInformationMock<T>(List<T> usersInformationList) where T : BaseEntity
         {
@@ -31,7 +30,7 @@ namespace WebApi.Tests.Mocks
                 .Returns(Task.FromResult(0));
 
             repository.Setup(t => t.Get(It.IsAny<Expression<Func<T, bool>>>()))
-                .Returns((Expression<Func<T,bool>> query) => usersInformationList.AsQueryable().Where(query).ToList());
+                .Returns((Expression<Func<T, bool>> query) => usersInformationList.AsQueryable().Where(query).ToList());
 
 
             return repository;

@@ -2,7 +2,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -18,24 +17,23 @@ namespace WebApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
-        private readonly IMapper _mapper;
         private readonly IRepository<UserInformation> _userInformationRepository;
 
-        public AuthController(IIdentityRepository identityRepository,
-            IRepository<UserInformation> userInformationRepository, IMapper mapper)
+        public AuthController(
+            IIdentityRepository identityRepository,
+            IRepository<UserInformation> userInformationRepository)
         {
             _identityRepository = identityRepository;
             _userInformationRepository = userInformationRepository;
-            _mapper = mapper;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto login)
         {
-            var identityUser = _mapper.Map<LoginDto, IdentityUser>(login);
-
-            identityUser.PasswordHash = login.Password;
-            identityUser.UserName = identityUser.Email;
+            var identityUser = new IdentityUser
+            {
+                Email = login.Email, UserName = login.Email, PasswordHash = login.Password
+            };
 
             SecurityToken securityToken;
 
@@ -45,13 +43,17 @@ namespace WebApi.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new {message = ex.Message});
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
             }
 
             var user = await _identityRepository.GetUserByEmail(identityUser.Email);
             var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == user.Id).FirstOrDefault();
 
-            if (user == null || userInformation == null) return NotFound();
+            if (user == null || userInformation == null)
+                return NotFound();
 
             var userDto = new UserDto
             {
@@ -60,7 +62,7 @@ namespace WebApi.Controllers
                 PhoneNumber = user.PhoneNumber,
                 Name = userInformation.Name,
                 Bsn = userInformation.Bsn,
-                Dob = userInformation.Dob,
+                Dob = userInformation.Dob, 
                 Gender = userInformation.Gender,
                 City = userInformation.City,
                 Street = userInformation.Street,
@@ -70,7 +72,10 @@ namespace WebApi.Controllers
                 Country = userInformation.Country
             };
 
-            return Ok(new {Token = new JwtSecurityTokenHandler().WriteToken(securityToken), User = userDto});
+            return Ok(new
+            {
+                Token = new JwtSecurityTokenHandler().WriteToken(securityToken), User = userDto
+            });
         }
     }
 }

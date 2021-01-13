@@ -60,7 +60,7 @@ namespace WebApi.controllers
         public async Task<IActionResult> Put(int id, [FromBody] UserJournal userJournal)
         {
             userJournal.Id = id;
-            
+
             var updatedUserJournal = await _userJournalRepository.Update(userJournal);
 
             return Ok(updatedUserJournal);

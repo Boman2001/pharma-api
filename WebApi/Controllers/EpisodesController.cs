@@ -60,7 +60,7 @@ namespace WebApi.controllers
         public async Task<IActionResult> Put(int id, [FromBody] Episode episode)
         {
             episode.Id = id;
-            
+
             var updatedEpisode = await _episodeRepository.Update(episode);
 
             return Ok(updatedEpisode);

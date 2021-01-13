@@ -17,8 +17,8 @@ namespace WebApi.controllers
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class PatientsController : Controller
     {
-        private readonly IRepository<Patient> _patientRepository;
         private readonly PatientHelper _patientHelper;
+        private readonly IRepository<Patient> _patientRepository;
 
         public PatientsController(IRepository<Patient> patientRepository, IConfiguration config)
         {
@@ -53,17 +53,19 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Patient>> Post([FromBody] Patient patient)
         {
-            Patient toCreatePatient;
             Patient createdPatient;
 
             try
             {
-                toCreatePatient = await _patientHelper.AddLatLongToPatient(patient);
-                createdPatient = await _patientRepository.Add(toCreatePatient);
+                createdPatient = await _patientHelper.AddLatLongToPatient(patient);
+                createdPatient = await _patientRepository.Add(createdPatient);
             }
             catch (Exception e)
             {
-                return BadRequest(new {message = e.Message});
+                return BadRequest(new
+                {
+                    message = e.Message
+                });
             }
 
             return CreatedAtAction(nameof(Post), null, createdPatient);

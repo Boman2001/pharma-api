@@ -63,7 +63,7 @@ namespace WebApi.controllers
         public async Task<IActionResult> Put(int id, [FromBody] AdditionalExaminationType additionalExaminationType)
         {
             additionalExaminationType.Id = id;
-            
+
             var updatedAdditionalExaminationType =
                 await _additionalExaminationTypeRepository.Update(additionalExaminationType);
 

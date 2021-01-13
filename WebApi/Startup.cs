@@ -1,4 +1,11 @@
+using System;
+using System.Text;
+using System.Threading.Tasks;
+using AutoMapper;
+using Core.DomainServices.Repositories;
 using Infrastructure;
+using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -6,14 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Threading.Tasks;
-using System.Text;
-using AutoMapper;
-using Core.DomainServices.Repositories;
-using Infrastructure.Repositories;
 
 namespace WebApi
 {
@@ -24,7 +24,7 @@ namespace WebApi
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -46,8 +46,8 @@ namespace WebApi
                 }).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<SecurityDbContext>()
                 .AddDefaultTokenProviders();
-            
-            services.AddCors(options => 
+
+            services.AddCors(options =>
                 options.AddDefaultPolicy(builder => builder
                     .WithOrigins(Configuration["AppUrl"])
                     .AllowAnyMethod()
@@ -56,7 +56,7 @@ namespace WebApi
                     .Build()
                 )
             );
-            
+
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -68,7 +68,8 @@ namespace WebApi
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JWT:Secret"])),
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JWT:Secret"])),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
@@ -90,10 +91,7 @@ namespace WebApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
             app.UseRouting();
@@ -108,15 +106,15 @@ namespace WebApi
         private static async Task CreateUserRoles(IServiceProvider serviceProvider)
         {
             var getRoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            string[] roleNames = {"Admin", "Doctor"};
+            string[] roleNames =
+            {
+                "Admin", "Doctor"
+            };
 
             foreach (var roleName in roleNames)
             {
                 var roleExist = await getRoleManager.RoleExistsAsync(roleName);
-                if (!roleExist)
-                {
-                    await getRoleManager.CreateAsync(new IdentityRole(roleName));
-                }
+                if (!roleExist) await getRoleManager.CreateAsync(new IdentityRole(roleName));
             }
         }
 
@@ -125,15 +123,15 @@ namespace WebApi
             using var serviceScope = app.ApplicationServices
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
-            
+
             using (var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>())
             {
-                context.Database.Migrate();
+                context?.Database.Migrate();
             }
 
             using (var context = serviceScope.ServiceProvider.GetService<SecurityDbContext>())
             {
-                context.Database.Migrate();
+                context?.Database.Migrate();
             }
         }
     }
