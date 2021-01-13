@@ -1,50 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
-using System.ComponentModel;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
-using Core.DomainServices;
 using Core.DomainServices.Helpers;
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
-using Xunit;
-using Core.DomainServices;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Core.DomainServices.Tests
 {
     public class AuthhelperTests
     {
-        readonly private AuthHelper _authHelper;
-        public AuthhelperTests()
-        {
-            IConfiguration config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
-            .Build();
-            _authHelper = new AuthHelper(config);
-        }
-
         [Trait("Category", "Jwt validation test")]
         [Fact]
         public void Returns_Jwt()
         {
-            var identityUser = new IdentityUser();
-            identityUser.Email = "maartendonkersloot@gmail.com";
-            identityUser.UserName = identityUser.Email;
-            identityUser.PasswordHash = "password";
+            IConfiguration config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+            var authHelper = new AuthHelper(config);
 
-            IList<string> roleList = new List<string>();
-            roleList.Add("DOCTOR");
+            var identityUser = new IdentityUser
+            {
+                Email = "maartendonkersloot@gmail.com",
+                UserName = "maartendonkersloot@gmail.com",
+                PasswordHash = "password"
+            };
 
-            var result = _authHelper.GenerateToken(identityUser, roleList);
+            var roleList = new List<string> {"Doctor"};
 
-            Assert.Equal(5,result.Claims.Count());
+            var result = authHelper.GenerateToken(identityUser, roleList);
+
+            Assert.Equal(6, result.Claims.Count());
         }
     }
 }

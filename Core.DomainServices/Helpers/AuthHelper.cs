@@ -24,12 +24,16 @@ namespace Core.DomainServices.Helpers
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Role, roles[0])
+                new(ClaimTypes.Email, user.Email),
+                new(ClaimTypes.NameIdentifier, user.Id)
             };
+
+            if (roles != null && roles.Count > 0)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, roles[0]));
+            }
 
             return new JwtSecurityToken(
                 _configuration["JWT:ValidIssuer"],
@@ -38,7 +42,6 @@ namespace Core.DomainServices.Helpers
                 claims: claims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
-            
         }
     }
 }
