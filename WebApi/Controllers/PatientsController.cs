@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core.Domain;
 using Core.Domain.Models;
+using Core.DomainServices.Helpers;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace WebApi.controllers
 {
@@ -16,10 +17,12 @@ namespace WebApi.controllers
     public class PatientsController : Controller
     {
         private readonly IRepository<Patient> _patientRepository;
+        private readonly PatientHelper _patientHelper;
 
-        public PatientsController(IRepository<Patient> patientRepository)
+        public PatientsController(IRepository<Patient> patientRepository, IConfiguration config)
         {
             _patientRepository = patientRepository;
+            _patientHelper = new PatientHelper(config);
         }
 
         [HttpGet]
@@ -39,7 +42,7 @@ namespace WebApi.controllers
         {
             var patient = await _patientRepository.Get(id);
 
-            return patient != null ? Ok(patient) : NotFound();
+            return patient != null ? (ActionResult<Patient>) Ok(patient) : NotFound();
         }
 
         [HttpPost]
@@ -49,7 +52,8 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Patient>> Post([FromBody] Patient patient)
         {
-            var createdPatient = await _patientRepository.Add(patient);
+            var toCreatePatient = await _patientHelper.AddLatLongToPatient(patient);
+            var createdPatient = await _patientRepository.Add(toCreatePatient);
 
             return CreatedAtAction(nameof(Post), null, createdPatient);
         }

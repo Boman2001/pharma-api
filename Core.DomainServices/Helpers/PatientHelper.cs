@@ -8,9 +8,6 @@ using Core.Domain.Models;
 using Geocoding;
 using Geocoding.Google;
 using Microsoft.Extensions.Configuration;
-using RestSharp;
-using RestSharp.Authenticators;
-using RestSharp.Serializers.NewtonsoftJson;
 
 namespace Core.DomainServices.Helpers
 {
@@ -32,7 +29,7 @@ namespace Core.DomainServices.Helpers
                 IGeocoder geocoder = new GoogleGeocoder() { ApiKey = config["GoogleApiKey"] };
                 var addresses = await geocoder.GeocodeAsync(formattedAddress);
                 patient.Latitude = addresses.First().Coordinates.Latitude;
-                 patient.Longditude = addresses.First().Coordinates.Longitude;
+                patient.Longditude = addresses.First().Coordinates.Longitude;
 
                 return patient;
             }
