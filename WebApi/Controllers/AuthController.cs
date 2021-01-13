@@ -30,11 +30,11 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromForm] LoginDto login, [FromForm] string password)
+        public async Task<IActionResult> Login([FromBody] LoginDto login)
         {
             var identityUser = _mapper.Map<LoginDto, IdentityUser>(login);
 
-            identityUser.PasswordHash = password;
+            identityUser.PasswordHash = login.Password;
             identityUser.UserName = identityUser.Email;
 
             SecurityToken securityToken;
