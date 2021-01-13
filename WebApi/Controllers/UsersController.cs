@@ -170,7 +170,14 @@ namespace WebApi.Controllers
             user.PhoneNumber = updateUserDto.PhoneNumber;
             user.PasswordHash = updateUserDto.Password;
 
-            await _identityRepository.Update(user);
+            try
+            {
+                await _identityRepository.Update(user);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new {message = e.Message});
+            }
 
             var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == id).FirstOrDefault();
 
@@ -199,9 +206,7 @@ namespace WebApi.Controllers
                 return BadRequest(new {message = e.Message});
             }
 
-
             var userDto = _mapper.Map<IdentityUser, UserDto>(user);
-
 
             var userInformationDto = _mapper.Map<UserInformation, UserInformationDto>(userInformation);
             _mapper.Map(userInformationDto, userDto);

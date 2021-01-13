@@ -109,7 +109,7 @@ namespace Infrastructure.Repositories
             }
 
             var findByEmailAsync = await _userManager.FindByEmailAsync(user.Email);
-            if (findByEmailAsync != null && findByEmailAsync.Email != result.Email)
+            if (findByEmailAsync != null && findByEmailAsync.Email == result.Email)
             {
                 throw new Exception("E-mailadres is al in gebruik.");
             }
