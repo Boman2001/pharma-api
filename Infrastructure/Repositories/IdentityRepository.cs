@@ -41,8 +41,10 @@ namespace Infrastructure.Repositories
             ErrorHandling(result);
 
             await _userManager.AddToRoleAsync(user, "Doctor");
-            var roleList = await _userManager.GetRolesAsync(user);
-            var token = _authHelper.GenerateToken(user, roleList);
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var token = _authHelper.GenerateToken(user, roles);
 
             return token;
         }
@@ -51,14 +53,18 @@ namespace Infrastructure.Repositories
         {
             var result = await _userManager.FindByEmailAsync(user.Email);
 
-            if (result == null) throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
+            if (result == null)
+            {
+                throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
+            }
 
             var loginResult = await _signInManager.PasswordSignInAsync(user.UserName, password, false, false);
-            var roleList = await _userManager.GetRolesAsync(result);
+
+            var roles = await _userManager.GetRolesAsync(result);
 
             if (loginResult.Succeeded)
             {
-                var token = _authHelper.GenerateToken(user, roleList);
+                var token = _authHelper.GenerateToken(user, roles);
                 return token;
             }
 
@@ -86,13 +92,20 @@ namespace Infrastructure.Repositories
 
             if (password != null)
             {
+                var passwordCheck = await _userManager.CheckPasswordAsync(user, password);
+
+                if (!passwordCheck)
+                {
+                    throw new Exception("Wachtwoord is ongeldig.");
+                }
+
                 result.PasswordHash = _userManager.PasswordHasher.HashPassword(user, password);
             }
 
             return await _userManager.UpdateAsync(result);
         }
 
-        public async Task<IdentityResult> DeleteUser(IdentityUser user)
+        public async Task<IdentityResult> Delete(IdentityUser user)
         {
             return await _userManager.DeleteAsync(user);
         }
@@ -100,18 +113,17 @@ namespace Infrastructure.Repositories
         public Task<IdentityUser> GetCurrentUser(ClaimsPrincipal user)
         {
             var userEmail = user.FindFirstValue(ClaimTypes.Email);
-            var result = _userManager.FindByEmailAsync(userEmail);
-            return result;
-        }
-
-        public async Task<IdentityUser> GetUserByEmail(string email)
-        {
-            return await _userManager.FindByEmailAsync(email);
+            return _userManager.FindByEmailAsync(userEmail);
         }
 
         public async Task<IdentityUser> GetUserById(string id)
         {
             return await _userManager.FindByIdAsync(id);
+        }
+
+        public async Task<IdentityUser> GetUserByEmail(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
         }
 
         public void Detach(IEnumerable<IdentityUser> entities)
@@ -123,7 +135,10 @@ namespace Infrastructure.Repositories
         {
             var exceptions = result.Errors.Select(error => new Exception(error.Description)).ToList();
 
-            if (exceptions.Count >= 1) throw new AggregateException(exceptions);
+            if (exceptions.Count >= 1)
+            {
+                throw new AggregateException(exceptions);
+            }
         }
     }
 }

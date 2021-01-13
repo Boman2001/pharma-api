@@ -8,6 +8,7 @@ using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using WebApi.Models.Authentication;
 using WebApi.Models.Users;
 
 namespace WebApi.Controllers

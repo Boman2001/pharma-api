@@ -14,14 +14,14 @@ namespace Core.DomainServices.Repositories
 
         Task<IdentityResult> Update(IdentityUser user, string password);
 
+        Task<IdentityResult> Delete(IdentityUser user);
+
         Task<IdentityUser> GetCurrentUser(ClaimsPrincipal user);
+
+        Task<IdentityUser> GetUserById(string id);
 
         Task<IdentityUser> GetUserByEmail(string email);
 
         void Detach(IEnumerable<IdentityUser> entities);
-
-        Task<IdentityResult> DeleteUser(IdentityUser user);
-
-        Task<IdentityUser> GetUserById(string id);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Domain.Models;
 using Core.DomainServices.Helpers;
@@ -52,8 +53,18 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Patient>> Post([FromBody] Patient patient)
         {
-            var toCreatePatient = await _patientHelper.AddLatLongToPatient(patient);
-            var createdPatient = await _patientRepository.Add(toCreatePatient);
+            Patient toCreatePatient;
+            Patient createdPatient;
+
+            try
+            {
+                toCreatePatient = await _patientHelper.AddLatLongToPatient(patient);
+                createdPatient = await _patientRepository.Add(toCreatePatient);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new {message = e.Message});
+            }
 
             return CreatedAtAction(nameof(Post), null, createdPatient);
         }
@@ -65,6 +76,7 @@ namespace WebApi.controllers
         public async Task<IActionResult> Put(int id, [FromBody] Patient patient)
         {
             patient.Id = id;
+
             var updatedPatient = await _patientRepository.Update(patient);
 
             return Ok(updatedPatient);

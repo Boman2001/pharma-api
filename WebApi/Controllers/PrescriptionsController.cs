@@ -59,6 +59,8 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] Prescription prescription)
         {
+            prescription.Id = id;
+            
             var updatedPrescription = await _prescriptionRepository.Update(prescription);
 
             return Ok(updatedPrescription);

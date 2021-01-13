@@ -1,7 +1,7 @@
-﻿using Core.Domain.DataTransferObject;
-using AutoMapper;
+﻿using AutoMapper;
 using Core.Domain.Models;
 using Microsoft.AspNetCore.Identity;
+using WebApi.Models.Authentication;
 using WebApi.Models.Users;
 
 namespace WebApi.Mappings

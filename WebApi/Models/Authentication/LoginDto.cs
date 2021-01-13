@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebApi.Models.Users
+namespace WebApi.Models.Authentication
 {
     public class LoginDto
     {

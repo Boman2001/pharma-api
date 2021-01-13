@@ -59,6 +59,8 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] IcpcCode icpcCode)
         {
+            icpcCode.Id = id;
+            
             var updatedIcpcCode = await _icpcCodeRepository.Update(icpcCode);
 
             return Ok(updatedIcpcCode);

@@ -59,6 +59,8 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] Consultation consultation)
         {
+            consultation.Id = id;
+            
             var updatedConsultation = await _consultationRepository.Update(consultation);
 
             return Ok(updatedConsultation);

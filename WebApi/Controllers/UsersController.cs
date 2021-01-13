@@ -4,9 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Core.Domain.DataTransferObject;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +14,7 @@ using WebApi.Models.Users;
 
 namespace WebApi.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
@@ -176,7 +177,10 @@ namespace WebApi.Controllers
 
             var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == id).FirstOrDefault();
 
-            if (userInformation == null) return NotFound();
+            if (userInformation == null)
+            {
+                return NotFound();
+            }
 
             userInformation.Name = updateUserDto.Name;
             userInformation.Bsn = updateUserDto.Bsn;
@@ -217,7 +221,7 @@ namespace WebApi.Controllers
 
             if (user == null) return NotFound();
 
-            await _identityRepository.DeleteUser(user);
+            await _identityRepository.Delete(user);
 
             var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == user.Id)
                 .FirstOrDefault();

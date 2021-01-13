@@ -1,7 +1,7 @@
 ﻿using System;
 using Core.Domain.Enums;
 
-namespace Core.Domain.DataTransferObject
+namespace WebApi.Models.Users
 {
     public class UserInformationDto
     {

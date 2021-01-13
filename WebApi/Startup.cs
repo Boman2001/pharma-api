@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Core.DomainServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -15,7 +14,6 @@ using System.Text;
 using AutoMapper;
 using Core.DomainServices.Repositories;
 using Infrastructure.Repositories;
-using AutoMapper;
 
 namespace WebApi
 {
@@ -33,21 +31,32 @@ namespace WebApi
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
                 Configuration.GetConnectionString("Default")
             ));
-            
-            services.AddDbContext<SecurityDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Security")));
-            services.AddIdentity<IdentityUser, IdentityRole>(config => 
+
+            services.AddDbContext<SecurityDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("Security")));
+            services.AddIdentity<IdentityUser, IdentityRole>(config =>
                 {
-                config.Password.RequireDigit = false;
-                config.Password.RequiredLength = 4;
-                config.Password.RequireNonAlphanumeric = false;
-                config.Password.RequireUppercase = false;
-                config.Password.RequiredUniqueChars = 0;
-                config.Password.RequireLowercase = false;
-                config.User.RequireUniqueEmail = true;
-            }).AddRoles<IdentityRole>()
+                    config.Password.RequireDigit = false;
+                    config.Password.RequiredLength = 4;
+                    config.Password.RequireNonAlphanumeric = false;
+                    config.Password.RequireUppercase = false;
+                    config.Password.RequiredUniqueChars = 0;
+                    config.Password.RequireLowercase = false;
+                    config.User.RequireUniqueEmail = true;
+                }).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<SecurityDbContext>()
                 .AddDefaultTokenProviders();
-
+            
+            services.AddCors(options => 
+                options.AddDefaultPolicy(builder => builder
+                    .WithOrigins(Configuration["AppUrl"])
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .AllowAnyHeader()
+                    .Build()
+                )
+            );
+            
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -61,12 +70,13 @@ namespace WebApi
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JWT:Secret"])),
                     ValidateIssuer = false,
-                    ValidateAudience = false,
+                    ValidateAudience = false
                 };
             });
-        
+
             services.AddOptions();
-            services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromMinutes(5));
+            services.Configure<SecurityStampValidatorOptions>(options =>
+                options.ValidationInterval = TimeSpan.FromMinutes(5));
 
             services.AddScoped<IIdentityRepository, IdentityRepository>();
 
@@ -96,34 +106,33 @@ namespace WebApi
 
         private static async Task CreateUserRoles(IServiceProvider serviceProvider)
         {
-            RoleManager<IdentityRole> getRoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var getRoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             string[] roleNames = {"Admin", "Doctor"};
 
-            foreach (string roleName in roleNames)
+            foreach (var roleName in roleNames)
             {
-                bool roleExist = await getRoleManager.RoleExistsAsync(roleName);
+                var roleExist = await getRoleManager.RoleExistsAsync(roleName);
                 if (!roleExist)
                 {
-                     await getRoleManager.CreateAsync(new IdentityRole(roleName));
+                    await getRoleManager.CreateAsync(new IdentityRole(roleName));
                 }
             }
         }
 
         private static void UpdateDatabase(IApplicationBuilder app)
         {
-            using (var serviceScope = app.ApplicationServices
+            using var serviceScope = app.ApplicationServices
                 .GetRequiredService<IServiceScopeFactory>()
-                .CreateScope())
+                .CreateScope();
+            
+            using (var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>())
             {
-                using (var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>())
-                {
-                    context.Database.Migrate();
-                }
+                context.Database.Migrate();
+            }
 
-                using (var context = serviceScope.ServiceProvider.GetService<SecurityDbContext>())
-                {
-                    context.Database.Migrate();
-                }
+            using (var context = serviceScope.ServiceProvider.GetService<SecurityDbContext>())
+            {
+                context.Database.Migrate();
             }
         }
     }

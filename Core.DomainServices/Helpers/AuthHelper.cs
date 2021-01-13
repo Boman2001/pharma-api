@@ -27,7 +27,8 @@ namespace Core.DomainServices.Helpers
             var claims = new[]
             {
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Role, roles[0])
             };
 
             return new JwtSecurityToken(
@@ -37,6 +38,7 @@ namespace Core.DomainServices.Helpers
                 claims: claims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
+            
         }
     }
 }
