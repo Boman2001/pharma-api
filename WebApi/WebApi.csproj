@@ -42,7 +42,6 @@
 
     <ItemGroup>
       <Folder Include="Models\" />
-      <Folder Include="Models\Doctors" />
     </ItemGroup>
 
 

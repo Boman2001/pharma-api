@@ -34,47 +34,35 @@ namespace Infrastructure.Repositories
 
         public async Task<JwtSecurityToken> Register(IdentityUser user, string password)
         {
-            if (string.IsNullOrEmpty(password))
-            {
-                throw new Exception("Incorrect password");
-            }
-
-            if (AuthHelper.IsValidEmail(user.Email) == false)
-            {
-                throw new Exception("Incorrect email");
-            }
-
             var findByEmailAsync = await _userManager.FindByEmailAsync(user.Email);
+            
             if (findByEmailAsync != null)
             {
-                throw new Exception("Email already in use");
+                throw new Exception("E-mailadres is al in gebruik.");
             }
 
             var result = await _userManager.CreateAsync(user, password);
             ErrorHandling(result);
+            
             await _userManager.AddToRoleAsync(user, "Doctor");
             var roleList = await _userManager.GetRolesAsync(user);
             var token = _authHelper.GenerateToken(user, roleList);
+            
             return token;
         }
 
         public async Task<JwtSecurityToken> Login(IdentityUser user, string password)
         {
-            if (string.IsNullOrEmpty(password))
-            {
-                throw new Exception("Incorrect password");
-            }
-
             if (AuthHelper.IsValidEmail(user.Email) == false)
             {
-                throw new Exception("Incorrect email");
+                throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
             }
 
             var result = await _userManager.FindByEmailAsync(user.Email);
 
             if (result == null)
             {
-                throw new Exception("User doesnt exist");
+                throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
             }
 
             var loginResult = await _signInManager.PasswordSignInAsync(user.UserName, password, false, false);
@@ -86,7 +74,7 @@ namespace Infrastructure.Repositories
                 return token;
             }
 
-            throw new Exception("Password Incorrect");
+            throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
         }
 
         public async Task<IdentityResult> DeleteUser(IdentityUser user)
@@ -100,7 +88,7 @@ namespace Infrastructure.Repositories
 
             if (exceptions.Count >= 1)
             {
-                throw new AggregateException("Encountered errors while trying to do something.", exceptions);
+                throw new AggregateException(exceptions);
             }
         }
 
@@ -111,32 +99,27 @@ namespace Infrastructure.Repositories
             return result;
         }
 
-        public async Task<IdentityResult> Update(IdentityUser user, UserInformation i)
+        public async Task<IdentityResult> Update(IdentityUser user)
         {
-            if (i == null)
-            {
-                throw new Exception("This userId doesn't correspond to an existing user");
-            }
-
-            var result = await _userManager.FindByIdAsync(i.UserId.ToString());
+            var result = await _userManager.FindByIdAsync(user.Id);
 
             if (result == null)
             {
-                throw new Exception("This userId doesn't correspond to an existing user");
+                throw new Exception("Gebruiker bestaat niet.");
             }
 
             var findByEmailAsync = await _userManager.FindByEmailAsync(user.Email);
             if (findByEmailAsync != null && findByEmailAsync.Email != result.Email)
             {
-                throw new Exception("Email already in use");
+                throw new Exception("E-mailadres is al in gebruik.");
             }
 
             result.Email = user.Email;
             result.UserName = user.UserName;
+            result.PhoneNumber = user.PhoneNumber;
             result.PasswordHash = AuthHelper.HashPassword(user.PasswordHash);
-            //Detach(user);
-            var r = await _userManager.UpdateAsync(result);
-            return r;
+            
+            return await _userManager.UpdateAsync(result);
         }
 
         public async Task<IdentityUser> GetUserByEmail(string email)
@@ -146,8 +129,7 @@ namespace Infrastructure.Repositories
 
         public async Task<IdentityUser> GetUserById(string id)
         {
-            var a = await _userManager.FindByIdAsync(id);
-            return a;
+            return await _userManager.FindByIdAsync(id);
         }
 
         public void Detach(IEnumerable<IdentityUser> entities)
@@ -156,25 +138,6 @@ namespace Infrastructure.Repositories
             {
                 _dbContext.Entry(entity).State = EntityState.Detached;
             }
-        }
-
-        public Task<IdentityUser> GetCurrentuser(ClaimsPrincipal user)
-        {
-            var userEmail = user.FindFirstValue(ClaimTypes.Email);
-            var result = _userManager.FindByEmailAsync(userEmail);
-            return result;
-        }
-
-        public async Task<IdentityResult> Update(UserInformation oldUserInformation, IdentityUser user)
-        {
-            IdentityUser result = await _userManager.FindByEmailAsync(user.Email);
-
-
-            result.Email = user.Email;
-            result.UserName = result.UserName;
-            result.PasswordHash = user.PasswordHash;
-
-            return await _userManager.UpdateAsync(result);
         }
     }
 }

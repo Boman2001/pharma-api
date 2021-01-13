@@ -15,7 +15,7 @@ namespace Core.DomainServices.Repositories
 
         Task<IdentityUser> GetCurrentUser(ClaimsPrincipal user);
 
-        Task<IdentityResult> Update(IdentityUser user, UserInformation i);
+        Task<IdentityResult> Update(IdentityUser user);
 
         Task<IdentityUser> GetUserByEmail(string email);
 

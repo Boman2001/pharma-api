@@ -10,6 +10,8 @@ using Core.Domain;
 using Core.Domain.DataTransferObject;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
+using Microsoft.IdentityModel.Tokens;
+using WebApi.Models.Users;
 
 namespace WebApi.Controllers
 {
@@ -21,66 +23,59 @@ namespace WebApi.Controllers
         private readonly IRepository<UserInformation> _userInformationRepository;
         private readonly IMapper _mapper;
 
-        public AuthController(IMapper autoMapper, IIdentityRepository identityRepository, IRepository<UserInformation> userInformationRepository )
+        public AuthController(IIdentityRepository identityRepository,
+            IRepository<UserInformation> userInformationRepository, IMapper mapper)
         {
             _identityRepository = identityRepository;
             _userInformationRepository = userInformationRepository;
-            _mapper = autoMapper;
-        }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromForm] IdentityUser model, [FromForm] string password)
-        {
-            model.PasswordHash = password;
-            model.UserName = model.Email;
-            try
-            {
-                var resultJwtSecurityToken = await _identityRepository.Register(model, model.PasswordHash);
-
-                return Ok(new {Token = new JwtSecurityTokenHandler().WriteToken(resultJwtSecurityToken)});
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new {message = ex.Message});
-            }
+            _mapper = mapper;
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync([FromForm] IdentityUser model, [FromForm] string password)
+        public async Task<IActionResult> Login([FromForm] LoginDto login, [FromForm] string password)
         {
-            model.PasswordHash = password;
-            model.UserName = model.Email;
+            var identityUser = _mapper.Map<LoginDto, IdentityUser>(login);
+            
+            identityUser.PasswordHash = password;
+            identityUser.UserName = identityUser.Email;
+
+            SecurityToken securityToken;
+
             try
             {
-                var result = await _identityRepository.Login(model, model.PasswordHash);
-                var user = await _identityRepository.GetUserByEmail(model.Email);
-
-                var b = _userInformationRepository.Get(d => d.UserId == Guid.Parse(user.Id)).FirstOrDefault();
-                
-                var p = _mapper.Map<UserInformationDto>(b);
-                p.Email = user.Email;
-
-                p.StringId = user.Id.ToString();
-
-
-                return Ok(new {Token = new JwtSecurityTokenHandler().WriteToken(result), User = p });
+                securityToken = await _identityRepository.Login(identityUser, identityUser.PasswordHash);
             }
             catch (Exception ex)
             {
                 return BadRequest(new {message = ex.Message});
             }
+
+            var user = await _identityRepository.GetUserByEmail(identityUser.Email);
+            var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == user.Id).FirstOrDefault();
+
+            if (user == null || userInformation == null)
+            {
+                return NotFound();
+            }
+
+            var userDto = new UserDto
+            {
+                Id = Guid.Parse(user.Id),
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Name = userInformation.Name,
+                Bsn = userInformation.Bsn,
+                Dob = userInformation.Dob,
+                Gender = userInformation.Gender,
+                City = userInformation.City,
+                Street = userInformation.Street,
+                HouseNumber = userInformation.HouseNumber,
+                HouseNumberAddon = userInformation.HouseNumberAddon,
+                PostalCode = userInformation.PostalCode,
+                Country = userInformation.Country,
+            };
+
+            return Ok(new {Token = new JwtSecurityTokenHandler().WriteToken(securityToken), User = userDto});
         }
-
-
-        //Example off authorized route
-        //Header required:
-        //Authorization Bearer [Token]
-        //[Authorize]
-        //[HttpGet]
-        //public async Task<IActionResult> Get()
-        //{
-        //    var user =  await _IdentityRepository.GetCurrentuser(User);
-        //    return Ok(user);
-        //}
     }
 }

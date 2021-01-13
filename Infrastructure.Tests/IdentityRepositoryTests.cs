@@ -189,7 +189,7 @@ namespace Infrastructure.Tests
                 Id = 1,
                 User = _fakeUser
             };
-            var result = await Controller.Update(identityUser, userInformation);
+            var result = await Controller.Update(identityUser);
 
             Assert.True(result.Succeeded);
             Assert.Equal(identityUser.Email, _fakeIdentityUsers[0].Email);
@@ -211,7 +211,7 @@ namespace Infrastructure.Tests
                 Email = "newmail@newmail.com"
             };
 
-            Assert.ThrowsAsync<Exception>(() => Controller.Update(identityUser, userInformation));
+            Assert.ThrowsAsync<Exception>(() => Controller.Update(identityUser));
         }
 
         [Trait("Category", "Identity Update")]
@@ -230,7 +230,7 @@ namespace Infrastructure.Tests
                 Email = "email2@gmail.com"
             };
 
-            Assert.ThrowsAsync<Exception>(() => Controller.Update(identityUser, userInformation));
+            Assert.ThrowsAsync<Exception>(() => Controller.Update(identityUser));
         }
 
         internal void SeedData()

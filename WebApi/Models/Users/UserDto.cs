@@ -1,12 +1,13 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 using Core.Domain.Enums;
-using Microsoft.AspNetCore.Identity;
 
-namespace Core.Domain.Models
+namespace WebApi.Models.Users
 {
-    public class UserInformation : BaseEntity
+    public class UserDto
     {
+        public Guid Id { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
         public string Name { get; set; }
         public string Bsn { get; set; }
         public DateTime Dob { get; set; }
@@ -17,9 +18,5 @@ namespace Core.Domain.Models
         public string HouseNumberAddon { get; set; }
         public string PostalCode { get; set; }
         public string Country { get; set; }
-
-        public Guid UserId { get; set; }
-        [NotMapped]
-        public IdentityUser User { get; set; }
     }
 }

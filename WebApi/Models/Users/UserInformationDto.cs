@@ -1,11 +1,14 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Core.Domain.Enums;
-using Microsoft.AspNetCore.Identity;
+using Core.Domain.Models;
 
-namespace Core.Domain.Models
+namespace Core.Domain.DataTransferObject
 {
-    public class UserInformation : BaseEntity
+    public class UserInformationDto
     {
         public string Name { get; set; }
         public string Bsn { get; set; }
@@ -17,9 +20,5 @@ namespace Core.Domain.Models
         public string HouseNumberAddon { get; set; }
         public string PostalCode { get; set; }
         public string Country { get; set; }
-
-        public Guid UserId { get; set; }
-        [NotMapped]
-        public IdentityUser User { get; set; }
     }
 }

@@ -8,7 +8,7 @@ using Moq;
 
 namespace WebApi.Tests.Mocks.Extends
 {
-    public static class MockDoctorExtension
+    public static class MockUserExtension
     {
         public static void ExtendMock(Mock<IRepository<UserInformation>> repository, List<UserInformation> usersInformationList)
         {
