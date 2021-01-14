@@ -122,7 +122,6 @@ namespace WebApi.Tests
             var userInformation = new UserInformation
             {
                 Name = "name",
-                Bsn = "bsn",
                 City = "hank",
                 Street = "lepelaarstraat20",
                 HouseNumber = "20",

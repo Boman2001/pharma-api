@@ -107,7 +107,6 @@ namespace WebApi.Controllers
             var userInformation = new UserInformation
             {
                 Name = newUserDto.Name,
-                Bsn = newUserDto.Bsn,
                 Dob = newUserDto.Dob,
                 Gender = newUserDto.Gender,
                 City = newUserDto.City,
@@ -127,7 +126,6 @@ namespace WebApi.Controllers
                 Email = identityUser.Email,
                 PhoneNumber = identityUser.PhoneNumber,
                 Name = userInformation.Name,
-                Bsn = userInformation.Bsn,
                 Dob = userInformation.Dob,
                 Gender = userInformation.Gender,
                 City = userInformation.City,
@@ -172,7 +170,6 @@ namespace WebApi.Controllers
             if (userInformation == null) return NotFound();
 
             userInformation.Name = updateUserDto.Name;
-            userInformation.Bsn = updateUserDto.Bsn;
             userInformation.Dob = updateUserDto.Dob;
             userInformation.Gender = updateUserDto.Gender;
             userInformation.City = updateUserDto.City;

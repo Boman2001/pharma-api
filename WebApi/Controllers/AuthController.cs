@@ -61,7 +61,6 @@ namespace WebApi.Controllers
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 Name = userInformation.Name,
-                Bsn = userInformation.Bsn,
                 Dob = userInformation.Dob, 
                 Gender = userInformation.Gender,
                 City = userInformation.City,

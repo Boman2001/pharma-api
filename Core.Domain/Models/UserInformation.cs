@@ -8,7 +8,6 @@ namespace Core.Domain.Models
     public class UserInformation : BaseEntity
     {
         public string Name { get; set; }
-        public string Bsn { get; set; }
         public DateTime Dob { get; set; }
         public Gender Gender { get; set; }
         public string City { get; set; }

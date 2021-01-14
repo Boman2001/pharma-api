@@ -8,9 +8,9 @@ namespace Core.Domain.Models
     public class Consultation : BaseEntitySoftDeletes
     {
         public DateTime Date { get; set; }
+        public string Comments { get; set; }
 
         public int DoctorId { get; set; }
-
         [NotMapped] public IdentityUser Doctor { get; set; }
 
         public int PatientId { get; set; }
