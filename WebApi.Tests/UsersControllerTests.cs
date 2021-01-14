@@ -101,7 +101,6 @@ namespace WebApi.Tests
             {
                 Email = "emailTwdo@gmail.com",
                 PhoneNumber = "3145142",
-                Bsn = "Bsn",
                 City = "City",
                 Country = "Country",
                 Dob = DateTime.Now,
