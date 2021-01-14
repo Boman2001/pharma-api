@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core.Domain.Enums;
 using Core.Domain.Models;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -46,6 +48,8 @@ namespace WebApi.Tests
             var fakeIdentityRepository = new Mock<IdentityRepository>(userManager, signInManager, config).Object;
 
             FakeController = new UsersController(mapper, fakeGenericRepo.Object, fakeIdentityRepository, userManager);
+
+            setUser(_fakeIdentityUsers[0]);
         }
 
         //Get Tests
@@ -193,6 +197,20 @@ namespace WebApi.Tests
             var result = (NoContentResult) await FakeController.Delete(_fakeIdentityUsers[1].Id);
 
             Assert.IsType<NoContentResult>(result);
+        }
+
+        private void setUser(IdentityUser identity)
+        {
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Name, identity.Id),
+                new Claim(ClaimTypes.NameIdentifier, identity.Id)
+            }, "mock"));
+
+            FakeController.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
         }
 
         private void SeedData()
