@@ -11,17 +11,20 @@ namespace Infrastructure.Repositories
 {
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
+    using Newtonsoft.Json;
 
     public class Repository<T> : IRepository<T>
         where T : BaseEntity
     {
         private readonly DbContext _context;
         private readonly DbSet<T> _dbSet;
+        private readonly DbSet<Activity> _activities;
 
         public Repository(DbContext context)
         {
             _context = context;
             _dbSet = _context.Set<T>();
+            _activities = _context.Set<Activity>();
         }
 
         public IEnumerable<T> Get()
@@ -107,41 +110,65 @@ namespace Infrastructure.Repositories
 
         public async Task<T> Add(T entity, IdentityUser identityUser)
         {
-            await _dbSet.AddAsync(entity);
+            Guid guid;
 
             try
             {
-                entity.CreatedBy = Guid.Parse(identityUser.Id);
+                guid = Guid.Parse(identityUser.Id);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw new ArgumentException(e.Message);
+                throw new ArgumentException("Invalid credentials");
             }
+
+            entity.CreatedBy = guid;
+
+            await _dbSet.AddAsync(entity);
+            await _context.Entry(entity).GetDatabaseValuesAsync();
+
+            await _activities.AddAsync(new Activity
+            {
+                Description = "Add",
+                Properties = JsonConvert.SerializeObject(entity),
+                SubjectId = entity.Id,
+                SubjectType = typeof(T).ToString(),
+                CreatedBy = guid
+            });
 
             await Save();
-
-            await _context.Entry(entity).GetDatabaseValuesAsync();
 
             return entity;
         }
 
         public async Task<T> Update(T entity, IdentityUser identityUser)
         {
+            Guid guid;
+
             try
             {
-                entity.UpdatedBy = Guid.Parse(identityUser.Id);
-                entity.UpdatedAt = DateTime.Now;
+                guid = Guid.Parse(identityUser.Id);
             }
             catch (Exception)
             {
-                throw new ArgumentException("Invalid GUID.");
+                throw new ArgumentException("Invalid credentials.");
             }
 
-            _dbSet.Update(entity);
+            entity.UpdatedBy = guid;
+            entity.UpdatedAt = DateTime.Now;
 
+            _dbSet.Update(entity);
             await Save();
 
-            await _context.Entry(entity).GetDatabaseValuesAsync();
+            await _activities.AddAsync(new Activity
+            {
+                Description = "Update",
+                Properties = JsonConvert.SerializeObject(entity),
+                SubjectId = entity.Id,
+                SubjectType = typeof(T).ToString(),
+                CreatedBy = guid
+            });
+
+            await Save();
 
             return entity;
         }
@@ -150,36 +177,71 @@ namespace Infrastructure.Repositories
         {
             var entity = await Get(id);
 
-            if (entity == null) return;
-            
+            if (entity == null)
+            {
+                return;
+            }
+
+            Guid guid;
+
             try
             {
-                entity.DeletedBy = Guid.Parse(identityUser.Id);
-                entity.DeletedAt = DateTime.Now;
+                guid = Guid.Parse(identityUser.Id);
             }
             catch (Exception)
             {
-                throw new ArgumentException("Invalid GUID.");
+                throw new ArgumentException("Invalid credentials.");
             }
 
+            entity.DeletedBy = guid;
+            entity.DeletedAt = DateTime.Now;
+
             _dbSet.Remove(entity);
+            await Save();
+
+            await _activities.AddAsync(new Activity
+            {
+                Description = "Delete",
+                Properties = JsonConvert.SerializeObject(entity),
+                SubjectId = entity.Id,
+                SubjectType = typeof(T).ToString(),
+                CreatedBy = guid
+            });
+            
             await Save();
         }
 
         public async Task Delete(T entity, IdentityUser identityUser)
         {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
-            
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            Guid guid;
+
             try
             {
-                entity.DeletedBy = Guid.Parse(identityUser.Id);
+                guid = Guid.Parse(identityUser.Id);
             }
             catch (Exception)
             {
-                throw new ArgumentException("Invalid GUID.");
+                throw new ArgumentException("Invalid credentials.");
             }
 
             _dbSet.Remove(entity);
+            await Save();
+
+            await _activities.AddAsync(new Activity
+            {
+                Description = "Delete",
+                Properties = JsonConvert.SerializeObject(entity),
+                SubjectId = entity.Id,
+                SubjectType = typeof(T).ToString(),
+                DeletedBy = guid,
+                DeletedAt = DateTime.Now,
+            });
+            
             await Save();
         }
 
@@ -187,7 +249,10 @@ namespace Infrastructure.Repositories
         {
             var entity = await Get(id);
 
-            if (entity == null) return;
+            if (entity == null)
+            {
+                return;
+            }
 
             _dbSet.Remove(entity);
             await Save();
@@ -195,7 +260,10 @@ namespace Infrastructure.Repositories
 
         public async Task ForceDelete(T entity)
         {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
 
             _dbSet.Remove(entity);
             await Save();
@@ -208,7 +276,10 @@ namespace Infrastructure.Repositories
 
         public void Detach(IEnumerable<T> entities)
         {
-            foreach (var entity in entities) _context.Entry(entity).State = EntityState.Detached;
+            foreach (var entity in entities)
+            {
+                _context.Entry(entity).State = EntityState.Detached;
+            }
         }
 
         public void Detach(T entity)

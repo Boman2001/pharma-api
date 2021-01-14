@@ -14,7 +14,7 @@ using WebApi.Models.Users;
 namespace WebApi.Controllers
 {
     using System.Security.Claims;
-    
+
     [Route("api/[controller]")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
@@ -108,7 +108,7 @@ namespace WebApi.Controllers
 
             try
             {
-                await _identityRepository.Register(identityUser, identityUser.PasswordHash);
+                identityUser = await _identityRepository.Register(identityUser, identityUser.PasswordHash);
             }
             catch (Exception e)
             {
@@ -139,9 +139,12 @@ namespace WebApi.Controllers
             {
                 await _userInformationRepository.Add(userInformation, currentUser);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return BadRequest("Invalid credentials.");
+                return BadRequest(new
+                {
+                    message = e.Message
+                });
 
                 //TODO rollback identityuser
             }
@@ -210,7 +213,7 @@ namespace WebApi.Controllers
                 var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
                 var currentUser = await _identityRepository.GetUserById(userId);
 
-                userInformation = await _userInformationRepository.Update(userInformation,currentUser);
+                userInformation = await _userInformationRepository.Update(userInformation, currentUser);
             }
             catch (Exception e)
             {
@@ -237,17 +240,20 @@ namespace WebApi.Controllers
         {
             var user = await _identityRepository.GetUserById(id);
 
-            if (user == null) return NotFound();
+            if (user == null)
+            {
+                return NotFound();
+            }
 
             await _identityRepository.Delete(user);
 
             var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == user.Id)
                 .FirstOrDefault();
-            
+
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            await _userInformationRepository.Delete(userInformation,currentUser);
+            await _userInformationRepository.Delete(userInformation, currentUser);
 
             return NoContent();
         }

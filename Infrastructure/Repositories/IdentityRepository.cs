@@ -26,7 +26,7 @@ namespace Infrastructure.Repositories
             _authHelper = new AuthHelper(configuration);
         }
 
-        public async Task<JwtSecurityToken> Register(IdentityUser user, string password)
+        public async Task<IdentityUser> Register(IdentityUser user, string password)
         {
             var findByEmailAsync = await _userManager.FindByEmailAsync(user.Email);
 
@@ -39,12 +39,8 @@ namespace Infrastructure.Repositories
             ErrorHandling(result);
 
             await _userManager.AddToRoleAsync(user, "Doctor");
-
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var token = _authHelper.GenerateToken(user, roles);
-
-            return token;
+            
+            return user;
         }
         
         public async Task<JwtSecurityToken> Login(IdentityUser user, string password)
