@@ -53,7 +53,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Episode>> Post([FromBody] Episode episode)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             var createdEpisode = await _episodeRepository.Add(episode, currentUser);
@@ -67,7 +67,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] Episode episode)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             episode.Id = id;
@@ -83,7 +83,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             await _episodeRepository.Delete(id,currentUser);

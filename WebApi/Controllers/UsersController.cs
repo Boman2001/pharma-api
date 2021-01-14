@@ -132,14 +132,14 @@ namespace WebApi.Controllers
                 UserId = Guid.Parse(identityUser.Id)
             };
 
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             try
             {
                 await _userInformationRepository.Add(userInformation, currentUser);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest("Invalid credentials.");
 
@@ -207,7 +207,7 @@ namespace WebApi.Controllers
 
             try
             {
-                var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+                var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
                 var currentUser = await _identityRepository.GetUserById(userId);
 
                 userInformation = await _userInformationRepository.Update(userInformation,currentUser);
@@ -244,7 +244,7 @@ namespace WebApi.Controllers
             var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == user.Id)
                 .FirstOrDefault();
             
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             await _userInformationRepository.Delete(userInformation,currentUser);

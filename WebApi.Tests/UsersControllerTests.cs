@@ -203,7 +203,7 @@ namespace WebApi.Tests
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Name, identity.Id),
-                new Claim(ClaimTypes.NameIdentifier, identity.Id)
+                new Claim(ClaimTypes.Sid, identity.Id)
             }, "mock"));
 
             FakeController.ControllerContext = new ControllerContext()

@@ -20,7 +20,7 @@ namespace Infrastructure
         public DbSet<AdditionalExaminationType> AdditionalExaminationTypes { get; set; }
         public DbSet<Consultation> Consultations { get; set; }
         public DbSet<Episode> Episodes { get; set; }
-        public DbSet<PhysicalExaminationType> ExaminationTypes { get; set; }
+        public DbSet<ExaminationType> ExaminationTypes { get; set; }
         public DbSet<IcpcCode> IcpcCodes { get; set; }
         public DbSet<Intolerance> Intolerances { get; set; }
         public DbSet<Patient> Patients { get; set; }
@@ -38,7 +38,7 @@ namespace Infrastructure
             builder.Entity<AdditionalExaminationType>().ToTable("AdditionalExaminationTypes");
             builder.Entity<Consultation>().ToTable("Consultations");
             builder.Entity<Episode>().ToTable("Episodes");
-            builder.Entity<PhysicalExaminationType>().ToTable("ExaminationTypes");
+            builder.Entity<ExaminationType>().ToTable("ExaminationTypes");
             builder.Entity<IcpcCode>().ToTable("IcpcCodes");
             builder.Entity<Intolerance>().ToTable("Intolerances");
             builder.Entity<Patient>().ToTable("Patients");

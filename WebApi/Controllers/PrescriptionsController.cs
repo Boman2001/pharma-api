@@ -54,7 +54,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Prescription>> Post([FromBody] Prescription prescription)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             var createdPrescription = await _prescriptionRepository.Add(prescription, currentUser);
@@ -68,7 +68,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] Prescription prescription)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             prescription.Id = id;
@@ -84,7 +84,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             await _prescriptionRepository.Delete(id, currentUser);

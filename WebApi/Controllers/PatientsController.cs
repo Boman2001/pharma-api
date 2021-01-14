@@ -60,7 +60,7 @@ namespace WebApi.controllers
         {
             Patient createdPatient;
 
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             try
@@ -85,7 +85,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] Patient patient)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             patient.Id = id;
@@ -101,7 +101,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             await _patientRepository.Delete(id,currentUser);

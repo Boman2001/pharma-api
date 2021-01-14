@@ -24,7 +24,7 @@ namespace Core.DomainServices.Helpers
 
             var claims = new List<Claim>
             {
-                new(ClaimTypes.NameIdentifier, user.Id),
+                new(ClaimTypes.Sid, user.Id),
                 new(ClaimTypes.Email, user.Email), 
             };
 

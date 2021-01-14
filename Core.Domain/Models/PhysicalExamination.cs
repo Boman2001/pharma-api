@@ -14,6 +14,6 @@ namespace Core.Domain.Models
         public Patient Patient { get; set; }
 
         public int ExaminationTypeId { get; set; }
-        public PhysicalExaminationType PhysicalExaminationType { get; set; }
+        public ExaminationType ExaminationType { get; set; }
     }
 }

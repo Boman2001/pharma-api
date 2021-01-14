@@ -54,7 +54,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<PhysicalExamination>> Post([FromBody] PhysicalExamination physicalExamination)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             var createdPhysicalExamination = await _physicalExaminationRepository.Add(physicalExamination, currentUser);
@@ -68,7 +68,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] PhysicalExamination physicalExamination)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             physicalExamination.Id = id;
@@ -84,7 +84,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             await _physicalExaminationRepository.Delete(id,currentUser);

@@ -15,13 +15,13 @@ namespace WebApi.controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class PhysicalExaminationTypesController : Controller
+    public class ExaminationTypesController : Controller
     {
         private readonly IIdentityRepository _identityRepository;
-        private readonly IRepository<PhysicalExaminationType> _physicalExaminationTypeRepository;
+        private readonly IRepository<ExaminationType> _physicalExaminationTypeRepository;
 
-        public PhysicalExaminationTypesController(
-            IRepository<PhysicalExaminationType> physicalExaminationTypeRepository, IIdentityRepository identityRepository)
+        public ExaminationTypesController(
+            IRepository<ExaminationType> physicalExaminationTypeRepository, IIdentityRepository identityRepository)
         {
             _physicalExaminationTypeRepository = physicalExaminationTypeRepository;
             _identityRepository = identityRepository;
@@ -31,7 +31,7 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<PhysicalExaminationType>> Get()
+        public ActionResult<IEnumerable<ExaminationType>> Get()
         {
             return Ok(_physicalExaminationTypeRepository.Get());
         }
@@ -40,7 +40,7 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<PhysicalExaminationType>> Get(int id)
+        public async Task<ActionResult<ExaminationType>> Get(int id)
         {
             var physicalExaminationType = await _physicalExaminationTypeRepository.Get(id);
 
@@ -52,12 +52,12 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<PhysicalExaminationType>> Post([FromBody] PhysicalExaminationType physicalExaminationType)
+        public async Task<ActionResult<ExaminationType>> Post([FromBody] ExaminationType examinationType)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            var createdPhysicalExaminationType = await _physicalExaminationTypeRepository.Add(physicalExaminationType,currentUser);
+            var createdPhysicalExaminationType = await _physicalExaminationTypeRepository.Add(examinationType,currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdPhysicalExaminationType);
         }
@@ -66,15 +66,15 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Put(int id, [FromBody] PhysicalExaminationType physicalExaminationType)
+        public async Task<IActionResult> Put(int id, [FromBody] ExaminationType examinationType)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            physicalExaminationType.Id = id;
+            examinationType.Id = id;
 
             var updatedPhysicalExaminationType =
-                await _physicalExaminationTypeRepository.Update(physicalExaminationType,currentUser);
+                await _physicalExaminationTypeRepository.Update(examinationType,currentUser);
 
             return Ok(updatedPhysicalExaminationType);
         }
@@ -85,7 +85,7 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             await _physicalExaminationTypeRepository.Delete(id,currentUser);
