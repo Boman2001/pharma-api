@@ -26,6 +26,27 @@ namespace Infrastructure.Repositories
             _authHelper = new AuthHelper(configuration);
         }
 
+        public async Task<JwtSecurityToken> Register(IdentityUser user, string password)
+        {
+            var findByEmailAsync = await _userManager.FindByEmailAsync(user.Email);
+
+            if (findByEmailAsync != null)
+            {
+                throw new Exception("E-mailadres is al in gebruik.");
+            }
+
+            var result = await _userManager.CreateAsync(user, password);
+            ErrorHandling(result);
+
+            await _userManager.AddToRoleAsync(user, "Doctor");
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var token = _authHelper.GenerateToken(user, roles);
+
+            return token;
+        }
+        
         public async Task<JwtSecurityToken> Login(IdentityUser user, string password)
         {
             var result = await _userManager.FindByEmailAsync(user.Email);

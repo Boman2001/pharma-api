@@ -7,6 +7,7 @@ namespace Core.DomainServices.Repositories
 {
     public interface IIdentityRepository
     {
+        Task<JwtSecurityToken> Register(IdentityUser user, string password);
         Task<JwtSecurityToken> Login(IdentityUser user, string password);
 
         Task<IdentityResult> Update(IdentityUser user, string password);

@@ -18,11 +18,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     SubjectId = table.Column<int>("int", nullable: false),
                     CauserId = table.Column<Guid>("uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
-                    CreatedBy = table.Column<int>("int", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>("int", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
                     DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    DeletedBy = table.Column<int>("int", nullable: true)
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table => { table.PrimaryKey("PK_Activities", x => x.Id); });
 
@@ -35,11 +35,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     Name = table.Column<string>("nvarchar(max)", nullable: true),
                     Unit = table.Column<string>("nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
-                    CreatedBy = table.Column<int>("int", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>("int", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
                     DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    DeletedBy = table.Column<int>("int", nullable: true)
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table => { table.PrimaryKey("PK_AdditionalExaminationTypes", x => x.Id); });
 
@@ -52,11 +52,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     Name = table.Column<string>("nvarchar(max)", nullable: true),
                     Unit = table.Column<string>("nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
-                    CreatedBy = table.Column<int>("int", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>("int", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
                     DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    DeletedBy = table.Column<int>("int", nullable: true)
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table => { table.PrimaryKey("PK_ExaminationTypes", x => x.Id); });
 
@@ -69,11 +69,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     Name = table.Column<string>("nvarchar(max)", nullable: true),
                     Code = table.Column<string>("nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
-                    CreatedBy = table.Column<int>("int", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>("int", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
                     DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    DeletedBy = table.Column<int>("int", nullable: true)
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table => { table.PrimaryKey("PK_IcpcCodes", x => x.Id); });
 
@@ -96,11 +96,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     PostalCode = table.Column<string>("nvarchar(max)", nullable: true),
                     Country = table.Column<string>("nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
-                    CreatedBy = table.Column<int>("int", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>("int", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
                     DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    DeletedBy = table.Column<int>("int", nullable: true)
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table => { table.PrimaryKey("PK_Patients", x => x.Id); });
 
@@ -123,9 +123,9 @@ namespace Infrastructure.Migrations.ApplicationDb
                     Country = table.Column<string>("nvarchar(max)", nullable: true),
                     UserId = table.Column<Guid>("uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
-                    CreatedBy = table.Column<int>("int", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>("int", nullable: true)
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table => { table.PrimaryKey("PK_UserInformation", x => x.Id); });
 
@@ -139,11 +139,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     DoctorId = table.Column<int>("int", nullable: false),
                     PatientId = table.Column<int>("int", nullable: false),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
-                    CreatedBy = table.Column<int>("int", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>("int", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
                     DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    DeletedBy = table.Column<int>("int", nullable: true)
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -168,11 +168,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     PatientId = table.Column<int>("int", nullable: false),
                     AdditionalExaminationTypeId = table.Column<int>("int", nullable: false),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
-                    CreatedBy = table.Column<int>("int", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>("int", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
                     DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    DeletedBy = table.Column<int>("int", nullable: true)
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -209,11 +209,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     PatientId = table.Column<int>("int", nullable: false),
                     IcpcCodeId = table.Column<int>("int", nullable: false),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
-                    CreatedBy = table.Column<int>("int", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>("int", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
                     DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    DeletedBy = table.Column<int>("int", nullable: true)
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -250,11 +250,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     ConsultationId = table.Column<int>("int", nullable: false),
                     PatientId = table.Column<int>("int", nullable: false),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
-                    CreatedBy = table.Column<int>("int", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>("int", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
                     DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    DeletedBy = table.Column<int>("int", nullable: true)
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -286,11 +286,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     ExaminationTypeId = table.Column<int>("int", nullable: false),
                     PhysicalExaminationTypeId = table.Column<int>("int", nullable: true),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
-                    CreatedBy = table.Column<int>("int", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>("int", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
                     DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    DeletedBy = table.Column<int>("int", nullable: true)
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -327,11 +327,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     ConsultationId = table.Column<int>("int", nullable: false),
                     PatientId = table.Column<int>("int", nullable: false),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
-                    CreatedBy = table.Column<int>("int", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>("int", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
                     DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    DeletedBy = table.Column<int>("int", nullable: true)
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -361,11 +361,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     ConsultationId = table.Column<int>("int", nullable: false),
                     PatientId = table.Column<int>("int", nullable: false),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
-                    CreatedBy = table.Column<int>("int", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>("int", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
                     DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    DeletedBy = table.Column<int>("int", nullable: true)
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {

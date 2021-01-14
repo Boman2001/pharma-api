@@ -8,17 +8,23 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class UserJournalsController : Controller
     {
+        private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<UserJournal> _userJournalRepository;
 
-        public UserJournalsController(IRepository<UserJournal> userJournalRepository)
+        public UserJournalsController(IRepository<UserJournal> userJournalRepository,
+            IIdentityRepository identityRepository)
         {
             _userJournalRepository = userJournalRepository;
+            _identityRepository = identityRepository;
         }
 
         [HttpGet]
@@ -48,7 +54,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<UserJournal>> Post([FromBody] UserJournal userJournal)
         {
-            var createdUserJournal = await _userJournalRepository.Add(userJournal);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            var createdUserJournal = await _userJournalRepository.Add(userJournal, currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdUserJournal);
         }

@@ -103,14 +103,14 @@ namespace Infrastructure
                     switch (entry.State)
                     {
                         case EntityState.Modified:
-                            entry.CurrentValues["UpdatedBy"] = 0;
+                            // entry.CurrentValues["UpdatedBy"] = 0;
                             entry.CurrentValues["UpdatedAt"] = DateTime.Now;
                             break;
                         case EntityState.Deleted:
                             if (entry.Entity is BaseEntitySoftDeletes)
                             {
                                 entry.State = EntityState.Modified;
-                                entry.CurrentValues["DeletedBy"] = 0;
+                                // entry.CurrentValues["DeletedBy"] = 0;
                                 entry.CurrentValues["DeletedAt"] = DateTime.Now;
                             }
 

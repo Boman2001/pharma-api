@@ -8,18 +8,23 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class PhysicalExaminationTypesController : Controller
     {
+        private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<PhysicalExaminationType> _physicalExaminationTypeRepository;
 
         public PhysicalExaminationTypesController(
-            IRepository<PhysicalExaminationType> physicalExaminationTypeRepository)
+            IRepository<PhysicalExaminationType> physicalExaminationTypeRepository, IIdentityRepository identityRepository)
         {
             _physicalExaminationTypeRepository = physicalExaminationTypeRepository;
+            _identityRepository = identityRepository;
         }
 
         [HttpGet]
@@ -47,10 +52,12 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<PhysicalExaminationType>> Post(
-            [FromBody] PhysicalExaminationType physicalExaminationType)
+        public async Task<ActionResult<PhysicalExaminationType>> Post([FromBody] PhysicalExaminationType physicalExaminationType)
         {
-            var createdPhysicalExaminationType = await _physicalExaminationTypeRepository.Add(physicalExaminationType);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            var createdPhysicalExaminationType = await _physicalExaminationTypeRepository.Add(physicalExaminationType,currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdPhysicalExaminationType);
         }

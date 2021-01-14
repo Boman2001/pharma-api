@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Identity;
+
     public class Repository<T> : IRepository<T>
         where T : BaseEntity
     {
@@ -87,9 +90,18 @@ namespace Infrastructure.Repositories
             return query.ToList();
         }
 
-        public async Task<T> Add(T entity)
+        public async Task<T> Add(T entity, IdentityUser identityUser)
         {
             await _dbSet.AddAsync(entity);
+
+            try
+            {
+                entity.CreatedBy = Guid.Parse(identityUser.Id);
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Invalid GUID.");
+            }
 
             await Save();
 

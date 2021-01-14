@@ -13,7 +13,8 @@ using WebApi.Models.Users;
 
 namespace WebApi.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
@@ -76,6 +77,7 @@ namespace WebApi.Controllers
             var user = _mapper.Map<IdentityUser, UserDto>(result);
             var userInformation = _userInformationRepository.Get(u => u.UserId == user.Id)
                 .FirstOrDefault();
+
             var userInformationDto = _mapper.Map<UserInformation, UserInformationDto>(userInformation);
             _mapper.Map(userInformationDto, user);
 
@@ -96,13 +98,25 @@ namespace WebApi.Controllers
                 PhoneNumber = newUserDto.PhoneNumber,
                 PasswordHash = newUserDto.Password
             };
-            
-            identityUser = await _identityRepository.GetUserByEmail(identityUser.Email);
 
-            //if (identityUser != null)
-            //{
-            //    return BadRequest("E-mailadres is al in gebruik.");
-            //}
+            var checkEmail = await _identityRepository.GetUserByEmail(identityUser.Email);
+
+            if (checkEmail != null)
+            {
+                return BadRequest("E-mailadres is al in gebruik.");
+            }
+
+            try
+            {
+                await _identityRepository.Register(identityUser, identityUser.PasswordHash);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                {
+                    message = e.Message
+                });
+            }
 
             var userInformation = new UserInformation
             {
@@ -118,7 +132,17 @@ namespace WebApi.Controllers
                 UserId = Guid.Parse(identityUser.Id)
             };
 
-            await _userInformationRepository.Add(userInformation);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            try
+            {
+                await _userInformationRepository.Add(userInformation, currentUser);
+            }
+            catch (Exception e)
+            {
+                //TODO rollback identityuser
+            }
 
             var user = new UserDto
             {

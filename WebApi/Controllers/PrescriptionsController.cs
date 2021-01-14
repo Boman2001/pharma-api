@@ -8,17 +8,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class PrescriptionsController : Controller
     {
+        private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Prescription> _prescriptionRepository;
 
-        public PrescriptionsController(IRepository<Prescription> prescriptionRepository)
+        public PrescriptionsController(IRepository<Prescription> prescriptionRepository, IIdentityRepository identityRepository)
         {
             _prescriptionRepository = prescriptionRepository;
+            _identityRepository = identityRepository;
         }
 
         [HttpGet]
@@ -48,7 +53,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Prescription>> Post([FromBody] Prescription prescription)
         {
-            var createdPrescription = await _prescriptionRepository.Add(prescription);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            var createdPrescription = await _prescriptionRepository.Add(prescription,currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdPrescription);
         }

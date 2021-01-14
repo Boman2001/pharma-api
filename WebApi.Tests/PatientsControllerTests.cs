@@ -11,20 +11,30 @@ using Xunit;
 
 namespace WebApi.Tests
 {
+    using Infrastructure.Repositories;
+    using Microsoft.AspNetCore.Identity;
+
     public class PatientsControllerTests
     {
         private List<Patient> _fakeUsersPatient;
+        private List<IdentityUser> _fakeIdentityUsers;
         private PatientsController FakeController { get; }
+        private IdentityRepository IdentityRepositoryFake { get; }
 
         public PatientsControllerTests()
         {
             SeedData();
-
+            
             IConfiguration config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .Build();
+            
+            var userManager = MockUserManager.GetMockUserManager(_fakeIdentityUsers).Object;
+            var signInManager = MockSigninManager.GetSignInManager<IdentityUser>(userManager).Object;
+            IdentityRepositoryFake = new IdentityRepository(userManager, signInManager, config);
+
             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_fakeUsersPatient);
-            FakeController = new PatientsController(fakeGenericRepo.Object, config);
+            FakeController = new PatientsController(fakeGenericRepo.Object, config, IdentityRepositoryFake);
         }
 
         //Get Tests

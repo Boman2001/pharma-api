@@ -8,17 +8,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class EpisodeController : Controller
     {
+        private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Episode> _episodeRepository;
 
-        public EpisodeController(IRepository<Episode> episodeRepository)
+        public EpisodeController(IRepository<Episode> episodeRepository, IIdentityRepository identityRepository)
         {
             _episodeRepository = episodeRepository;
+            _identityRepository = identityRepository;
         }
 
         [HttpGet]
@@ -48,7 +53,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Episode>> Post([FromBody] Episode episode)
         {
-            var createdEpisode = await _episodeRepository.Add(episode);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            var createdEpisode = await _episodeRepository.Add(episode, currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdEpisode);
         }

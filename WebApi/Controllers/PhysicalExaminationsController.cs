@@ -8,17 +8,23 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class PhysicalExaminationsController : Controller
     {
+        private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<PhysicalExamination> _physicalExaminationRepository;
 
-        public PhysicalExaminationsController(IRepository<PhysicalExamination> physicalExaminationRepository)
+        public PhysicalExaminationsController(IRepository<PhysicalExamination> physicalExaminationRepository,
+            IIdentityRepository identityRepository)
         {
             _physicalExaminationRepository = physicalExaminationRepository;
+            _identityRepository = identityRepository;
         }
 
         [HttpGet]
@@ -48,7 +54,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<PhysicalExamination>> Post([FromBody] PhysicalExamination physicalExamination)
         {
-            var createdPhysicalExamination = await _physicalExaminationRepository.Add(physicalExamination);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            var createdPhysicalExamination = await _physicalExaminationRepository.Add(physicalExamination, currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdPhysicalExamination);
         }

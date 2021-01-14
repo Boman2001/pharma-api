@@ -8,17 +8,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class ConsultationController : Controller
     {
+        private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Consultation> _consultationRepository;
 
-        public ConsultationController(IRepository<Consultation> consultationRepository)
+        public ConsultationController(IRepository<Consultation> consultationRepository, IIdentityRepository identityRepository)
         {
             _consultationRepository = consultationRepository;
+            _identityRepository = identityRepository;
         }
 
         [HttpGet]
@@ -48,7 +53,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Consultation>> Post([FromBody] Consultation consultation)
         {
-            var createdConsultation = await _consultationRepository.Add(consultation);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+            
+            var createdConsultation = await _consultationRepository.Add(consultation, currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdConsultation);
         }

@@ -11,18 +11,23 @@ using Microsoft.Extensions.Configuration;
 
 namespace WebApi.controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class PatientsController : Controller
     {
+        private readonly IIdentityRepository _identityRepository;
         private readonly PatientHelper _patientHelper;
         private readonly IRepository<Patient> _patientRepository;
 
-        public PatientsController(IRepository<Patient> patientRepository, IConfiguration config)
+        public PatientsController(IRepository<Patient> patientRepository, IConfiguration config, IIdentityRepository identityRepository)
         {
             _patientRepository = patientRepository;
+            _identityRepository = identityRepository;
             _patientHelper = new PatientHelper(config);
         }
 
@@ -55,10 +60,13 @@ namespace WebApi.controllers
         {
             Patient createdPatient;
 
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
             try
             {
                 createdPatient = await _patientHelper.AddLatLongToPatient(patient);
-                createdPatient = await _patientRepository.Add(createdPatient);
+                createdPatient = await _patientRepository.Add(createdPatient,currentUser);
             }
             catch (Exception e)
             {
