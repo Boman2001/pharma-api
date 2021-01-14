@@ -16,9 +16,6 @@ namespace WebApi.Models.Users
         [Required(ErrorMessage = "Naam is verplicht.")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "BSN is verplicht.")]
-        public string Bsn { get; set; }
-
         [Required(ErrorMessage = "Geboortedatum is verplicht.")]
         public DateTime Dob { get; set; }
 
