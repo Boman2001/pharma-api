@@ -2,7 +2,7 @@
 
 namespace Core.Domain.Models
 {
-    public class AdditionalExaminationResult : BaseEntitySoftDeletes
+    public class AdditionalExaminationResult : BaseEntity
     {
         public string Value { get; set; }
         public DateTime Date { get; set; }

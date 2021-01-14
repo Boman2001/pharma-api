@@ -15,12 +15,12 @@ namespace WebApi.controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class ConsultationController : Controller
+    public class ConsultationsController : Controller
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Consultation> _consultationRepository;
 
-        public ConsultationController(IRepository<Consultation> consultationRepository, IIdentityRepository identityRepository)
+        public ConsultationsController(IRepository<Consultation> consultationRepository, IIdentityRepository identityRepository)
         {
             _consultationRepository = consultationRepository;
             _identityRepository = identityRepository;
@@ -67,9 +67,12 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] Consultation consultation)
         {
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
             consultation.Id = id;
 
-            var updatedConsultation = await _consultationRepository.Update(consultation);
+            var updatedConsultation = await _consultationRepository.Update(consultation,currentUser);
 
             return Ok(updatedConsultation);
         }
@@ -80,7 +83,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            await _consultationRepository.Delete(id);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _consultationRepository.Delete(id,currentUser);
 
             return NoContent();
         }

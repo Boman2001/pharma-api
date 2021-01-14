@@ -78,8 +78,12 @@ namespace Infrastructure
                 .OnDelete(DeleteBehavior.Restrict);
 
             foreach (var entityType in builder.Model.GetEntityTypes())
-                if (typeof(IBaseEntitySoftDeletes).IsAssignableFrom(entityType.ClrType))
+            {
+                if (typeof(IEntity).IsAssignableFrom(entityType.ClrType))
+                {
                     entityType.AddSoftDeleteQueryFilter();
+                }
+            }
         }
 
         public override int SaveChanges()
@@ -107,7 +111,7 @@ namespace Infrastructure
                             entry.CurrentValues["UpdatedAt"] = DateTime.Now;
                             break;
                         case EntityState.Deleted:
-                            if (entry.Entity is BaseEntitySoftDeletes)
+                            if (entry.Entity is BaseEntity)
                             {
                                 entry.State = EntityState.Modified;
                                 // entry.CurrentValues["DeletedBy"] = 0;

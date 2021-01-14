@@ -20,11 +20,10 @@ namespace Core.DomainServices.Repositories
 
         IEnumerable<T> Get(Expression<Func<T, bool>> filter, IEnumerable<string> includeProperties,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy);
-
         Task<T> Add(T model, IdentityUser identityUser);
-        Task<T> Update(T model);
-        Task Delete(int id);
-        Task Delete(T model);
+        Task<T> Update(T model, IdentityUser identityUser);
+        Task Delete(int id, IdentityUser identityUser);
+        Task Delete(T model, IdentityUser identityUser);
         Task ForceDelete(int id);
         Task ForceDelete(T model);
         Task Save();

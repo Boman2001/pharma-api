@@ -20,7 +20,8 @@ namespace WebApi.controllers
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Prescription> _prescriptionRepository;
 
-        public PrescriptionsController(IRepository<Prescription> prescriptionRepository, IIdentityRepository identityRepository)
+        public PrescriptionsController(IRepository<Prescription> prescriptionRepository,
+            IIdentityRepository identityRepository)
         {
             _prescriptionRepository = prescriptionRepository;
             _identityRepository = identityRepository;
@@ -56,7 +57,7 @@ namespace WebApi.controllers
             var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            var createdPrescription = await _prescriptionRepository.Add(prescription,currentUser);
+            var createdPrescription = await _prescriptionRepository.Add(prescription, currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdPrescription);
         }
@@ -67,9 +68,12 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] Prescription prescription)
         {
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
             prescription.Id = id;
 
-            var updatedPrescription = await _prescriptionRepository.Update(prescription);
+            var updatedPrescription = await _prescriptionRepository.Update(prescription, currentUser);
 
             return Ok(updatedPrescription);
         }
@@ -80,7 +84,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            await _prescriptionRepository.Delete(id);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _prescriptionRepository.Delete(id, currentUser);
 
             return NoContent();
         }

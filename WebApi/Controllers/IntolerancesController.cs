@@ -68,9 +68,12 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] Intolerance intolerance)
         {
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
             intolerance.Id = id;
 
-            var updatedIntolerance = await _intoleranceRepository.Update(intolerance);
+            var updatedIntolerance = await _intoleranceRepository.Update(intolerance,currentUser);
 
             return Ok(updatedIntolerance);
         }
@@ -81,7 +84,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            await _intoleranceRepository.Delete(id);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _intoleranceRepository.Delete(id,currentUser);
 
             return NoContent();
         }

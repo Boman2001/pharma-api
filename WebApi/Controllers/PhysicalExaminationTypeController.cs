@@ -68,10 +68,13 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] PhysicalExaminationType physicalExaminationType)
         {
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
             physicalExaminationType.Id = id;
 
             var updatedPhysicalExaminationType =
-                await _physicalExaminationTypeRepository.Update(physicalExaminationType);
+                await _physicalExaminationTypeRepository.Update(physicalExaminationType,currentUser);
 
             return Ok(updatedPhysicalExaminationType);
         }
@@ -82,7 +85,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            await _physicalExaminationTypeRepository.Delete(id);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _physicalExaminationTypeRepository.Delete(id,currentUser);
 
             return NoContent();
         }

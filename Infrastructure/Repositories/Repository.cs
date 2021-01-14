@@ -110,8 +110,17 @@ namespace Infrastructure.Repositories
             return entity;
         }
 
-        public async Task<T> Update(T entity)
+        public async Task<T> Update(T entity, IdentityUser identityUser)
         {
+            try
+            {
+                entity.UpdatedBy = Guid.Parse(identityUser.Id);
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Invalid GUID.");
+            }
+
             _dbSet.Update(entity);
 
             await Save();
@@ -121,19 +130,37 @@ namespace Infrastructure.Repositories
             return entity;
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(int id, IdentityUser identityUser)
         {
             var entity = await Get(id);
 
             if (entity == null) return;
+            
+            try
+            {
+                entity.DeletedBy = Guid.Parse(identityUser.Id);
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Invalid GUID.");
+            }
 
             _dbSet.Remove(entity);
             await Save();
         }
 
-        public async Task Delete(T entity)
+        public async Task Delete(T entity, IdentityUser identityUser)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
+            
+            try
+            {
+                entity.DeletedBy = Guid.Parse(identityUser.Id);
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Invalid GUID.");
+            }
 
             _dbSet.Remove(entity);
             await Save();

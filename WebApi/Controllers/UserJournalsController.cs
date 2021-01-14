@@ -68,9 +68,12 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] UserJournal userJournal)
         {
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
             userJournal.Id = id;
 
-            var updatedUserJournal = await _userJournalRepository.Update(userJournal);
+            var updatedUserJournal = await _userJournalRepository.Update(userJournal, currentUser);
 
             return Ok(updatedUserJournal);
         }
@@ -81,7 +84,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            await _userJournalRepository.Delete(id);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _userJournalRepository.Delete(id, currentUser);
 
             return NoContent();
         }

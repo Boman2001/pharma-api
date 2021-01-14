@@ -15,12 +15,12 @@ namespace WebApi.controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class EpisodeController : Controller
+    public class EpisodesController : Controller
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Episode> _episodeRepository;
 
-        public EpisodeController(IRepository<Episode> episodeRepository, IIdentityRepository identityRepository)
+        public EpisodesController(IRepository<Episode> episodeRepository, IIdentityRepository identityRepository)
         {
             _episodeRepository = episodeRepository;
             _identityRepository = identityRepository;
@@ -67,9 +67,12 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] Episode episode)
         {
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
             episode.Id = id;
 
-            var updatedEpisode = await _episodeRepository.Update(episode);
+            var updatedEpisode = await _episodeRepository.Update(episode,currentUser);
 
             return Ok(updatedEpisode);
         }
@@ -80,7 +83,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            await _episodeRepository.Delete(id);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _episodeRepository.Delete(id,currentUser);
 
             return NoContent();
         }

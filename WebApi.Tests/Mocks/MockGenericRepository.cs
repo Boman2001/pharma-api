@@ -27,7 +27,7 @@ namespace WebApi.Tests.Mocks
                 .Callback((T t) => usersInformationList.Add(t))
                 .Returns(Task.FromResult(It.IsAny<T>()));
 
-            repository.Setup(x => x.Delete(It.IsAny<int>()))
+            repository.Setup(x => x.Delete(It.IsAny<int>(), It.IsAny<IdentityUser>()))
                 .Callback((int t) => usersInformationList.RemoveAt(t))
                 .Returns(Task.FromResult(0));
 

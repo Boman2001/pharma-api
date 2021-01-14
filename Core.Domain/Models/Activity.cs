@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Core.Domain.Models
 {
-    public class Activity : BaseEntitySoftDeletes
+    public class Activity : BaseEntity
     {
         public string Description { get; set; }
         public string Properties { get; set; }

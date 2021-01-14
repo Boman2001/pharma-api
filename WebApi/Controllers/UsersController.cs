@@ -205,7 +205,10 @@ namespace WebApi.Controllers
 
             try
             {
-                userInformation = await _userInformationRepository.Update(userInformation);
+                var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+                var currentUser = await _identityRepository.GetUserById(userId);
+
+                userInformation = await _userInformationRepository.Update(userInformation,currentUser);
             }
             catch (Exception e)
             {
@@ -238,7 +241,11 @@ namespace WebApi.Controllers
 
             var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == user.Id)
                 .FirstOrDefault();
-            await _userInformationRepository.Delete(userInformation);
+            
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _userInformationRepository.Delete(userInformation,currentUser);
 
             return NoContent();
         }

@@ -4,7 +4,7 @@ using Core.Domain.Enums;
 
 namespace Core.Domain.Models
 {
-    public class Patient : BaseEntitySoftDeletes
+    public class Patient : BaseEntity
     {
         public string Name { get; set; }
         public string Bsn { get; set; }

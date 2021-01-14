@@ -1,6 +1,6 @@
 ﻿namespace Core.Domain.Models
 {
-    public class UserJournal : BaseEntitySoftDeletes
+    public class UserJournal : BaseEntity
     {
         public string Description { get; set; }
         public int Property { get; set; }
