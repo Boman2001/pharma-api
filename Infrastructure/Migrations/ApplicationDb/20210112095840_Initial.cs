@@ -111,7 +111,6 @@ namespace Infrastructure.Migrations.ApplicationDb
                     Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>("nvarchar(max)", nullable: true),
-                    Bsn = table.Column<string>("nvarchar(max)", nullable: true),
                     Dob = table.Column<DateTime>("datetime2", nullable: false),
                     Gender = table.Column<int>("int", nullable: false),
                     PhoneNumber = table.Column<string>("nvarchar(max)", nullable: true),
@@ -137,6 +136,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                 {
                     Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Comments = table.Column<string>("nvarchar(max)", nullable: true),
                     Date = table.Column<DateTime>("datetime2", nullable: false),
                     DoctorId = table.Column<Guid>("uniqueidentifier", nullable: false),
                     PatientId = table.Column<int>("int", nullable: false),
