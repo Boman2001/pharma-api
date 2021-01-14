@@ -48,12 +48,16 @@ namespace Infrastructure.Repositories
             var result = await _userManager.FindByEmailAsync(user.Email);
 
             if (result == null)
+            {
                 throw new ArgumentException("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
+            }
 
             var loginResult = await _signInManager.PasswordSignInAsync(user.UserName, password, false, false);
 
             if (!loginResult.Succeeded)
+            {
                 throw new ArgumentException("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
+            }
 
             var roles = await _userManager.GetRolesAsync(result);
             var token = _authHelper.GenerateToken(result, roles);
@@ -64,11 +68,16 @@ namespace Infrastructure.Repositories
         {
             var result = await _userManager.FindByIdAsync(user.Id);
 
-            if (result == null) throw new ArgumentException("Gebruiker bestaat niet.");
+            if (result == null)
+            {
+                throw new ArgumentException("Gebruiker bestaat niet.");
+            }
 
             var findByEmailAsync = await _userManager.FindByEmailAsync(result.Email);
             if (findByEmailAsync?.Id != result.Id && findByEmailAsync?.Email == result.Email)
+            {
                 throw new ArgumentException("E-mailadres is al in gebruik.");
+            }
 
             result.Email = user.Email;
             result.UserName = user.UserName;
@@ -78,9 +87,12 @@ namespace Infrastructure.Repositories
             {
                 var passwordCheck = await _userManager.CheckPasswordAsync(user, password);
 
-                if (!passwordCheck) throw new ArgumentException("Wachtwoord is ongeldig.");
+                if (!passwordCheck)
+                {
+                    throw new ArgumentException("Wachtwoord is ongeldig.");
+                }
 
-                    result.PasswordHash = _userManager.PasswordHasher.HashPassword(user, password);
+                result.PasswordHash = _userManager.PasswordHasher.HashPassword(user, password);
             }
 
             return await _userManager.UpdateAsync(result);
@@ -111,7 +123,10 @@ namespace Infrastructure.Repositories
         {
             var exceptions = result.Errors.Select(error => new Exception(error.Description)).ToList();
 
-            if (exceptions.Count >= 1) throw new AggregateException(exceptions);
+            if (exceptions.Count >= 1)
+            {
+                throw new AggregateException(exceptions);
+            }
         }
     }
 }

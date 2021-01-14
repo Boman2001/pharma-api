@@ -15,6 +15,7 @@ namespace WebApi.Controllers
 {
     using System.Security.Claims;
 
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
@@ -72,7 +73,10 @@ namespace WebApi.Controllers
         {
             var result = await _identityRepository.GetUserById(id);
 
-            if (result == null) return NotFound();
+            if (result == null)
+            {
+                return NotFound();
+            }
 
             var user = _mapper.Map<IdentityUser, UserDto>(result);
             var userInformation = _userInformationRepository.Get(u => u.UserId == user.Id)
@@ -176,7 +180,10 @@ namespace WebApi.Controllers
         {
             var user = await _identityRepository.GetUserById(id);
 
-            if (user == null) return NotFound();
+            if (user == null)
+            {
+                return NotFound();
+            }
 
             user.Email = updateUserDto.Email;
             user.UserName = updateUserDto.Email;
@@ -196,7 +203,10 @@ namespace WebApi.Controllers
 
             var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == id).FirstOrDefault();
 
-            if (userInformation == null) return NotFound();
+            if (userInformation == null)
+            {
+                return NotFound();
+            }
 
             userInformation.Name = updateUserDto.Name;
             userInformation.Dob = updateUserDto.Dob;

@@ -53,7 +53,9 @@ namespace WebApi.Controllers
             var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == user.Id).FirstOrDefault();
 
             if (user == null || userInformation == null)
+            {
                 return NotFound();
+            }
 
             var userDto = new UserDto
             {

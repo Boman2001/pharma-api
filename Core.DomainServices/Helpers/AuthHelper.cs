@@ -28,7 +28,10 @@ namespace Core.DomainServices.Helpers
                 new(ClaimTypes.Email, user.Email), 
             };
 
-            if (roles != null && roles.Count > 0) claims.Add(new Claim(ClaimTypes.Role, roles[0]));
+            if (roles != null && roles.Count > 0)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, roles[0]));
+            }
 
             return new JwtSecurityToken(
                 _configuration["JWT:ValidIssuer"],

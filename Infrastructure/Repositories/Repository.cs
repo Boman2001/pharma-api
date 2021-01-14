@@ -41,7 +41,10 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            if (filter == null) return query.ToList();
+            if (filter == null)
+            {
+                return query.ToList();
+            }
 
             query = query.Where(filter);
 
@@ -76,7 +79,10 @@ namespace Infrastructure.Repositories
                 query = query.Include(includeProperty);
             }
 
-            if (filter == null) return query.ToList();
+            if (filter == null)
+            {
+                return query.ToList();
+            }
 
             query = query.Where(filter);
 
