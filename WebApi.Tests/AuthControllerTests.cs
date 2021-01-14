@@ -107,11 +107,21 @@ namespace WebApi.Tests
         {
             _fakeIdentityUser = new IdentityUser
             {
-                PasswordHash = "password", Email = "email@gmail.com", UserName = "email@gmail.com"
+                PasswordHash = "password", Email = "email@gmail.com", UserName = "email@gmail.com",
+                PhoneNumber = "+31623183611",
+                PhoneNumberConfirmed = true,
+                NormalizedUserName = "M@GMAIL.COM",
+                NormalizedEmail = "M@GMAIL.COM",
+                EmailConfirmed = true,
             };
             var extraIdentityUser = new IdentityUser
             {
-                PasswordHash = "password", Email = "email2@gmail.com", UserName = "email@gmail.com"
+                PasswordHash = "password", Email = "email2@gmail.com", UserName = "email@gmail.com",
+                PhoneNumber = "+31623183611",
+                PhoneNumberConfirmed = true,
+                NormalizedUserName = "M@GMAIL.COM",
+                NormalizedEmail = "M@GMAIL.COM",
+                EmailConfirmed = true,
             };
             _fakeIdentityUsers = new List<IdentityUser>
             {

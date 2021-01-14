@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Core.Domain.Enums;
 using Core.Domain.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Moq;
 using WebApi.controllers;
 using WebApi.Tests.Mocks;
 using Xunit;
@@ -35,6 +40,9 @@ namespace WebApi.Tests
 
             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_fakeUsersPatient);
             FakeController = new PatientsController(fakeGenericRepo.Object, config, IdentityRepositoryFake);
+
+            setUser(_fakeIdentityUsers[0]);
+           
         }
 
         //Get Tests
@@ -97,7 +105,8 @@ namespace WebApi.Tests
             };
             var lengthBefore = _fakeUsersPatient.Count;
 
-            var result = await FakeController.Post(patient);
+        
+                    var result = await FakeController.Post(patient);
             var objActionResult = (CreatedAtActionResult) result.Result;
 
             Assert.Equal(lengthBefore + 1, _fakeUsersPatient.Count);
@@ -172,6 +181,20 @@ namespace WebApi.Tests
             Assert.Equal(lengthBefore - 1, _fakeUsersPatient.Count);
         }
 
+        private void setUser (IdentityUser identity)
+        {
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Name, identity.Id),
+                new Claim(ClaimTypes.NameIdentifier, identity.Id)
+            }, "mock"));
+
+            FakeController.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
+        }
+
         private void SeedData()
         {
             _fakeUsersPatient = new List<Patient>();
@@ -208,6 +231,34 @@ namespace WebApi.Tests
                 patient,
                 patient02
             });
+
+            var _fakeIdentityUser = new IdentityUser
+            {
+                PasswordHash = "password",
+                Email = "email@gmail.com",
+                UserName = "email@gmail.com",
+                PhoneNumber = "+31623183611",
+                PhoneNumberConfirmed = true,
+                NormalizedUserName = "M@GMAIL.COM",
+                NormalizedEmail = "M@GMAIL.COM",
+                EmailConfirmed = true,
+            };
+            var extraIdentityUser = new IdentityUser
+            {
+                PasswordHash = "password",
+                Email = "email2@gmail.com",
+                UserName = "email@gmail.com",
+                PhoneNumber = "+31623183611",
+                PhoneNumberConfirmed = true,
+                NormalizedUserName = "M@GMAIL.COM",
+                NormalizedEmail = "M@GMAIL.COM",
+                EmailConfirmed = true,
+            };
+
+            _fakeIdentityUsers = new List<IdentityUser>
+            {
+                _fakeIdentityUser, extraIdentityUser
+            };
         }
     }
 }
