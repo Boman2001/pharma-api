@@ -125,7 +125,9 @@ namespace Infrastructure.Migrations.ApplicationDb
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
                     CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
-                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table => { table.PrimaryKey("PK_UserInformation", x => x.Id); });
 

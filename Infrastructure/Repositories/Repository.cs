@@ -49,7 +49,10 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            foreach (var includeProperty in includeProperties) query = query.Include(includeProperty);
+            foreach (var includeProperty in includeProperties)
+            {
+                query = query.Include(includeProperty);
+            }
 
             return query.ToList();
         }
@@ -65,7 +68,10 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            foreach (var includeProperty in includeProperties) query = query.Include(includeProperty);
+            foreach (var includeProperty in includeProperties)
+            {
+                query = query.Include(includeProperty);
+            }
 
             if (filter == null) return query.ToList();
 
@@ -81,11 +87,20 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            foreach (var includeProperty in includeProperties) query = query.Include(includeProperty);
+            foreach (var includeProperty in includeProperties)
+            {
+                query = query.Include(includeProperty);
+            }
 
-            if (filter != null) query = query.Where(filter);
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
 
-            if (orderBy != null) return orderBy(query).ToList();
+            if (orderBy != null)
+            {
+                return orderBy(query).ToList();
+            }
 
             return query.ToList();
         }
@@ -115,6 +130,7 @@ namespace Infrastructure.Repositories
             try
             {
                 entity.UpdatedBy = Guid.Parse(identityUser.Id);
+                entity.UpdatedAt = DateTime.Now;
             }
             catch (Exception)
             {
@@ -139,6 +155,7 @@ namespace Infrastructure.Repositories
             try
             {
                 entity.DeletedBy = Guid.Parse(identityUser.Id);
+                entity.DeletedAt = DateTime.Now;
             }
             catch (Exception)
             {
