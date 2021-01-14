@@ -14,7 +14,7 @@ using WebApi.Models.Users;
 namespace WebApi.Controllers
 {
     using System.Security.Claims;
-
+    
     [Route("api/[controller]")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
@@ -141,6 +141,8 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
+                return BadRequest("Invalid credentials.");
+
                 //TODO rollback identityuser
             }
 

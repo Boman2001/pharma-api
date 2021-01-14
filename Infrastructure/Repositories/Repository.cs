@@ -113,9 +113,9 @@ namespace Infrastructure.Repositories
             {
                 entity.CreatedBy = Guid.Parse(identityUser.Id);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new ArgumentException("Invalid GUID.");
+                throw new ArgumentException(e.Message);
             }
 
             await Save();

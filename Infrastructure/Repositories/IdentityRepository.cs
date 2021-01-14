@@ -60,7 +60,7 @@ namespace Infrastructure.Repositories
                 throw new ArgumentException("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
 
             var roles = await _userManager.GetRolesAsync(result);
-            var token = _authHelper.GenerateToken(user, roles);
+            var token = _authHelper.GenerateToken(result, roles);
             return token;
         }
 
