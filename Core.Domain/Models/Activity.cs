@@ -9,7 +9,5 @@ namespace Core.Domain.Models
 
         public int SubjectId { get; set; }
         public string SubjectType { get; set; }
-
-        public Guid CauserId { get; set; }
     }
 }

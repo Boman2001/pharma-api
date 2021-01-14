@@ -10,11 +10,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models.Users;
+using System.Security.Claims;
 
 namespace WebApi.Controllers
 {
-    using System.Security.Claims;
-
     [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
