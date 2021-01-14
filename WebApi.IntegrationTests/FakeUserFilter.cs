@@ -11,9 +11,10 @@ namespace WebApi.IntegrationTests
         {
             context.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, "12345678-1234-1234-1234-123456789012"),
+                new Claim(ClaimTypes.Sid, "6105002a-295f-49b1-ace3-2072c7edbb69"),
                 new Claim(ClaimTypes.Name, "TestUser"),
-                new Claim(ClaimTypes.Email, "test.user@example.com"), // add as many claims as you need
+                new Claim(ClaimTypes.Email, "test.user@example.com"),
+                new Claim(ClaimTypes.Role, "Admin")    
             }));
 
             await next();

@@ -45,7 +45,7 @@ namespace Infrastructure.Tests
 
         [Trait("Category", "Login Tests")]
         [Fact]
-        public async Task Given_InCorrect_Email_Returns_Error()
+        public async Task Given_In_Correct_Email_Returns_Error()
         {
            var user = new IdentityUser
             {

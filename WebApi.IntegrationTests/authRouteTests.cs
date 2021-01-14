@@ -1,11 +1,15 @@
-﻿using System.Net;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using WebApi.Models.Authentication;
 
 namespace WebApi.IntegrationTests
 {
@@ -23,9 +27,35 @@ namespace WebApi.IntegrationTests
             });
         }
 
+        [Trait("Category", "api/doctors")]
+        [Fact]
+        public void Given_Valid_Login_Details_Returns_Ok_And_Valid_Token()
+        {
+            var newUserDto = new LoginDto {Email = "m@gmail.com", Password = "password"};
+
+            var serialize = JsonConvert.SerializeObject(newUserDto);
+
+            var content = new StringContent(serialize, Encoding.UTF8, "application/json");
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = _client.PostAsync("/api/auth/login", content).Result;
+
+            var readAsStringAsync = result.Content.ReadAsStringAsync();
+            var json = readAsStringAsync.Result;
+            var jObject = JObject.Parse(json);
+            _token = jObject["token"].Value<string>();
+
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadToken(_token.ToString()) as JwtSecurityToken;
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.IsType<JwtSecurityToken>(token);
+            Assert.InRange(token.Claims.Count(), 5, 10);
+            Assert.InRange(token.Payload.Count, 5, 10);
+        }
+
         [Trait("Category", "Routes")]
         [Fact]
-        public async Task Step0_Not_Found_Test()
+        public async Task Requesting_To_Non_Existing_Route_Gives_Bad_Request()
         {
             var defaultPage = await _client.GetAsync("/ntoFound");
 
@@ -34,183 +64,91 @@ namespace WebApi.IntegrationTests
 
         [Trait("Category", "api/doctors")]
         [Fact]
-        public async Task Step1_Register()
+        public void Given_No_Email_Login_Returns_Bad_Request()
         {
-            var content = new StringContent($"email={"de@LEander.com"}&password={"eLEANDER223"}",
-                Encoding.UTF8,
-                "application/x-www-form-urlencoded");
+            var newUserDto = new LoginDto {Password = "password"};
 
-            var defaultPage = await _client.PostAsync("/api/doctors", content);
-            var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
-            var json = readAsStringAsync.Result;
-            _token = JObject.Parse(json)["token"];
-            var jToken = JObject.Parse(json)["user"];
-            var user = jToken.ToObject<IdentityUser>();
 
-            Assert.Equal(HttpStatusCode.OK, defaultPage.StatusCode);
-            Assert.NotNull(_token);
-            Assert.Equal("de@LEander.com", user.Email);
-        }
+            var serialize = JsonConvert.SerializeObject(newUserDto);
 
-        [Trait("Category", "api/auth.login")]
-        [Fact]
-        public async Task Step2_Login()
-        {
-            var content = new StringContent($"email={"de@LEander.com"}&password={"eLEANDER223"}",
-                Encoding.UTF8,
-                "application/x-www-form-urlencoded");
+            var content = new StringContent(serialize, Encoding.UTF8, "application/json");
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = _client.PostAsync("/api/auth/login", content).Result;
+            var readAsStringAsync = result.Content.ReadAsStringAsync();
 
-            var defaultPage = await _client.PostAsync("/api/auth/login", content);
-            var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
-            var json = readAsStringAsync.Result;
-            _token = JObject.Parse(json)["token"];
-            var jToken = JObject.Parse(json)["user"];
-            var user = jToken.ToObject<IdentityUser>();
-
-            Assert.Equal(HttpStatusCode.OK, defaultPage.StatusCode);
-            Assert.NotNull(_token);
-            Assert.Equal("de@LEander.com", user.Email);
-        }
-
-        [Trait("Category", "api/auth.login")]
-        [Fact]
-        public async Task Step3_Login_non_existent_user()
-        {
-            var content = new StringContent($"email={"d@LEanader.com"}&password={"LEANDEaR223"}",
-                Encoding.UTF8,
-                "application/x-www-form-urlencoded");
-
-            var defaultPage = await _client.PostAsync("/api/auth/login", content);
-            var contesnt = defaultPage.Content.ReadAsStringAsync();
-
-            var json = contesnt.Result;
-            var message = JObject.Parse(json)["message"];
-            Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
-            Assert.NotNull(message);
-            Assert.Equal("User doesnt exist", message);
-        }
-
-        [Trait("Category", "api/auth.login")]
-        [Fact]
-        public async Task Step4_Login_wrong_password()
-        {
-            var content = new StringContent($"email={"d@LEander.com"}&password={"LEANDEaR223dsadsda"}",
-                Encoding.UTF8,
-                "application/x-www-form-urlencoded");
-
-            var defaultPage = await _client.PostAsync("/api/auth/login", content);
-            var contenTask = defaultPage.Content.ReadAsStringAsync();
-
-            var json = contenTask.Result;
-            var message = JObject.Parse(json)["message"];
-            Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
-            Assert.NotNull(message);
-        }
-
-        [Trait("Category", "api/auth.login")]
-        [Fact]
-        public async Task Step5_Login_wrong_email()
-        {
-            var content = new StringContent($"email={"d@LEanderr.com"}&password={"LEANDEaR223"}",
-                Encoding.UTF8,
-                "application/x-www-form-urlencoded");
-
-            var defaultPage = await _client.PostAsync("/api/auth/login", content);
-            var contesnt = defaultPage.Content.ReadAsStringAsync();
-
-            var json = contesnt.Result;
-            var message = JObject.Parse(json)["message"];
-            Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
-            Assert.NotNull(message);
-            Assert.Equal("User doesnt exist", message);
-        }
-
-        [Trait("Category", "api/auth.login")]
-        [Fact]
-        public async Task Step6_Login_no_data()
-        {
-            var content = new StringContent($"",
-                Encoding.UTF8,
-                "application/x-www-form-urlencoded");
-
-            var defaultPage = await _client.PostAsync("/api/auth/login", content);
-            var contesnt = defaultPage.Content.ReadAsStringAsync();
-
-            var json = contesnt.Result;
-            var message = JObject.Parse(json)["message"];
-            Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
-            Assert.NotNull(message);
-            Assert.Equal("Incorrect password", message);
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.InRange(readAsStringAsync.Result.Length, 10, int.MaxValue);
         }
 
         [Trait("Category", "api/doctors")]
         [Fact]
-        public async Task Step7_Register_already_existing_email()
+        public void Given_No_Password_Login_Returns_Bad_Request()
         {
-            var content = new StringContent($"email={"de@LEander.com"}&password={"LEANDER223"}",
-                Encoding.UTF8,
-                "application/x-www-form-urlencoded");
+            var newUserDto = new LoginDto {Email = "m@gmail.com"};
 
-            var defaultPage = await _client.PostAsync("/api/doctors", content);
-            var contesnt = defaultPage.Content.ReadAsStringAsync();
 
-            var json = contesnt.Result;
-            var message = JObject.Parse(json)["message"];
-            Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
-            Assert.NotNull(message);
+            var serialize = JsonConvert.SerializeObject(newUserDto);
+
+            var content = new StringContent(serialize, Encoding.UTF8, "application/json");
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = _client.PostAsync("/api/auth/login", content).Result;
+            var readAsStringAsync = result.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.InRange(readAsStringAsync.Result.Length, 10, int.MaxValue);
         }
-        
-        [Trait("Category", "api/doctors")]
-        [Fact]
-        public async Task Register_no_password()
-        {
-            var content = new StringContent($"email={"d@LEander.com"}&password={""}",
-                Encoding.UTF8,
-                "application/x-www-form-urlencoded");
 
-            var defaultPage = await _client.PostAsync("/api/doctors", content);
-            var contesnt = defaultPage.Content.ReadAsStringAsync();
-
-            var json = contesnt.Result;
-            var message = JObject.Parse(json)["errors"]["Password"];
-            Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
-            Assert.NotNull(message);
-        }
 
         [Trait("Category", "api/doctors")]
         [Fact]
-        public async Task Register_no_email()
+        public void Given_No_Data_Login_Returns_Bad_Request()
         {
-            var content = new StringContent($"email={""}&password={"a"}",
-                Encoding.UTF8,
-                "application/x-www-form-urlencoded");
+            var newUserDto = new LoginDto();
 
-            var defaultPage = await _client.PostAsync("/api/doctors", content);
-            var contesnt = defaultPage.Content.ReadAsStringAsync();
 
-            var json = contesnt.Result;
-            var message = JObject.Parse(json)["errors"]["Email"];
-            Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
-            Assert.NotNull(message);
+            var serialize = JsonConvert.SerializeObject(newUserDto);
+
+            var content = new StringContent(serialize, Encoding.UTF8, "application/json");
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = _client.PostAsync("/api/auth/login", content).Result;
+            var readAsStringAsync = result.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.InRange(readAsStringAsync.Result.Length, 10, int.MaxValue);
         }
 
         [Trait("Category", "api/doctors")]
         [Fact]
-        public async Task Register_no_data()
+        public void Given_InCorrect_Email_Returns_Bad_Request()
         {
-            var content = new StringContent($"email={""}&password={""}",
-                Encoding.UTF8,
-                "application/x-www-form-urlencoded");
+            var newUserDto = new LoginDto {Email = "incorrect@gmail.com", Password = "password"};
+            
+            var serialize = JsonConvert.SerializeObject(newUserDto);
 
-            var defaultPage = await _client.PostAsync("/api/doctors", content);
-            var contesnt = defaultPage.Content.ReadAsStringAsync();
+            var content = new StringContent(serialize, Encoding.UTF8, "application/json");
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = _client.PostAsync("/api/auth/login", content).Result;
+            var readAsStringAsync = result.Content.ReadAsStringAsync();
 
-            var json = contesnt.Result;
-            var message = JObject.Parse(json)["errors"]["Email"];
-            var passwordMessage = JObject.Parse(json)["errors"]["Password"];
-            Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
-            Assert.NotNull(message);
-            Assert.NotNull(passwordMessage);
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.InRange(readAsStringAsync.Result.Length, 10, int.MaxValue);
+        }
+
+        [Trait("Category", "api/doctors")]
+        [Fact]
+        public void Given_InCorrect_Password_Returns_Bad_Request()
+        {
+            var newUserDto = new LoginDto {Email = "incorrect@gmail.com", Password = "passwordIncorrect"};
+
+            var serialize = JsonConvert.SerializeObject(newUserDto);
+
+            var content = new StringContent(serialize, Encoding.UTF8, "application/json");
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = _client.PostAsync("/api/auth/login", content).Result;
+            var readAsStringAsync = result.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.InRange(readAsStringAsync.Result.Length, 10, int.MaxValue);
         }
     }
 }

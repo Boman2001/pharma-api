@@ -39,7 +39,9 @@ namespace WebApi.IntegrationTests.Helper
 
         static TValue GetOrCreate<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key) where TValue : new()
         {
-            if (dictionary.TryGetValue(key, out var result))
+            TValue result;
+
+            if (dictionary.TryGetValue(key, out result))
             {
                 return result;
             }
@@ -59,6 +61,6 @@ namespace WebApi.IntegrationTests.Helper
             Priority = priority;
         }
 
-        public int Priority { get; }
+        public int Priority { get; private set; }
     }
 }
