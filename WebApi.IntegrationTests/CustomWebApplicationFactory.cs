@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Core.Domain;
 using Core.Domain.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -107,7 +109,9 @@ namespace WebApi.IntegrationTests
                         options.Filters.Add(new FakeUserFilter());
                     })
                     .AddApplicationPart(typeof(Startup).Assembly);
+                services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
             });
+     
 
             builder.ConfigureServices(services =>
             {
