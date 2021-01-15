@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Core.Domain.Models
 {
-    public class Consultation : BaseEntitySoftDeletes
+    public class Consultation : BaseEntity
     {
         public DateTime Date { get; set; }
-        
-        public int DoctorId { get; set; }
-        [NotMapped]
-        public IdentityUser Doctor { get; set; }
-        
+        public string Comments { get; set; }
+
+        public Guid DoctorId { get; set; }
+        [NotMapped] public IdentityUser Doctor { get; set; }
+
         public int PatientId { get; set; }
         public Patient Patient { get; set; }
 

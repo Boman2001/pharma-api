@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core.Domain;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -9,17 +8,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class EpisodeController : Controller
+    public class EpisodesController : Controller
     {
+        private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Episode> _episodeRepository;
 
-        public EpisodeController(IRepository<Episode> episodeRepository)
+        public EpisodesController(IRepository<Episode> episodeRepository, IIdentityRepository identityRepository)
         {
             _episodeRepository = episodeRepository;
+            _identityRepository = identityRepository;
         }
 
         [HttpGet]
@@ -49,7 +53,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Episode>> Post([FromBody] Episode episode)
         {
-            var createdEpisode = await _episodeRepository.Add(episode);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            var createdEpisode = await _episodeRepository.Add(episode, currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdEpisode);
         }
@@ -60,7 +67,12 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] Episode episode)
         {
-            var updatedEpisode = await _episodeRepository.Update(episode);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            episode.Id = id;
+
+            var updatedEpisode = await _episodeRepository.Update(episode,currentUser);
 
             return Ok(updatedEpisode);
         }
@@ -71,7 +83,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            await _episodeRepository.Delete(id);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _episodeRepository.Delete(id,currentUser);
 
             return NoContent();
         }

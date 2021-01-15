@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Core.DomainServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -15,7 +14,6 @@ using System.Text;
 using AutoMapper;
 using Core.DomainServices.Repositories;
 using Infrastructure.Repositories;
-using AutoMapper;
 
 namespace WebApi
 {
@@ -102,8 +100,11 @@ namespace WebApi
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
             CreateUserRoles(serviceProvider).Wait();
-            databaseContext.Database.Migrate();
-            identityDbContext.Database.Migrate();
+            if (databaseContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+            {
+                databaseContext.Database.Migrate();
+                identityDbContext.Database.Migrate();
+            }
         }
 
         private static async Task CreateUserRoles(IServiceProvider serviceProvider)

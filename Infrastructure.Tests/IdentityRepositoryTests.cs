@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Core.Domain;
-using Core.Domain.Models;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Moq;
 using WebApi.Tests.Mocks;
 using Xunit;
 using Assert = Xunit.Assert;
@@ -20,7 +16,6 @@ namespace Infrastructure.Tests
     {
         private IdentityUser _fakeIdentityUser;
         private List<IdentityUser> _fakeIdentityUsers;
-
         private IdentityUser _fakeUser;
         private IdentityRepository Controller { get; }
 
@@ -32,150 +27,41 @@ namespace Infrastructure.Tests
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var options = new DbContextOptionsBuilder<SecurityDbContext>()
-                .UseInMemoryDatabase(databaseName: "PharmaPartnersIdentityDb")
-                .Options;
-
-            var fakeSecurityDbContext = new Mock<SecurityDbContext>(options).Object;
             var userManager = MockUserManager.GetMockUserManager(_fakeIdentityUsers).Object;
             var signInManager = MockSigninManager.GetSignInManager<IdentityUser>(userManager).Object;
-            Controller = new IdentityRepository(userManager, signInManager, config, fakeSecurityDbContext);
+            Controller = new IdentityRepository(userManager, signInManager, config);
         }
 
-        [Trait("Category", "Identity Register")]
+        //Login Tests
+
+        [Trait("Category", "Login Tests")]
         [Fact]
-        public async Task Register()
+        public async Task Given_Correct_Login_Details_Returns_Jwt()
         {
-            var count = _fakeIdentityUsers.Count;
+            var result = await Controller.Login(_fakeIdentityUsers[0], _fakeIdentityUsers[0].PasswordHash);
 
-            var register = await Controller.Register(_fakeUser, _fakeUser.PasswordHash);
-
-            Assert.IsType<JwtSecurityToken>(register);
-            Assert.Equal(count + 1, _fakeIdentityUsers.Count);
-            Assert.Equal(_fakeIdentityUsers[count], _fakeUser);
+            Assert.IsType<JwtSecurityToken>(result);
         }
 
-        [Trait("Category", "Identity Register")]
+        [Trait("Category", "Login Tests")]
         [Fact]
-        public async Task Register_Invalid_Mail()
+        public async Task Given_In_Correct_Email_Returns_Error()
         {
-            _fakeUser.Email = "";
-
-            await Assert.ThrowsAsync<Exception>(() => Controller.Register(_fakeUser, _fakeUser.PasswordHash));
-        }
-
-        [Trait("Category", "Identity Register")]
-        [Fact]
-        public async Task Register_Invalid_Password()
-        {
-            _fakeUser.PasswordHash = "";
-
-            await Assert.ThrowsAsync<Exception>(() => Controller.Register(_fakeUser, _fakeUser.PasswordHash));
-        }
-
-        [Trait("Category", "Identity Register")]
-        [Fact]
-        public async Task Register_Empty()
-        {
-            var emptyUser = new IdentityUser();
-
-            await Assert.ThrowsAsync<Exception>(() => Controller.Register(emptyUser, _fakeUser.PasswordHash));
-        }
-
-        [Trait("Category", "Identity Register")]
-        [Fact]
-        public async Task Register_User_Already_Exists()
-        {
-            await Assert.ThrowsAsync<Exception>(() => Controller.Register(_fakeIdentityUsers[0], _fakeUser.PasswordHash));
-        }
-
-        //Er moet nog wel een beter mocklogin zijn, nu returned hij altijd true
-        //maar linq wilden niet meewerken, dus kijk later naar
-        [Trait("Category", "Identity Login")]
-        [Fact]
-        public async Task Login()
-        {
-            var login = await Controller.Login(_fakeIdentityUsers[0], _fakeIdentityUsers[0].PasswordHash);
-
-            Assert.IsType<JwtSecurityToken>(login);
-        }
-
-        [Trait("Category", "Identity Login")]
-        [Fact]
-        public async Task Login_Invalid_Mail()
-        {
-            _fakeUser.Email = "";
-
-            await Assert.ThrowsAsync<Exception>(() => Controller.Login(_fakeUser, _fakeUser.PasswordHash));
-        }
-
-        [Trait("Category", "Identity Login")]
-        [Fact]
-        public async Task Login_Invalid_Password()
-        {
-            _fakeUser.PasswordHash = "";
-
-            await Assert.ThrowsAsync<Exception>(() => Controller.Login(_fakeUser, _fakeUser.PasswordHash));
-        }
-
-        [Trait("Category", "Identity Login")]
-        [Fact]
-        public async Task Login_Empty()
-        {
-            var emptyUser = new IdentityUser();
-
-            await Assert.ThrowsAsync<Exception>(() => Controller.Login(emptyUser, _fakeUser.PasswordHash));
-        }
-
-        [Trait("Category", "Error Handling")]
-        [Fact]
-        public void Error_Handling()
-        {
-            var errors = new List<IdentityError>()
+           var user = new IdentityUser
             {
-                new IdentityError {Code = "1", Description = "First error"},
-                new IdentityError {Code = "2", Description = "Second validation error"}
-            };
-            var identityResult = IdentityResult.Failed(errors.ToArray());
-            Assert.Throws<AggregateException>(() => IdentityRepository.ErrorHandling(identityResult));
-        }
-
-        [Trait("Category", "Claims")]
-        [Fact]
-        public async Task Get_Current_User_From_Principal()
-        {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Email, _fakeIdentityUsers[0].Email)
+                UserName = "GenericUsername",
+                PasswordHash = "GenericUsername",
+                Email = "wrong@gmail.com"
             };
 
-            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Basic"));
-            var result = await Controller.GetCurrentUser(principal);
-
-            Assert.Equal(_fakeIdentityUsers[0], result);
+            await Assert.ThrowsAsync<ArgumentException>(async () => await Controller.Login(user, user.PasswordHash));
         }
 
-        [Trait("Category", "Email")]
+        //Update Tests
+
+        [Trait("Category", "Update Tests")]
         [Fact]
-        public async Task Get_Current_User_From_Email()
-        {
-            var result = await Controller.GetUserByEmail(_fakeIdentityUsers[0].Email);
-
-            Assert.Equal(_fakeIdentityUsers[0], result);
-        }
-
-        [Trait("Category", "Email")]
-        [Fact]
-        public async Task Get_Current_User_From_NonExisting_Email()
-        {
-            var result = await Controller.GetUserByEmail("NonEsxiting@newmail.COm");
-
-            Assert.Null(result);
-        }
-
-        [Trait("Category", "Identity Update")]
-        [Fact]
-        public async Task Update()
+        public void Given_Non_Existing_User_Throws_Exception()
         {
             var identityUser = new IdentityUser()
             {
@@ -183,46 +69,14 @@ namespace Infrastructure.Tests
                 PasswordHash = "GenericUsername",
                 Email = "newmail@newmail.com"
             };
-            var userInformation = new UserInformation
-            {
-                UserId = Guid.Parse(_fakeIdentityUsers[0].Id),
-                Id = 1,
-                User = _fakeUser
-            };
-            var result = await Controller.Update(identityUser, userInformation);
 
-            Assert.True(result.Succeeded);
-            Assert.Equal(identityUser.Email, _fakeIdentityUsers[0].Email);
+            Assert.ThrowsAsync<Exception>(() => Controller.Update(identityUser));
         }
 
-        [Trait("Category", "Identity Update")]
+        [Trait("Category", "Update Tests")]
         [Fact]
-        public void Update_Non_Existing_Guid()
+        public void Given_Non_Existing_User_To_Update_Returns_Exception()
         {
-            var userInformation = new UserInformation
-            {
-                Id = 1,
-                User = _fakeUser
-            };
-            var identityUser = new IdentityUser()
-            {
-                UserName = "GenericUsername",
-                PasswordHash = "GenericUsername",
-                Email = "newmail@newmail.com"
-            };
-
-            Assert.ThrowsAsync<Exception>(() => Controller.Update(identityUser, userInformation));
-        }
-
-        [Trait("Category", "Identity Update")]
-        [Fact]
-        public void Update_Email_Already_Exists()
-        {
-            var userInformation = new UserInformation
-            {
-                Id = 1,
-                User = _fakeUser
-            };
             var identityUser = new IdentityUser()
             {
                 UserName = "GenericUsername",
@@ -230,9 +84,125 @@ namespace Infrastructure.Tests
                 Email = "email2@gmail.com"
             };
 
-            Assert.ThrowsAsync<Exception>(() => Controller.Update(identityUser, userInformation));
+            Assert.ThrowsAsync<Exception>(() => Controller.Update(identityUser));
         }
 
+        [Trait("Category", "Update Tests")]
+        [Fact]
+        public async Task Given_User_And_New_Details_Update_Returns_Succeeded_And_Updates()
+        {
+            var identityUser = new IdentityUser
+            {
+                Id = _fakeIdentityUsers[0].Id,
+                UserName = _fakeIdentityUsers[0].UserName,
+                PasswordHash = _fakeIdentityUsers[0].PasswordHash,
+                Email = _fakeIdentityUsers[0].Email
+            };
+            identityUser.PhoneNumber = "phoneNumber";
+
+            var result = await Controller.Update(identityUser);
+
+            Assert.True(result.Succeeded);
+            Assert.Equal(_fakeIdentityUsers[0].PhoneNumber, identityUser.PhoneNumber);
+        }
+
+        //Delete Tests
+
+        [Trait("Category", "Delete Tests")]
+        [Fact]
+        public void Given_User_To_Delete_Returns_Succeeded()
+        {
+            var count = _fakeIdentityUsers.Count;
+
+            var result = Controller.Delete(_fakeIdentityUsers[2]);
+
+            Assert.True(result.Result.Succeeded);
+            Assert.Equal(count - 1, _fakeIdentityUsers.Count);
+        }
+
+        [Trait("Category", "Delete Tests")]
+        [Fact]
+        public void Given_Non_Existing_User_To_Delete_Dont_Delete_Anything()
+        {
+            var identityUser = new IdentityUser
+            {
+                UserName = "Username",
+                PasswordHash = "Password",
+                Email = "Maarten@gmail.com"
+            };
+            var count = _fakeIdentityUsers.Count;
+
+            var result = Controller.Delete(identityUser);
+
+            Assert.True(result.Result.Succeeded);
+            Assert.Equal(count, _fakeIdentityUsers.Count);
+        }
+
+        //GetUser Tests
+
+        [Trait("Category", "Get Tests")]
+        [Fact]
+        public async Task Given_Correct_Claims_Principle_Returns_User()
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Email, _fakeIdentityUsers[0].Email)
+            };
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Basic"));
+
+            var result = await Controller.GetCurrentUser(principal);
+
+            Assert.Equal(_fakeIdentityUsers[0], result);
+        }
+
+        [Trait("Category", "Get Tests")]
+        [Fact]
+        public async Task Given_Incorrect_Claims_Principle_Returns_Null()
+        {
+            var claims = Array.Empty<Claim>();
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Basic"));
+
+            var result = await Controller.GetCurrentUser(principal);
+
+            Assert.Null(result);
+        }
+
+        [Trait("Category", "Get Tests")]
+        [Fact]
+        public async Task Given_Id_Returns_Correct_User()
+        {
+            var result = await Controller.GetUserById(_fakeIdentityUsers[0].Id);
+
+            Assert.Equal(_fakeIdentityUsers[0], result);
+        }
+
+        [Trait("Category", "Get Tests")]
+        [Fact]
+        public async Task Given_Incorrect_Id_Returns_Null()
+        {
+            var result = await Controller.GetUserById("Id");
+
+            Assert.Null(result);
+        }
+
+        [Trait("Category", "Get Tests")]
+        [Fact]
+        public async Task Given_Correct_Email_Returns_User()
+        {
+            var result = await Controller.GetUserByEmail(_fakeIdentityUsers[0].Email);
+
+            Assert.Equal(_fakeIdentityUsers[0], result);
+        }
+
+        [Trait("Category", "Get Tests")]
+        [Fact]
+        public async Task Given_Non_Existing_Email_Details_Returns_Null()
+        {
+            var result = await Controller.GetUserByEmail("NonEsxiting@newmail.COm");
+
+            Assert.Null(result);
+        }
+        
         internal void SeedData()
         {
             _fakeUser = new IdentityUser
@@ -247,14 +217,14 @@ namespace Infrastructure.Tests
                 Email = "email@gmail.com",
                 UserName = "email@gmail.com"
             };
-            var extrIdentityUser = new IdentityUser
+            var identityUser = new IdentityUser
             {
                 Id = "!#!@#!@!#@#@2",
                 PasswordHash = "GenericUsername",
                 Email = "email2@gmail.com",
                 UserName = "email@gmail.com"
             };
-            _fakeIdentityUsers = new List<IdentityUser> {_fakeIdentityUser, extrIdentityUser};
+            _fakeIdentityUsers = new List<IdentityUser> {_fakeIdentityUser, identityUser, _fakeUser};
         }
     }
 }
