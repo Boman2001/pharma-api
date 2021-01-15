@@ -19,7 +19,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.1");
 
-            modelBuilder.Entity("Core.Domain.Activity", b =>
+            modelBuilder.Entity("Core.Domain.Models.Activity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,14 +32,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -53,15 +53,15 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.ToTable("Activities");
                 });
 
-            modelBuilder.Entity("Core.Domain.AdditionalExaminationResult", b =>
+            modelBuilder.Entity("Core.Domain.Models.AdditionalExaminationResult", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -77,8 +77,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -86,8 +86,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
@@ -95,8 +95,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -112,7 +112,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.ToTable("AdditionalExaminationResults");
                 });
 
-            modelBuilder.Entity("Core.Domain.AdditionalExaminationType", b =>
+            modelBuilder.Entity("Core.Domain.Models.AdditionalExaminationType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -122,14 +122,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -140,26 +140,29 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.ToTable("AdditionalExaminationTypes");
                 });
 
-            modelBuilder.Entity("Core.Domain.Consultation", b =>
+            modelBuilder.Entity("Core.Domain.Models.Consultation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<string>("Comments")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -167,8 +170,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
@@ -179,8 +182,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -189,7 +192,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.ToTable("Consultations");
                 });
 
-            modelBuilder.Entity("Core.Domain.Episode", b =>
+            modelBuilder.Entity("Core.Domain.Models.Episode", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -202,14 +205,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -226,8 +229,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -240,7 +243,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.ToTable("Episodes");
                 });
 
-            modelBuilder.Entity("Core.Domain.IcpcCode", b =>
+            modelBuilder.Entity("Core.Domain.Models.IcpcCode", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -253,14 +256,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -268,15 +271,15 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.ToTable("IcpcCodes");
                 });
 
-            modelBuilder.Entity("Core.Domain.Intolerance", b =>
+            modelBuilder.Entity("Core.Domain.Models.Intolerance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -289,14 +292,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -313,8 +316,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -325,7 +328,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.ToTable("Intolerances");
                 });
 
-            modelBuilder.Entity("Core.Domain.Patient", b =>
+            modelBuilder.Entity("Core.Domain.Models.Patient", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -344,14 +347,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Dob")
                         .HasColumnType("datetime2");
@@ -368,6 +371,12 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<string>("HouseNumberAddon")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("longitude")
+                        .HasColumnType("float");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -383,15 +392,15 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.ToTable("Patients");
                 });
 
-            modelBuilder.Entity("Core.Domain.PhysicalExamination", b =>
+            modelBuilder.Entity("Core.Domain.Models.PhysicalExamination", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -404,8 +413,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -413,8 +422,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("ExaminationTypeId")
                         .HasColumnType("int");
@@ -428,8 +437,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -445,7 +454,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.ToTable("PhysicalExaminations");
                 });
 
-            modelBuilder.Entity("Core.Domain.PhysicalExaminationType", b =>
+            modelBuilder.Entity("Core.Domain.Models.PhysicalExaminationType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -455,14 +464,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -473,15 +482,15 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.ToTable("ExaminationTypes");
                 });
 
-            modelBuilder.Entity("Core.Domain.Prescription", b =>
+            modelBuilder.Entity("Core.Domain.Models.Prescription", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -494,14 +503,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -518,8 +527,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -530,15 +539,12 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.ToTable("Prescriptions");
                 });
 
-            modelBuilder.Entity("Core.Domain.UserInformation", b =>
+            modelBuilder.Entity("Core.Domain.Models.UserInformation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
-
-                    b.Property<string>("Bsn")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
@@ -549,8 +555,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Dob")
                         .HasColumnType("datetime2");
@@ -567,9 +573,6 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PostalCode")
                         .HasColumnType("nvarchar(max)");
 
@@ -579,8 +582,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -590,7 +593,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.ToTable("UserInformation");
                 });
 
-            modelBuilder.Entity("Core.Domain.UserJournal", b =>
+            modelBuilder.Entity("Core.Domain.Models.UserJournal", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -603,14 +606,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -624,8 +627,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -636,21 +639,21 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.ToTable("UserJournals");
                 });
 
-            modelBuilder.Entity("Core.Domain.AdditionalExaminationResult", b =>
+            modelBuilder.Entity("Core.Domain.Models.AdditionalExaminationResult", b =>
                 {
-                    b.HasOne("Core.Domain.AdditionalExaminationType", "AdditionalExaminationType")
+                    b.HasOne("Core.Domain.Models.AdditionalExaminationType", "AdditionalExaminationType")
                         .WithMany("AdditionalExaminationResults")
                         .HasForeignKey("AdditionalExaminationTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Domain.Consultation", "Consultation")
+                    b.HasOne("Core.Domain.Models.Consultation", "Consultation")
                         .WithMany("AdditionalExaminationResults")
                         .HasForeignKey("ConsultationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Core.Domain.Patient", "Patient")
+                    b.HasOne("Core.Domain.Models.Patient", "Patient")
                         .WithMany("AdditionalExaminationResults")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -663,9 +666,9 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("Core.Domain.Consultation", b =>
+            modelBuilder.Entity("Core.Domain.Models.Consultation", b =>
                 {
-                    b.HasOne("Core.Domain.Patient", "Patient")
+                    b.HasOne("Core.Domain.Models.Patient", "Patient")
                         .WithMany("Consultations")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -674,21 +677,21 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("Core.Domain.Episode", b =>
+            modelBuilder.Entity("Core.Domain.Models.Episode", b =>
                 {
-                    b.HasOne("Core.Domain.Consultation", "Consultation")
+                    b.HasOne("Core.Domain.Models.Consultation", "Consultation")
                         .WithMany("Episodes")
                         .HasForeignKey("ConsultationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Core.Domain.IcpcCode", "IcpcCode")
+                    b.HasOne("Core.Domain.Models.IcpcCode", "IcpcCode")
                         .WithMany("Episodes")
                         .HasForeignKey("IcpcCodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Domain.Patient", "Patient")
+                    b.HasOne("Core.Domain.Models.Patient", "Patient")
                         .WithMany("Episodes")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -701,15 +704,15 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("Core.Domain.Intolerance", b =>
+            modelBuilder.Entity("Core.Domain.Models.Intolerance", b =>
                 {
-                    b.HasOne("Core.Domain.Consultation", "Consultation")
+                    b.HasOne("Core.Domain.Models.Consultation", "Consultation")
                         .WithMany("Intolerances")
                         .HasForeignKey("ConsultationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Core.Domain.Patient", "Patient")
+                    b.HasOne("Core.Domain.Models.Patient", "Patient")
                         .WithMany("Intolerances")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -720,21 +723,21 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("Core.Domain.PhysicalExamination", b =>
+            modelBuilder.Entity("Core.Domain.Models.PhysicalExamination", b =>
                 {
-                    b.HasOne("Core.Domain.Consultation", "Consultation")
+                    b.HasOne("Core.Domain.Models.Consultation", "Consultation")
                         .WithMany("PhysicalExaminations")
                         .HasForeignKey("ConsultationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Core.Domain.Patient", "Patient")
+                    b.HasOne("Core.Domain.Models.Patient", "Patient")
                         .WithMany("PhysicalExaminations")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Domain.PhysicalExaminationType", "PhysicalExaminationType")
+                    b.HasOne("Core.Domain.Models.PhysicalExaminationType", "PhysicalExaminationType")
                         .WithMany("PhysicalExaminations")
                         .HasForeignKey("PhysicalExaminationTypeId");
 
@@ -745,15 +748,15 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Navigation("PhysicalExaminationType");
                 });
 
-            modelBuilder.Entity("Core.Domain.Prescription", b =>
+            modelBuilder.Entity("Core.Domain.Models.Prescription", b =>
                 {
-                    b.HasOne("Core.Domain.Consultation", "Consultation")
+                    b.HasOne("Core.Domain.Models.Consultation", "Consultation")
                         .WithMany("Prescriptions")
                         .HasForeignKey("ConsultationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Core.Domain.Patient", "Patient")
+                    b.HasOne("Core.Domain.Models.Patient", "Patient")
                         .WithMany("Prescriptions")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -764,15 +767,15 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("Core.Domain.UserJournal", b =>
+            modelBuilder.Entity("Core.Domain.Models.UserJournal", b =>
                 {
-                    b.HasOne("Core.Domain.Consultation", "Consultation")
+                    b.HasOne("Core.Domain.Models.Consultation", "Consultation")
                         .WithMany("UserJournals")
                         .HasForeignKey("ConsultationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Core.Domain.Patient", "Patient")
+                    b.HasOne("Core.Domain.Models.Patient", "Patient")
                         .WithMany("UserJournals")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -783,12 +786,12 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("Core.Domain.AdditionalExaminationType", b =>
+            modelBuilder.Entity("Core.Domain.Models.AdditionalExaminationType", b =>
                 {
                     b.Navigation("AdditionalExaminationResults");
                 });
 
-            modelBuilder.Entity("Core.Domain.Consultation", b =>
+            modelBuilder.Entity("Core.Domain.Models.Consultation", b =>
                 {
                     b.Navigation("AdditionalExaminationResults");
 
@@ -803,12 +806,12 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Navigation("UserJournals");
                 });
 
-            modelBuilder.Entity("Core.Domain.IcpcCode", b =>
+            modelBuilder.Entity("Core.Domain.Models.IcpcCode", b =>
                 {
                     b.Navigation("Episodes");
                 });
 
-            modelBuilder.Entity("Core.Domain.Patient", b =>
+            modelBuilder.Entity("Core.Domain.Models.Patient", b =>
                 {
                     b.Navigation("AdditionalExaminationResults");
 
@@ -825,7 +828,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Navigation("UserJournals");
                 });
 
-            modelBuilder.Entity("Core.Domain.PhysicalExaminationType", b =>
+            modelBuilder.Entity("Core.Domain.Models.PhysicalExaminationType", b =>
                 {
                     b.Navigation("PhysicalExaminations");
                 });

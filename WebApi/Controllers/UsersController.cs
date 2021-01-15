@@ -1,179 +1,270 @@
-﻿using Core.Domain;
-using Core.Domain.DataTransferObject;
-using Core.DomainServices.Repositories;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core.Domain.Models;
-using Core.DomainServices;
+using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using WebApi.Mappings;
-
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using WebApi.Models.Users;
+using System.Security.Claims;
 
 namespace WebApi.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class UsersController : ControllerBase
     {
-        private readonly IRepository<UserInformation> _userInformationRepository;
         private readonly IIdentityRepository _identityRepository;
         private readonly IMapper _mapper;
+        private readonly IRepository<UserInformation> _userInformationRepository;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public UsersController(IMapper autoMapper, IRepository<UserInformation> userInformationRepository,
-            IIdentityRepository identityRepository)
+        public UsersController(
+            IMapper autoMapper,
+            IRepository<UserInformation> userInformationRepository,
+            IIdentityRepository identityRepository,
+            UserManager<IdentityUser> userManager)
         {
             _userInformationRepository = userInformationRepository;
             _identityRepository = identityRepository;
+            _userManager = userManager;
             _mapper = autoMapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserInformation>>> GetDoctorsAsync()
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
+        public ActionResult<IEnumerable<IdentityUser>> Get()
         {
-            try
+            var results = _userManager.Users;
+
+            var users = _mapper.Map<IEnumerable<IdentityUser>, IEnumerable<UserDto>>(results);
+
+            var userDtos = new List<UserDto>();
+
+            users.ToList().ForEach(user =>
             {
-                List<UserInformationDto> userInformationDtos = new List<UserInformationDto>();
-                var userinformations = _userInformationRepository.Get();
-                foreach (var var in userinformations)
-                {
-                    var p = _mapper.Map<UserInformationDto>(var);
-                    if (var.UserId != Guid.Empty)
-                    {
-                        var.User = await _identityRepository.GetUserById(var.UserId.ToString());
-                        p.Email = var.User.Email.ToString();
-                    }
+                var userInformation = _userInformationRepository.Get(u => u.UserId == user.Id)
+                    .FirstOrDefault();
 
+                var userInformationDto = _mapper.Map<UserInformation, UserInformationDto>(userInformation);
+                _mapper.Map(userInformationDto, user);
 
-                    p.StringId = var.Id.ToString();
-                    userInformationDtos.Add(p);
-                }
+                userDtos.Add(user);
+            });
 
-                return Ok(userInformationDtos);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new {message = ex.Message});
-            }
+            return Ok(userDtos);
         }
-
-        //[HttpGet("filter")]
-        //public ActionResult<IEnumerable<UserInformation>> GetDoctorsFilter([FromQuery] UserInformation userInformation)
-        //{
-        //    try
-        //    {
-        //        var filter = _userInformationRepository.Get(dr =>
-        //                dr.User.UserName.Contains(userInformation.User.UserName));
-
-        //        return Ok(filter);
-        //    }
-        //    catch (Exception ex)
-        //    {   
-        //        return BadRequest(new {message = ex.Message});
-        //    }
-        //}
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserInformationDto>> GetDoctor(int id)
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<UserInformationDto>> Get(string id)
         {
-            var result = _userInformationRepository.Get(s => s.Id == id).SingleOrDefault();
+            var result = await _identityRepository.GetUserById(id);
 
-            if (result != null)
+            if (result == null)
             {
-                var user = await _identityRepository.GetUserById(result.UserId.ToString());
-                var p = _mapper.Map<UserInformationDto>(result);
-                p.StringId = result.Id.ToString();
-                p.Email = user.Email.ToString();
-                return result == null ? StatusCode(204) : (ActionResult<UserInformationDto>) Ok(p);
+                return NotFound();
             }
 
-            return StatusCode(204);
-        }
+            var user = _mapper.Map<IdentityUser, UserDto>(result);
+            var userInformation = _userInformationRepository.Get(u => u.UserId == user.Id)
+                .FirstOrDefault();
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDoctor(int id, [FromBody] UserDto userDto)
-        {
-            userDto.UserId = new Guid();
-            userDto.Id = id;
-            var identityUser = new IdentityUser
-            {
-                Email = userDto.Email,
-                UserName = userDto.Email,
-                PasswordHash = userDto.Password
-            };
-            try
-            {
-                var userInformation = await _userInformationRepository.Get(id);
-                await _identityRepository.Update(identityUser, userInformation);
-                _userInformationRepository.Detach(userInformation);
-                userDto.UserId = userInformation.UserId;
-                await _userInformationRepository.Update(userDto);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new {message = ex.Message});
-            }
-        }
+            var userInformationDto = _mapper.Map<UserInformation, UserInformationDto>(userInformation);
+            _mapper.Map(userInformationDto, user);
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDoctor(int id)
-        {
-            try
-            {
-                var userInformation = _userInformationRepository.Get(id).Result;
-                var user = _identityRepository.GetUserById(userInformation.UserId.ToString()).Result;
-                await _identityRepository.DeleteUser(user);
-                await _userInformationRepository.Delete(userInformation);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return BadRequest(new {message = e});
-            }
+            return Ok(user);
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserDto>> Post([FromBody] UserDto userDto)
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<UserDto>> Post([FromBody] NewUserDto newUserDto)
         {
-            userDto.UserId = new Guid();
             var identityUser = new IdentityUser
             {
-                Email = userDto.Email,
-                UserName = userDto.Email,
-                PasswordHash = userDto.Password,
+                Email = newUserDto.Email,
+                UserName = newUserDto.Email,
+                PhoneNumber = newUserDto.PhoneNumber,
+                PasswordHash = newUserDto.Password
             };
+
+            var checkEmail = await _identityRepository.GetUserByEmail(identityUser.Email);
+
+            if (checkEmail != null)
+            {
+                return BadRequest("E-mailadres is al in gebruik.");
+            }
 
             try
             {
-                var result = await _identityRepository.Register(identityUser, identityUser.PasswordHash);
-                var user = await _identityRepository.GetUserByEmail(identityUser.Email);
-
-                userDto.UserId = Guid.Parse(user.Id);
-                var a = await _userInformationRepository.Add(userDto);
-
-
-                var p = _mapper.Map<UserInformationDto>(a);
-                p.StringId = user.Id.ToString();
-                p.Email = user.Email;
-
-                return Ok(new
+                identityUser = await _identityRepository.Register(identityUser, identityUser.PasswordHash);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
                 {
-                    Token = new JwtSecurityTokenHandler().WriteToken(result),
-                    User = p
+                    message = e.Message
                 });
             }
-            catch (Exception ex)
+
+            var userInformation = new UserInformation
             {
-                return BadRequest(new {message = ex.Message});
+                Name = newUserDto.Name,
+                Dob = newUserDto.Dob,
+                Gender = newUserDto.Gender,
+                City = newUserDto.City,
+                Street = newUserDto.Street,
+                HouseNumber = newUserDto.HouseNumber,
+                HouseNumberAddon = newUserDto.HouseNumberAddon,
+                PostalCode = newUserDto.PostalCode,
+                Country = newUserDto.Country,
+                UserId = Guid.Parse(identityUser.Id)
+            };
+
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            try
+            {
+                await _userInformationRepository.Add(userInformation, currentUser);
             }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                {
+                    message = e.Message
+                });
+
+                //TODO rollback identityuser
+            }
+
+            var user = new UserDto
+            {
+                Id = Guid.Parse(identityUser.Id),
+                Email = identityUser.Email,
+                PhoneNumber = identityUser.PhoneNumber,
+                Name = userInformation.Name,
+                Dob = userInformation.Dob,
+                Gender = userInformation.Gender,
+                City = userInformation.City,
+                Street = userInformation.Street,
+                HouseNumber = userInformation.HouseNumber,
+                HouseNumberAddon = userInformation.HouseNumberAddon,
+                PostalCode = userInformation.PostalCode,
+                Country = userInformation.Country
+            };
+
+            return Ok(user);
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> Put(string id, [FromBody] UpdateUserDto updateUserDto)
+        {
+            var user = await _identityRepository.GetUserById(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.Email = updateUserDto.Email;
+            user.UserName = updateUserDto.Email;
+            user.PhoneNumber = updateUserDto.PhoneNumber;
+
+            try
+            {
+                await _identityRepository.Update(user, updateUserDto.Password);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                {
+                    message = e.Message
+                });
+            }
+
+            var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == id).FirstOrDefault();
+
+            if (userInformation == null)
+            {
+                return NotFound();
+            }
+
+            userInformation.Name = updateUserDto.Name;
+            userInformation.Dob = updateUserDto.Dob;
+            userInformation.Gender = updateUserDto.Gender;
+            userInformation.City = updateUserDto.City;
+            userInformation.Street = updateUserDto.Street;
+            userInformation.HouseNumber = updateUserDto.HouseNumber;
+            userInformation.HouseNumberAddon = updateUserDto.HouseNumberAddon;
+            userInformation.PostalCode = updateUserDto.PostalCode;
+            userInformation.Country = updateUserDto.Country;
+
+            try
+            {
+                var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+                var currentUser = await _identityRepository.GetUserById(userId);
+
+                userInformation = await _userInformationRepository.Update(userInformation, currentUser);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                {
+                    message = e.Message
+                });
+            }
+
+            var userDto = _mapper.Map<IdentityUser, UserDto>(user);
+
+            var userInformationDto = _mapper.Map<UserInformation, UserInformationDto>(userInformation);
+            _mapper.Map(userInformationDto, userDto);
+
+            return Ok(userDto);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var user = await _identityRepository.GetUserById(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            await _identityRepository.Delete(user);
+
+            var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == user.Id)
+                .FirstOrDefault();
+
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _userInformationRepository.Delete(userInformation, currentUser);
+
+            return NoContent();
         }
     }
 }

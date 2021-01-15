@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using Core.Domain;
 using Core.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -23,10 +22,10 @@ namespace Core.DomainServices.QueryExtensions
             }
         }
 
-        private static LambdaExpression GetSoftDeleteFilter<TEntity>() where TEntity : class, IBaseEntitySoftDeletes
+        private static LambdaExpression GetSoftDeleteFilter<TEntity>() where TEntity : class, IEntity
         {
             Expression<Func<TEntity, bool>> filter = x => x.DeletedAt == null;
-            
+
             return filter;
         }
     }

@@ -3,22 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Core.Domain;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : BaseEntity
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Identity;
+    using Newtonsoft.Json;
+
+    public class Repository<T> : IRepository<T>
+        where T : BaseEntity
     {
         private readonly DbContext _context;
         private readonly DbSet<T> _dbSet;
+        private readonly DbSet<Activity> _activities;
 
         public Repository(DbContext context)
         {
             _context = context;
             _dbSet = _context.Set<T>();
+            _activities = _context.Set<Activity>();
         }
 
         public IEnumerable<T> Get()
@@ -35,10 +41,12 @@ namespace Infrastructure.Repositories
         {
             IQueryable<T> query = _dbSet;
 
-            if (filter != null)
+            if (filter == null)
             {
-                query = query.Where(filter);
+                return query.ToList();
             }
+
+            query = query.Where(filter);
 
             return query.ToList();
         }
@@ -71,15 +79,19 @@ namespace Infrastructure.Repositories
                 query = query.Include(includeProperty);
             }
 
-            if (filter != null)
+            if (filter == null)
             {
-                query = query.Where(filter);
+                return query.ToList();
             }
+
+            query = query.Where(filter);
 
             return query.ToList();
         }
 
-        public IEnumerable<T> Get(Expression<Func<T, bool>> filter, IEnumerable<string> includeProperties,
+        public IEnumerable<T> Get(
+            Expression<Func<T, bool>> filter,
+            IEnumerable<string> includeProperties,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy)
         {
             IQueryable<T> query = _dbSet;
@@ -102,29 +114,72 @@ namespace Infrastructure.Repositories
             return query.ToList();
         }
 
-        public async Task<T> Add(T entity)
+        public async Task<T> Add(T entity, IdentityUser identityUser)
         {
+            Guid guid;
+
+            try
+            {
+                guid = Guid.Parse(identityUser.Id);
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Invalid credentials");
+            }
+
+            entity.CreatedBy = guid;
+
             await _dbSet.AddAsync(entity);
-            
-            await Save();
+            await _context.Entry(entity).GetDatabaseValuesAsync();
 
-            _context.Entry(entity).GetDatabaseValues();
+            await _activities.AddAsync(new Activity
+            {
+                Description = "Add",
+                Properties = JsonConvert.SerializeObject(entity),
+                SubjectId = entity.Id,
+                SubjectType = typeof(T).ToString(),
+                CreatedBy = guid
+            });
+
+            await Save();
 
             return entity;
         }
 
-        public async Task<T> Update(T entity)
+        public async Task<T> Update(T entity, IdentityUser identityUser)
         {
-            _dbSet.Update(entity);
+            Guid guid;
 
+            try
+            {
+                guid = Guid.Parse(identityUser.Id);
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Invalid credentials.");
+            }
+
+            entity.UpdatedBy = guid;
+            entity.UpdatedAt = DateTime.Now;
+
+            _dbSet.Update(entity);
             await Save();
 
-            _context.Entry(entity).GetDatabaseValues();
+            await _activities.AddAsync(new Activity
+            {
+                Description = "Update",
+                Properties = JsonConvert.SerializeObject(entity),
+                SubjectId = entity.Id,
+                SubjectType = typeof(T).ToString(),
+                CreatedBy = guid
+            });
+
+            await Save();
 
             return entity;
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(int id, IdentityUser identityUser)
         {
             var entity = await Get(id);
 
@@ -133,18 +188,66 @@ namespace Infrastructure.Repositories
                 return;
             }
 
+            Guid guid;
+
+            try
+            {
+                guid = Guid.Parse(identityUser.Id);
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Invalid credentials.");
+            }
+
+            entity.DeletedBy = guid;
+            entity.DeletedAt = DateTime.Now;
+
             _dbSet.Remove(entity);
+            await Save();
+
+            await _activities.AddAsync(new Activity
+            {
+                Description = "Delete",
+                Properties = JsonConvert.SerializeObject(entity),
+                SubjectId = entity.Id,
+                SubjectType = typeof(T).ToString(),
+                CreatedBy = guid
+            });
+            
             await Save();
         }
 
-        public async Task Delete(T entity)
+        public async Task Delete(T entity, IdentityUser identityUser)
         {
             if (entity == null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
 
+            Guid guid;
+
+            try
+            {
+                guid = Guid.Parse(identityUser.Id);
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Invalid credentials.");
+            }
+
             _dbSet.Remove(entity);
+            await Save();
+
+            await _activities.AddAsync(new Activity
+            {
+                Description = "Delete",
+                Properties = JsonConvert.SerializeObject(entity),
+                SubjectId = entity.Id,
+                SubjectType = typeof(T).ToString(),
+                DeletedBy = guid,
+                DeletedAt = DateTime.Now,
+            });
+            
             await Save();
         }
 

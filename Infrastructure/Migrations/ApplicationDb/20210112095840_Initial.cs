@@ -8,521 +8,505 @@ namespace Infrastructure.Migrations.ApplicationDb
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Activities",
-                columns: table => new
+                "Activities",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Properties = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SubjectId = table.Column<int>(type: "int", nullable: false),
-                    CauserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<int>(type: "int", nullable: true)
+                    Description = table.Column<string>("nvarchar(max)", nullable: true),
+                    Properties = table.Column<string>("nvarchar(max)", nullable: true),
+                    SubjectId = table.Column<int>("int", nullable: false),
+                    SubjectType = table.Column<string>("nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Activities", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Activities", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "AdditionalExaminationTypes",
-                columns: table => new
+                "AdditionalExaminationTypes",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<int>(type: "int", nullable: true)
+                    Name = table.Column<string>("nvarchar(max)", nullable: true),
+                    Unit = table.Column<string>("nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AdditionalExaminationTypes", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_AdditionalExaminationTypes", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "ExaminationTypes",
-                columns: table => new
+                "ExaminationTypes",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<int>(type: "int", nullable: true)
+                    Name = table.Column<string>("nvarchar(max)", nullable: true),
+                    Unit = table.Column<string>("nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExaminationTypes", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_ExaminationTypes", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "IcpcCodes",
-                columns: table => new
+                "IcpcCodes",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<int>(type: "int", nullable: true)
+                    Name = table.Column<string>("nvarchar(max)", nullable: true),
+                    Code = table.Column<string>("nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IcpcCodes", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_IcpcCodes", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Patients",
-                columns: table => new
+                "Patients",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Bsn = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Dob = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Gender = table.Column<int>(type: "int", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HouseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HouseNumberAddon = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PostalCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<int>(type: "int", nullable: true)
+                    Name = table.Column<string>("nvarchar(max)", nullable: true),
+                    Bsn = table.Column<string>("nvarchar(max)", nullable: true),
+                    Email = table.Column<string>("nvarchar(max)", nullable: true),
+                    Dob = table.Column<DateTime>("datetime2", nullable: false),
+                    Gender = table.Column<int>("int", nullable: false),
+                    PhoneNumber = table.Column<string>("nvarchar(max)", nullable: true),
+                    City = table.Column<string>("nvarchar(max)", nullable: true),
+                    Street = table.Column<string>("nvarchar(max)", nullable: true),
+                    HouseNumber = table.Column<string>("nvarchar(max)", nullable: true),
+                    HouseNumberAddon = table.Column<string>("nvarchar(max)", nullable: true),
+                    PostalCode = table.Column<string>("nvarchar(max)", nullable: true),
+                    Country = table.Column<string>("nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Patients", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Patients", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "UserInformation",
-                columns: table => new
+                "UserInformation",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Bsn = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Dob = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Gender = table.Column<int>(type: "int", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HouseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HouseNumberAddon = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PostalCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true)
+                    Name = table.Column<string>("nvarchar(max)", nullable: true),
+                    Dob = table.Column<DateTime>("datetime2", nullable: false),
+                    Gender = table.Column<int>("int", nullable: false),
+                    PhoneNumber = table.Column<string>("nvarchar(max)", nullable: true),
+                    City = table.Column<string>("nvarchar(max)", nullable: true),
+                    Street = table.Column<string>("nvarchar(max)", nullable: true),
+                    HouseNumber = table.Column<string>("nvarchar(max)", nullable: true),
+                    HouseNumberAddon = table.Column<string>("nvarchar(max)", nullable: true),
+                    PostalCode = table.Column<string>("nvarchar(max)", nullable: true),
+                    Country = table.Column<string>("nvarchar(max)", nullable: true),
+                    UserId = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserInformation", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_UserInformation", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Consultations",
-                columns: table => new
+                "Consultations",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DoctorId = table.Column<int>(type: "int", nullable: false),
-                    PatientId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<int>(type: "int", nullable: true)
+                    Comments = table.Column<string>("nvarchar(max)", nullable: true),
+                    Date = table.Column<DateTime>("datetime2", nullable: false),
+                    DoctorId = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    PatientId = table.Column<int>("int", nullable: false),
+                    CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Consultations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Consultations_Patients_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "Patients",
-                        principalColumn: "Id",
+                        "FK_Consultations_Patients_PatientId",
+                        x => x.PatientId,
+                        "Patients",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AdditionalExaminationResults",
-                columns: table => new
+                "AdditionalExaminationResults",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ConsultationId = table.Column<int>(type: "int", nullable: false),
-                    PatientId = table.Column<int>(type: "int", nullable: false),
-                    AdditionalExaminationTypeId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<int>(type: "int", nullable: true)
+                    Value = table.Column<string>("nvarchar(max)", nullable: true),
+                    Date = table.Column<DateTime>("datetime2", nullable: false),
+                    ConsultationId = table.Column<int>("int", nullable: false),
+                    PatientId = table.Column<int>("int", nullable: false),
+                    AdditionalExaminationTypeId = table.Column<int>("int", nullable: false),
+                    CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AdditionalExaminationResults", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AdditionalExaminationResults_AdditionalExaminationTypes_AdditionalExaminationTypeId",
-                        column: x => x.AdditionalExaminationTypeId,
-                        principalTable: "AdditionalExaminationTypes",
-                        principalColumn: "Id",
+                        "FK_AdditionalExaminationResults_AdditionalExaminationTypes_AdditionalExaminationTypeId",
+                        x => x.AdditionalExaminationTypeId,
+                        "AdditionalExaminationTypes",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AdditionalExaminationResults_Consultations_ConsultationId",
-                        column: x => x.ConsultationId,
-                        principalTable: "Consultations",
-                        principalColumn: "Id",
+                        "FK_AdditionalExaminationResults_Consultations_ConsultationId",
+                        x => x.ConsultationId,
+                        "Consultations",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AdditionalExaminationResults_Patients_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "Patients",
-                        principalColumn: "Id",
+                        "FK_AdditionalExaminationResults_Patients_PatientId",
+                        x => x.PatientId,
+                        "Patients",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Episodes",
-                columns: table => new
+                "Episodes",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Priority = table.Column<int>(type: "int", nullable: false),
-                    ConsultationId = table.Column<int>(type: "int", nullable: false),
-                    PatientId = table.Column<int>(type: "int", nullable: false),
-                    IcpcCodeId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<int>(type: "int", nullable: true)
+                    Description = table.Column<string>("nvarchar(max)", nullable: true),
+                    Priority = table.Column<int>("int", nullable: false),
+                    ConsultationId = table.Column<int>("int", nullable: false),
+                    PatientId = table.Column<int>("int", nullable: false),
+                    IcpcCodeId = table.Column<int>("int", nullable: false),
+                    CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Episodes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Episodes_Consultations_ConsultationId",
-                        column: x => x.ConsultationId,
-                        principalTable: "Consultations",
-                        principalColumn: "Id",
+                        "FK_Episodes_Consultations_ConsultationId",
+                        x => x.ConsultationId,
+                        "Consultations",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Episodes_IcpcCodes_IcpcCodeId",
-                        column: x => x.IcpcCodeId,
-                        principalTable: "IcpcCodes",
-                        principalColumn: "Id",
+                        "FK_Episodes_IcpcCodes_IcpcCodeId",
+                        x => x.IcpcCodeId,
+                        "IcpcCodes",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Episodes_Patients_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "Patients",
-                        principalColumn: "Id",
+                        "FK_Episodes_Patients_PatientId",
+                        x => x.PatientId,
+                        "Patients",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Intolerances",
-                columns: table => new
+                "Intolerances",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ConsultationId = table.Column<int>(type: "int", nullable: false),
-                    PatientId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<int>(type: "int", nullable: true)
+                    Description = table.Column<string>("nvarchar(max)", nullable: true),
+                    StartDate = table.Column<DateTime>("datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>("datetime2", nullable: false),
+                    ConsultationId = table.Column<int>("int", nullable: false),
+                    PatientId = table.Column<int>("int", nullable: false),
+                    CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Intolerances", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Intolerances_Consultations_ConsultationId",
-                        column: x => x.ConsultationId,
-                        principalTable: "Consultations",
-                        principalColumn: "Id",
+                        "FK_Intolerances_Consultations_ConsultationId",
+                        x => x.ConsultationId,
+                        "Consultations",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Intolerances_Patients_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "Patients",
-                        principalColumn: "Id",
+                        "FK_Intolerances_Patients_PatientId",
+                        x => x.PatientId,
+                        "Patients",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PhysicalExaminations",
-                columns: table => new
+                "PhysicalExaminations",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ConsultationId = table.Column<int>(type: "int", nullable: false),
-                    PatientId = table.Column<int>(type: "int", nullable: false),
-                    ExaminationTypeId = table.Column<int>(type: "int", nullable: false),
-                    PhysicalExaminationTypeId = table.Column<int>(type: "int", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<int>(type: "int", nullable: true)
+                    Value = table.Column<string>("nvarchar(max)", nullable: true),
+                    Date = table.Column<DateTime>("datetime2", nullable: false),
+                    ConsultationId = table.Column<int>("int", nullable: false),
+                    PatientId = table.Column<int>("int", nullable: false),
+                    ExaminationTypeId = table.Column<int>("int", nullable: false),
+                    PhysicalExaminationTypeId = table.Column<int>("int", nullable: true),
+                    CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PhysicalExaminations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PhysicalExaminations_Consultations_ConsultationId",
-                        column: x => x.ConsultationId,
-                        principalTable: "Consultations",
-                        principalColumn: "Id",
+                        "FK_PhysicalExaminations_Consultations_ConsultationId",
+                        x => x.ConsultationId,
+                        "Consultations",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_PhysicalExaminations_ExaminationTypes_PhysicalExaminationTypeId",
-                        column: x => x.PhysicalExaminationTypeId,
-                        principalTable: "ExaminationTypes",
-                        principalColumn: "Id",
+                        "FK_PhysicalExaminations_ExaminationTypes_PhysicalExaminationTypeId",
+                        x => x.PhysicalExaminationTypeId,
+                        "ExaminationTypes",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_PhysicalExaminations_Patients_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "Patients",
-                        principalColumn: "Id",
+                        "FK_PhysicalExaminations_Patients_PatientId",
+                        x => x.PatientId,
+                        "Patients",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Prescriptions",
-                columns: table => new
+                "Prescriptions",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ConsultationId = table.Column<int>(type: "int", nullable: false),
-                    PatientId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<int>(type: "int", nullable: true)
+                    Description = table.Column<string>("nvarchar(max)", nullable: true),
+                    StartDate = table.Column<DateTime>("datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>("datetime2", nullable: false),
+                    ConsultationId = table.Column<int>("int", nullable: false),
+                    PatientId = table.Column<int>("int", nullable: false),
+                    CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Prescriptions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Prescriptions_Consultations_ConsultationId",
-                        column: x => x.ConsultationId,
-                        principalTable: "Consultations",
-                        principalColumn: "Id",
+                        "FK_Prescriptions_Consultations_ConsultationId",
+                        x => x.ConsultationId,
+                        "Consultations",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Prescriptions_Patients_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "Patients",
-                        principalColumn: "Id",
+                        "FK_Prescriptions_Patients_PatientId",
+                        x => x.PatientId,
+                        "Patients",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserJournals",
-                columns: table => new
+                "UserJournals",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Property = table.Column<int>(type: "int", nullable: false),
-                    ConsultationId = table.Column<int>(type: "int", nullable: false),
-                    PatientId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<int>(type: "int", nullable: true)
+                    Description = table.Column<string>("nvarchar(max)", nullable: true),
+                    Property = table.Column<int>("int", nullable: false),
+                    ConsultationId = table.Column<int>("int", nullable: false),
+                    PatientId = table.Column<int>("int", nullable: false),
+                    CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
+                    UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    UpdatedBy = table.Column<Guid>("uniqueidentifier", nullable: true),
+                    DeletedAt = table.Column<DateTime>("datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>("uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserJournals", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserJournals_Consultations_ConsultationId",
-                        column: x => x.ConsultationId,
-                        principalTable: "Consultations",
-                        principalColumn: "Id",
+                        "FK_UserJournals_Consultations_ConsultationId",
+                        x => x.ConsultationId,
+                        "Consultations",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserJournals_Patients_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "Patients",
-                        principalColumn: "Id",
+                        "FK_UserJournals_Patients_PatientId",
+                        x => x.PatientId,
+                        "Patients",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AdditionalExaminationResults_AdditionalExaminationTypeId",
-                table: "AdditionalExaminationResults",
-                column: "AdditionalExaminationTypeId");
+                "IX_AdditionalExaminationResults_AdditionalExaminationTypeId",
+                "AdditionalExaminationResults",
+                "AdditionalExaminationTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AdditionalExaminationResults_ConsultationId",
-                table: "AdditionalExaminationResults",
-                column: "ConsultationId");
+                "IX_AdditionalExaminationResults_ConsultationId",
+                "AdditionalExaminationResults",
+                "ConsultationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AdditionalExaminationResults_PatientId",
-                table: "AdditionalExaminationResults",
-                column: "PatientId");
+                "IX_AdditionalExaminationResults_PatientId",
+                "AdditionalExaminationResults",
+                "PatientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Consultations_PatientId",
-                table: "Consultations",
-                column: "PatientId");
+                "IX_Consultations_PatientId",
+                "Consultations",
+                "PatientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Episodes_ConsultationId",
-                table: "Episodes",
-                column: "ConsultationId");
+                "IX_Episodes_ConsultationId",
+                "Episodes",
+                "ConsultationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Episodes_IcpcCodeId",
-                table: "Episodes",
-                column: "IcpcCodeId");
+                "IX_Episodes_IcpcCodeId",
+                "Episodes",
+                "IcpcCodeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Episodes_PatientId",
-                table: "Episodes",
-                column: "PatientId");
+                "IX_Episodes_PatientId",
+                "Episodes",
+                "PatientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Intolerances_ConsultationId",
-                table: "Intolerances",
-                column: "ConsultationId");
+                "IX_Intolerances_ConsultationId",
+                "Intolerances",
+                "ConsultationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Intolerances_PatientId",
-                table: "Intolerances",
-                column: "PatientId");
+                "IX_Intolerances_PatientId",
+                "Intolerances",
+                "PatientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PhysicalExaminations_ConsultationId",
-                table: "PhysicalExaminations",
-                column: "ConsultationId");
+                "IX_PhysicalExaminations_ConsultationId",
+                "PhysicalExaminations",
+                "ConsultationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PhysicalExaminations_PatientId",
-                table: "PhysicalExaminations",
-                column: "PatientId");
+                "IX_PhysicalExaminations_PatientId",
+                "PhysicalExaminations",
+                "PatientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PhysicalExaminations_PhysicalExaminationTypeId",
-                table: "PhysicalExaminations",
-                column: "PhysicalExaminationTypeId");
+                "IX_PhysicalExaminations_PhysicalExaminationTypeId",
+                "PhysicalExaminations",
+                "PhysicalExaminationTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prescriptions_ConsultationId",
-                table: "Prescriptions",
-                column: "ConsultationId");
+                "IX_Prescriptions_ConsultationId",
+                "Prescriptions",
+                "ConsultationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prescriptions_PatientId",
-                table: "Prescriptions",
-                column: "PatientId");
+                "IX_Prescriptions_PatientId",
+                "Prescriptions",
+                "PatientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserJournals_ConsultationId",
-                table: "UserJournals",
-                column: "ConsultationId");
+                "IX_UserJournals_ConsultationId",
+                "UserJournals",
+                "ConsultationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserJournals_PatientId",
-                table: "UserJournals",
-                column: "PatientId");
+                "IX_UserJournals_PatientId",
+                "UserJournals",
+                "PatientId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Activities");
+                "Activities");
 
             migrationBuilder.DropTable(
-                name: "AdditionalExaminationResults");
+                "AdditionalExaminationResults");
 
             migrationBuilder.DropTable(
-                name: "Episodes");
+                "Episodes");
 
             migrationBuilder.DropTable(
-                name: "Intolerances");
+                "Intolerances");
 
             migrationBuilder.DropTable(
-                name: "PhysicalExaminations");
+                "PhysicalExaminations");
 
             migrationBuilder.DropTable(
-                name: "Prescriptions");
+                "Prescriptions");
 
             migrationBuilder.DropTable(
-                name: "UserInformation");
+                "UserInformation");
 
             migrationBuilder.DropTable(
-                name: "UserJournals");
+                "UserJournals");
 
             migrationBuilder.DropTable(
-                name: "AdditionalExaminationTypes");
+                "AdditionalExaminationTypes");
 
             migrationBuilder.DropTable(
-                name: "IcpcCodes");
+                "IcpcCodes");
 
             migrationBuilder.DropTable(
-                name: "ExaminationTypes");
+                "ExaminationTypes");
 
             migrationBuilder.DropTable(
-                name: "Consultations");
+                "Consultations");
 
             migrationBuilder.DropTable(
-                name: "Patients");
+                "Patients");
         }
     }
 }

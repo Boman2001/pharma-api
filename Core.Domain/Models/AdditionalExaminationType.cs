@@ -2,7 +2,7 @@
 
 namespace Core.Domain.Models
 {
-    public class AdditionalExaminationType: BaseEntitySoftDeletes
+    public class AdditionalExaminationType : BaseEntity
     {
         public string Name { get; set; }
         public string Unit { get; set; }

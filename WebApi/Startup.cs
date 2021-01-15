@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Core.DomainServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -15,7 +14,6 @@ using System.Text;
 using AutoMapper;
 using Core.DomainServices.Repositories;
 using Infrastructure.Repositories;
-using AutoMapper;
 
 namespace WebApi
 {
@@ -33,6 +31,16 @@ namespace WebApi
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
                 Configuration.GetConnectionString("Default")
             ));
+            
+            services.AddCors(options => 
+                options.AddDefaultPolicy(builder => builder
+                    .WithOrigins(Configuration["AppUrl"])
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .AllowAnyHeader()
+                    .Build()
+                )
+            );
             
             services.AddDbContext<SecurityDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Security")));
             services.AddIdentity<IdentityUser, IdentityRole>(config => 
@@ -87,10 +95,16 @@ namespace WebApi
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
             CreateUserRoles(serviceProvider).Wait();
+            if (databaseContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+            {
+                databaseContext.Database.Migrate();
+                identityDbContext.Database.Migrate();
+            }
         }
 
         private static async Task CreateUserRoles(IServiceProvider serviceProvider)

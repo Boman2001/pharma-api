@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core.Domain;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -9,17 +8,23 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class PhysicalExaminationsController : Controller
     {
+        private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<PhysicalExamination> _physicalExaminationRepository;
 
-        public PhysicalExaminationsController(IRepository<PhysicalExamination> physicalExaminationRepository)
+        public PhysicalExaminationsController(IRepository<PhysicalExamination> physicalExaminationRepository,
+            IIdentityRepository identityRepository)
         {
             _physicalExaminationRepository = physicalExaminationRepository;
+            _identityRepository = identityRepository;
         }
 
         [HttpGet]
@@ -49,7 +54,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<PhysicalExamination>> Post([FromBody] PhysicalExamination physicalExamination)
         {
-            var createdPhysicalExamination = await _physicalExaminationRepository.Add(physicalExamination);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            var createdPhysicalExamination = await _physicalExaminationRepository.Add(physicalExamination, currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdPhysicalExamination);
         }
@@ -60,7 +68,12 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] PhysicalExamination physicalExamination)
         {
-            var updatedPhysicalExamination = await _physicalExaminationRepository.Update(physicalExamination);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            physicalExamination.Id = id;
+
+            var updatedPhysicalExamination = await _physicalExaminationRepository.Update(physicalExamination,currentUser);
 
             return Ok(updatedPhysicalExamination);
         }
@@ -71,7 +84,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            await _physicalExaminationRepository.Delete(id);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _physicalExaminationRepository.Delete(id,currentUser);
 
             return NoContent();
         }

@@ -1,71 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-using System.ComponentModel;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Configuration;
-using Core.DomainServices;
 using Core.DomainServices.Helpers;
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
-using Xunit;
-using Core.DomainServices;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Mvc;
+using Xunit;
 
 namespace Core.DomainServices.Tests
 {
-    public class AuthhelperTests
+    public class AuthHelperTests
     {
-        readonly private AuthHelper _authHelper;
-        public AuthhelperTests()
+        [Trait("Category", "Jwt Tests")]
+        [Fact]
+        public void Given_User_Returns_Jwt_With_roles()
         {
             IConfiguration config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
-            .Build();
-            _authHelper = new AuthHelper(config);
+                .AddJsonFile("appsettings.json")
+                .Build();
+            var authHelper = new AuthHelper(config);
+
+            var identityUser = new IdentityUser
+            {
+                Email = "maartendonkersloot@gmail.com",
+                UserName = "maartendonkersloot@gmail.com",
+                PasswordHash = "password"
+            };
+
+            var roleList = new List<string>
+            {
+                "Doctor"
+            };
+
+            var result = authHelper.GenerateToken(identityUser, roleList);
+
+            Assert.Equal(6, result.Claims.Count());
         }
 
-        [Trait("Category", "Email Validation")]
+        [Trait("Category", "Jwt Tests")]
         [Fact]
-        public void Email_Invalled()
+        public void Given_User_Returns_Jwt_Without_Roles()
         {
-            var falseEmaile = "not a valid email";
-            bool result = AuthHelper.IsValidEmail(falseEmaile);
-           
-            Assert.False(result);
-        }
+            IConfiguration config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+            var authHelper = new AuthHelper(config);
 
-        [Trait("Category", "Email Validation")]
-        [Fact]
-        public void Email_valid()
-        {
-            var validEmail = "maartendonkersloot@gmail.com";
-           
-            bool result = AuthHelper.IsValidEmail(validEmail);
-         
-            Assert.Equal(true, result);
-        }
+            var identityUser = new IdentityUser
+            {
+                Email = "maartendonkersloot@gmail.com",
+                UserName = "maartendonkersloot@gmail.com",
+                PasswordHash = "password"
+            };
 
-        [Trait("Category", "Jwt validation test")]
-        [Fact]
-        public void Returns_Jwt()
-        {
-            IdentityUser identityUser = new IdentityUser();
-            identityUser.Email = "maartendonkersloot@gmail.com";
-            identityUser.UserName = identityUser.Email;
-            identityUser.PasswordHash = "password";
+            var result = authHelper.GenerateToken(identityUser, null);
 
-            IList<string> roleList = new List<string>();
-            roleList.Add("DOCTOR");
-
-            JwtSecurityToken result = _authHelper.GenerateToken(identityUser, roleList);
-
-            Assert.Equal(5,result.Claims.Count());
+            Assert.Equal(5, result.Claims.Count());
         }
     }
 }

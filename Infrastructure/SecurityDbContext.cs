@@ -1,5 +1,4 @@
-﻿using Core.Domain;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure
@@ -8,7 +7,6 @@ namespace Infrastructure
     {
         public SecurityDbContext(DbContextOptions<SecurityDbContext> contextOptions) : base(contextOptions)
         {
-
         }
     }
 }
