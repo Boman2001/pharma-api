@@ -54,7 +54,7 @@ namespace WebApi.Controllers
 
             if (user == null || userInformation == null)
             {
-                return NotFound();
+                return BadRequest("Invalid credentials.");
             }
 
             var userDto = new UserDto

@@ -18,7 +18,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                 defaultValue: 0.0);
 
             migrationBuilder.AddColumn<double>(
-                "Longditude",
+                "Longitude",
                 "Patients",
                 "float",
                 nullable: false,
@@ -32,7 +32,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                 "Patients");
 
             migrationBuilder.DropColumn(
-                "Longditude",
+                "Longitude",
                 "Patients");
 
             migrationBuilder.AddColumn<string>(

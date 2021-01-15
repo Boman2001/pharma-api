@@ -6,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Core.DomainServices.Helpers
 {
+    using System;
+    using System.Collections.Generic;
+
     public class PatientHelper
     {
         private readonly IConfiguration _configuration;
@@ -24,11 +27,19 @@ namespace Core.DomainServices.Helpers
             {
                 ApiKey = _configuration["GoogleApiKey"]
             };
-            var addresses = await geocoder.GeocodeAsync(formattedAddress);
 
-            var enumerable = addresses.ToList();
-            patient.Latitude = enumerable.First().Coordinates.Latitude;
-            patient.Longditude = enumerable.First().Coordinates.Longitude;
+            try
+            {
+                var addresses = await geocoder.GeocodeAsync(formattedAddress);
+                var enumerable = addresses.ToList();
+
+                patient.Latitude = enumerable.First().Coordinates.Latitude;
+                patient.Longitude = enumerable.First().Coordinates.Longitude;
+            }
+            catch (Exception e)
+            {
+                throw new ArgumentException("Invalid address.");
+            }
 
             return patient;
         }

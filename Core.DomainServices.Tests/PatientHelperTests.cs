@@ -39,7 +39,7 @@ namespace Core.DomainServices.Tests
             await patientHelper.AddLatLongToPatient(patient);
 
             Assert.True(patient.Latitude > 0);
-            Assert.True(patient.Longditude > 0);
+            Assert.True(patient.Longitude > 0);
         }
 
         [Trait("Category", "PatientHelper Tests")]
@@ -72,7 +72,7 @@ namespace Core.DomainServices.Tests
             
             Assert.Equal(result.Name, patient.Name);
             Assert.True(result.Latitude > 0);
-            Assert.True(result.Longditude > 0);
+            Assert.True(result.Longitude > 0);
         }
     }
 }

@@ -374,7 +374,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
 
-                    b.Property<double>("Longditude")
+                    b.Property<double>("longitude")
                         .HasColumnType("float");
 
                     b.Property<string>("Name")

@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 
 namespace WebApi.controllers
 {
+    using AutoMapper;
+    using Models.Patients;
     using System.Linq;
     using System.Security.Claims;
 
@@ -23,11 +25,14 @@ namespace WebApi.controllers
         private readonly IIdentityRepository _identityRepository;
         private readonly PatientHelper _patientHelper;
         private readonly IRepository<Patient> _patientRepository;
+        private readonly IMapper _mapper;
 
-        public PatientsController(IRepository<Patient> patientRepository, IConfiguration config, IIdentityRepository identityRepository)
+        public PatientsController(IRepository<Patient> patientRepository, IConfiguration config,
+            IIdentityRepository identityRepository, IMapper mapper)
         {
             _patientRepository = patientRepository;
             _identityRepository = identityRepository;
+            _mapper = mapper;
             _patientHelper = new PatientHelper(config);
         }
 
@@ -48,7 +53,7 @@ namespace WebApi.controllers
         {
             var patient = await _patientRepository.Get(id);
 
-            return patient != null ? (ActionResult<Patient>) Ok(patient) : NotFound();
+            return patient != null ? (ActionResult<Patient>)Ok(patient) : NotFound();
         }
 
         [HttpPost]
@@ -56,7 +61,7 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<Patient>> Post([FromBody] Patient patient)
+        public async Task<ActionResult<Patient>> Post([FromBody] PatientDto patientDto)
         {
             Patient createdPatient;
 
@@ -65,8 +70,10 @@ namespace WebApi.controllers
 
             try
             {
+                var patient = _mapper.Map<PatientDto, Patient>(patientDto);
+                
                 createdPatient = await _patientHelper.AddLatLongToPatient(patient);
-                createdPatient = await _patientRepository.Add(createdPatient,currentUser);
+                createdPatient = await _patientRepository.Add(createdPatient, currentUser);
             }
             catch (Exception e)
             {
@@ -90,7 +97,7 @@ namespace WebApi.controllers
 
             patient.Id = id;
 
-            var updatedPatient = await _patientRepository.Update(patient,currentUser);
+            var updatedPatient = await _patientRepository.Update(patient, currentUser);
 
             return Ok(updatedPatient);
         }
@@ -104,7 +111,7 @@ namespace WebApi.controllers
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            await _patientRepository.Delete(id,currentUser);
+            await _patientRepository.Delete(id, currentUser);
 
             return NoContent();
         }
