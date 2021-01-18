@@ -12,7 +12,7 @@ using WebApi.Models.Authentication;
 using WebApi.Tests.Mocks;
 using Xunit;
 
-namespace WebApi.Tests
+namespace WebApi.Tests.ControllerTests
 {
     public class AuthControllerTests
     {
@@ -98,7 +98,7 @@ namespace WebApi.Tests
                 Email = "email@gmail.com", Password = "password"
             };
             var result = await Controller.Login(user);
-            var okObjectResult = (OkObjectResult)result;
+            var okObjectResult = (OkObjectResult) result;
 
             Assert.Equal(200, okObjectResult.StatusCode);
         }
@@ -123,12 +123,14 @@ namespace WebApi.Tests
                 NormalizedEmail = "M@GMAIL.COM",
                 EmailConfirmed = true,
             };
+
             _fakeIdentityUsers = new List<IdentityUser>
             {
                 _fakeIdentityUser, extraIdentityUser
             };
 
             _userInformations = new List<UserInformation>();
+
             var userInformation = new UserInformation
             {
                 Name = "name",
@@ -139,6 +141,7 @@ namespace WebApi.Tests
                 Country = "qwe",
                 UserId = Guid.Parse(_fakeIdentityUser.Id)
             };
+
             _userInformations.AddRange(new List<UserInformation>
             {
                 userInformation
