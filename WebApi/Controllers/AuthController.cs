@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Core.Domain.Models;
 using Core.DomainServices.Helpers;
 using Core.DomainServices.Repositories;
