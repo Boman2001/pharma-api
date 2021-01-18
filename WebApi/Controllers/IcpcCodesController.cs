@@ -8,17 +8,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class IcpcCodeController : Controller
+    public class IcpcCodesController : Controller
     {
+        private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<IcpcCode> _icpcCodeRepository;
 
-        public IcpcCodeController(IRepository<IcpcCode> icpcCodeRepository)
+        public IcpcCodesController(IRepository<IcpcCode> icpcCodeRepository, IIdentityRepository identityRepository)
         {
             _icpcCodeRepository = icpcCodeRepository;
+            _identityRepository = identityRepository;
         }
 
         [HttpGet]
@@ -48,7 +53,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<IcpcCode>> Post([FromBody] IcpcCode icpcCode)
         {
-            var createdIcpcCode = await _icpcCodeRepository.Add(icpcCode);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            var createdIcpcCode = await _icpcCodeRepository.Add(icpcCode, currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdIcpcCode);
         }
@@ -59,9 +67,12 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] IcpcCode icpcCode)
         {
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
             icpcCode.Id = id;
-            
-            var updatedIcpcCode = await _icpcCodeRepository.Update(icpcCode);
+
+            var updatedIcpcCode = await _icpcCodeRepository.Update(icpcCode,currentUser);
 
             return Ok(updatedIcpcCode);
         }
@@ -72,7 +83,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            await _icpcCodeRepository.Delete(id);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _icpcCodeRepository.Delete(id,currentUser);
 
             return NoContent();
         }

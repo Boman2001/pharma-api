@@ -2,7 +2,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Core.Domain.Models;
 using Core.DomainServices.Helpers;
 using Core.DomainServices.Repositories;
@@ -76,10 +75,10 @@ namespace WebApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto login)
         {
-            var identityUser = _mapper.Map<LoginDto, IdentityUser>(login);
-
-            identityUser.PasswordHash = login.Password;
-            identityUser.UserName = identityUser.Email;
+            var identityUser = new IdentityUser
+            {
+                Email = login.Email, UserName = login.Email, PasswordHash = login.Password
+            };
 
             SecurityToken securityToken;
 
@@ -95,7 +94,10 @@ namespace WebApi.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new {message = ex.Message});
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
             }
         }
     }

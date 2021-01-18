@@ -8,17 +8,23 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class IntolerancesController : Controller
     {
+        private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Intolerance> _intoleranceRepository;
 
-        public IntolerancesController(IRepository<Intolerance> intoleranceRepository)
+        public IntolerancesController(IRepository<Intolerance> intoleranceRepository,
+            IIdentityRepository identityRepository)
         {
             _intoleranceRepository = intoleranceRepository;
+            _identityRepository = identityRepository;
         }
 
         [HttpGet]
@@ -48,7 +54,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Intolerance>> Post([FromBody] Intolerance intolerance)
         {
-            var createdIntolerance = await _intoleranceRepository.Add(intolerance);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            var createdIntolerance = await _intoleranceRepository.Add(intolerance, currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdIntolerance);
         }
@@ -59,9 +68,12 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] Intolerance intolerance)
         {
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
             intolerance.Id = id;
-            
-            var updatedIntolerance = await _intoleranceRepository.Update(intolerance);
+
+            var updatedIntolerance = await _intoleranceRepository.Update(intolerance,currentUser);
 
             return Ok(updatedIntolerance);
         }
@@ -72,7 +84,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            await _intoleranceRepository.Delete(id);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _intoleranceRepository.Delete(id,currentUser);
 
             return NoContent();
         }

@@ -32,14 +32,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -53,8 +53,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -77,8 +77,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -86,8 +86,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
@@ -95,8 +95,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -122,14 +122,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -140,8 +140,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -155,11 +155,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<string>("Comments")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -167,8 +170,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
@@ -179,8 +182,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -202,14 +205,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -226,8 +229,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -253,14 +256,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -268,8 +271,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -289,14 +292,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -313,8 +316,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -344,14 +347,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Dob")
                         .HasColumnType("datetime2");
@@ -371,7 +374,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
 
-                    b.Property<double>("Longditude")
+                    b.Property<double>("longitude")
                         .HasColumnType("float");
 
                     b.Property<string>("Name")
@@ -389,8 +392,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -410,8 +413,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -419,8 +422,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("ExaminationTypeId")
                         .HasColumnType("int");
@@ -434,8 +437,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -461,14 +464,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -479,8 +482,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -500,14 +503,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -524,8 +527,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -543,9 +546,6 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<string>("Bsn")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
@@ -555,8 +555,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Dob")
                         .HasColumnType("datetime2");
@@ -582,8 +582,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -606,14 +606,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -627,8 +627,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 

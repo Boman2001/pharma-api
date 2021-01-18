@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Mail;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -26,8 +24,8 @@ namespace Core.DomainServices.Helpers
 
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Email, user.Email),
-                new(ClaimTypes.NameIdentifier, user.Id)
+                new(ClaimTypes.Sid, user.Id),
+                new(ClaimTypes.Email, user.Email), 
             };
 
             if (roles != null && roles.Count > 0)

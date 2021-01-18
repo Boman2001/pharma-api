@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -7,7 +6,6 @@ using System.Threading.Tasks;
 using Core.DomainServices.Helpers;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Repositories
@@ -15,20 +13,20 @@ namespace Infrastructure.Repositories
     public class IdentityRepository : IIdentityRepository
     {
         private readonly AuthHelper _authHelper;
-        private readonly SecurityDbContext _dbContext;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public IdentityRepository(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
-            IConfiguration configuration, SecurityDbContext dbContext)
+        public IdentityRepository(
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager,
+            IConfiguration configuration)
         {
-            _dbContext = dbContext;
             _userManager = userManager;
             _signInManager = signInManager;
             _authHelper = new AuthHelper(configuration);
         }
 
-        public async Task<JwtSecurityToken> Register(IdentityUser user, string password)
+        public async Task<IdentityUser> Register(IdentityUser user, string password)
         {
             var findByEmailAsync = await _userManager.FindByEmailAsync(user.Email);
 
@@ -41,34 +39,29 @@ namespace Infrastructure.Repositories
             ErrorHandling(result);
 
             await _userManager.AddToRoleAsync(user, "Doctor");
-
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var token = _authHelper.GenerateToken(user, roles);
-
-            return token;
+            
+            return user;
         }
-
+        
         public async Task<JwtSecurityToken> Login(IdentityUser user, string password)
         {
             var result = await _userManager.FindByEmailAsync(user.Email);
 
             if (result == null)
             {
-                throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
+                throw new ArgumentException("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
             }
 
             var loginResult = await _signInManager.PasswordSignInAsync(user.UserName, password, false, false);
 
-            var roles = await _userManager.GetRolesAsync(result);
-
-            if (loginResult.Succeeded)
+            if (!loginResult.Succeeded)
             {
-                var token = _authHelper.GenerateToken(user, roles);
-                return token;
+                throw new ArgumentException("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
             }
 
-            throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
+            var roles = await _userManager.GetRolesAsync(result);
+            var token = _authHelper.GenerateToken(result, roles);
+            return token;
         }
 
         public async Task<JwtSecurityToken> GetTokenForTwoFactor(IdentityUser user)
@@ -92,13 +85,13 @@ namespace Infrastructure.Repositories
 
             if (result == null)
             {
-                throw new Exception("Gebruiker bestaat niet.");
+                throw new ArgumentException("Gebruiker bestaat niet.");
             }
 
             var findByEmailAsync = await _userManager.FindByEmailAsync(result.Email);
             if (findByEmailAsync?.Id != result.Id && findByEmailAsync?.Email == result.Email)
             {
-                throw new Exception("E-mailadres is al in gebruik.");
+                throw new ArgumentException("E-mailadres is al in gebruik.");
             }
 
             result.Email = user.Email;
@@ -111,7 +104,7 @@ namespace Infrastructure.Repositories
 
                 if (!passwordCheck)
                 {
-                    throw new Exception("Wachtwoord is ongeldig.");
+                    throw new ArgumentException("Wachtwoord is ongeldig.");
                 }
 
                 result.PasswordHash = _userManager.PasswordHasher.HashPassword(user, password);
@@ -141,12 +134,7 @@ namespace Infrastructure.Repositories
             return await _userManager.FindByEmailAsync(email);
         }
 
-        public void Detach(IEnumerable<IdentityUser> entities)
-        {
-            foreach (var entity in entities) _dbContext.Entry(entity).State = EntityState.Detached;
-        }
-
-        public static void ErrorHandling(IdentityResult result)
+        private static void ErrorHandling(IdentityResult result)
         {
             var exceptions = result.Errors.Select(error => new Exception(error.Description)).ToList();
 

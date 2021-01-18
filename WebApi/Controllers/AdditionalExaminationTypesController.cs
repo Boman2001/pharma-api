@@ -8,18 +8,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class AdditionalExaminationTypeController : Controller
+    public class AdditionalExaminationTypesController : Controller
     {
+        private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<AdditionalExaminationType> _additionalExaminationTypeRepository;
 
-        public AdditionalExaminationTypeController(
-            IRepository<AdditionalExaminationType> additionalExaminationTypeRepository)
+        public AdditionalExaminationTypesController(
+            IRepository<AdditionalExaminationType> additionalExaminationTypeRepository,
+            IIdentityRepository identityRepository)
         {
             _additionalExaminationTypeRepository = additionalExaminationTypeRepository;
+            _identityRepository = identityRepository;
         }
 
         [HttpGet]
@@ -50,8 +56,11 @@ namespace WebApi.controllers
         public async Task<ActionResult<AdditionalExaminationType>> Post(
             [FromBody] AdditionalExaminationType additionalExaminationType)
         {
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
             var createdAdditionalExaminationType =
-                await _additionalExaminationTypeRepository.Add(additionalExaminationType);
+                await _additionalExaminationTypeRepository.Add(additionalExaminationType, currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdAdditionalExaminationType);
         }
@@ -62,10 +71,13 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] AdditionalExaminationType additionalExaminationType)
         {
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
             additionalExaminationType.Id = id;
-            
+
             var updatedAdditionalExaminationType =
-                await _additionalExaminationTypeRepository.Update(additionalExaminationType);
+                await _additionalExaminationTypeRepository.Update(additionalExaminationType, currentUser);
 
             return Ok(updatedAdditionalExaminationType);
         }
@@ -76,7 +88,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            await _additionalExaminationTypeRepository.Delete(id);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _additionalExaminationTypeRepository.Delete(id, currentUser);
 
             return NoContent();
         }

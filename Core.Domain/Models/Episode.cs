@@ -1,6 +1,6 @@
 ﻿namespace Core.Domain.Models
 {
-    public class Episode : BaseEntitySoftDeletes
+    public class Episode : BaseEntity
     {
         public string Description { get; set; }
         public int Priority { get; set; }

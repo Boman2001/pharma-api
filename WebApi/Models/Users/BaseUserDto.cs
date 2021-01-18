@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using Core.Domain.Enums;
 
 namespace WebApi.Models.Users
@@ -16,9 +15,6 @@ namespace WebApi.Models.Users
 
         [Required(ErrorMessage = "Naam is verplicht.")]
         public string Name { get; set; }
-
-        [Required(ErrorMessage = "BSN is verplicht.")]
-        public string Bsn { get; set; }
 
         [Required(ErrorMessage = "Geboortedatum is verplicht.")]
         public DateTime Dob { get; set; }

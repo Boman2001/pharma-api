@@ -2,7 +2,7 @@
 
 namespace Core.Domain.Models
 {
-    public class PhysicalExamination : BaseEntitySoftDeletes
+    public class PhysicalExamination : BaseEntity
     {
         public string Value { get; set; }
         public DateTime Date { get; set; }
@@ -14,6 +14,6 @@ namespace Core.Domain.Models
         public Patient Patient { get; set; }
 
         public int ExaminationTypeId { get; set; }
-        public PhysicalExaminationType PhysicalExaminationType { get; set; }
+        public ExaminationType ExaminationType { get; set; }
     }
 }

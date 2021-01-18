@@ -22,7 +22,7 @@ namespace Core.DomainServices.QueryExtensions
             }
         }
 
-        private static LambdaExpression GetSoftDeleteFilter<TEntity>() where TEntity : class, IBaseEntitySoftDeletes
+        private static LambdaExpression GetSoftDeleteFilter<TEntity>() where TEntity : class, IEntity
         {
             Expression<Func<TEntity, bool>> filter = x => x.DeletedAt == null;
 

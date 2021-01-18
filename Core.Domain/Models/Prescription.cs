@@ -2,7 +2,7 @@
 
 namespace Core.Domain.Models
 {
-    public class Prescription : BaseEntitySoftDeletes
+    public class Prescription : BaseEntity
     {
         public string Description { get; set; }
         public DateTime StartDate { get; set; }

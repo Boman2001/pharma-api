@@ -7,20 +7,20 @@ namespace Infrastructure.Migrations.ApplicationDb
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "PhoneNumber",
-                table: "UserInformation");
+                "PhoneNumber",
+                "UserInformation");
 
             migrationBuilder.AddColumn<double>(
-                name: "Latitude",
-                table: "Patients",
-                type: "float",
+                "Latitude",
+                "Patients",
+                "float",
                 nullable: false,
                 defaultValue: 0.0);
 
             migrationBuilder.AddColumn<double>(
-                name: "Longditude",
-                table: "Patients",
-                type: "float",
+                "Longitude",
+                "Patients",
+                "float",
                 nullable: false,
                 defaultValue: 0.0);
         }
@@ -28,17 +28,17 @@ namespace Infrastructure.Migrations.ApplicationDb
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Latitude",
-                table: "Patients");
+                "Latitude",
+                "Patients");
 
             migrationBuilder.DropColumn(
-                name: "Longditude",
-                table: "Patients");
+                "Longitude",
+                "Patients");
 
             migrationBuilder.AddColumn<string>(
-                name: "PhoneNumber",
-                table: "UserInformation",
-                type: "nvarchar(max)",
+                "PhoneNumber",
+                "UserInformation",
+                "nvarchar(max)",
                 nullable: true);
         }
     }

@@ -8,17 +8,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class ConsultationController : Controller
+    public class ConsultationsController : Controller
     {
+        private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Consultation> _consultationRepository;
 
-        public ConsultationController(IRepository<Consultation> consultationRepository)
+        public ConsultationsController(IRepository<Consultation> consultationRepository, IIdentityRepository identityRepository)
         {
             _consultationRepository = consultationRepository;
+            _identityRepository = identityRepository;
         }
 
         [HttpGet]
@@ -48,7 +53,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Consultation>> Post([FromBody] Consultation consultation)
         {
-            var createdConsultation = await _consultationRepository.Add(consultation);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+            
+            var createdConsultation = await _consultationRepository.Add(consultation, currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdConsultation);
         }
@@ -59,9 +67,12 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] Consultation consultation)
         {
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
             consultation.Id = id;
-            
-            var updatedConsultation = await _consultationRepository.Update(consultation);
+
+            var updatedConsultation = await _consultationRepository.Update(consultation,currentUser);
 
             return Ok(updatedConsultation);
         }
@@ -72,7 +83,10 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(int id)
         {
-            await _consultationRepository.Delete(id);
+            var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
+            var currentUser = await _identityRepository.GetUserById(userId);
+
+            await _consultationRepository.Delete(id,currentUser);
 
             return NoContent();
         }
