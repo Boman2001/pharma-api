@@ -15,7 +15,7 @@ namespace WebApi.controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class IntolerancesController : Controller
+    public class IntolerancesController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Intolerance> _intoleranceRepository;

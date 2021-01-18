@@ -15,7 +15,7 @@ namespace WebApi.controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class PhysicalExaminationsController : Controller
+    public class PhysicalExaminationsController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<PhysicalExamination> _physicalExaminationRepository;

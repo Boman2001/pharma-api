@@ -15,7 +15,7 @@ namespace WebApi.Controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class AdditionalExaminationResultsController : Controller
+    public class AdditionalExaminationResultsController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<AdditionalExaminationResult> _additionalExaminationResultRepository;

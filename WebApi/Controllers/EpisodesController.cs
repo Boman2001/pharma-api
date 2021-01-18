@@ -15,7 +15,7 @@ namespace WebApi.controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class EpisodesController : Controller
+    public class EpisodesController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Episode> _episodeRepository;

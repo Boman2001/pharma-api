@@ -7,15 +7,12 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using Users;
 
-    public class ConsultationDto
+    public class ConsultationDto: BaseConsultationDto
     {
-        public DateTime Date { get; set; }
-        public string Comments { get; set; }
+        public int Id { get; set; }
 
-        public Guid DoctorId { get; set; }
         public UserDto Doctor { get; set; }
 
-        public int PatientId { get; set; }
         public Patient Patient { get; set; }
 
         public List<AdditionalExaminationResult> AdditionalExaminationResults { get; set; }

@@ -15,7 +15,7 @@ namespace WebApi.controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class PrescriptionsController : Controller
+    public class PrescriptionsController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Prescription> _prescriptionRepository;

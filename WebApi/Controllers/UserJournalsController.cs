@@ -15,7 +15,7 @@ namespace WebApi.controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class UserJournalsController : Controller
+    public class UserJournalsController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<UserJournal> _userJournalRepository;

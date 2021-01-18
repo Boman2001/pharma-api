@@ -20,7 +20,7 @@ namespace WebApi.controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class PatientsController : Controller
+    public class PatientsController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly PatientHelper _patientHelper;
