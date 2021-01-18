@@ -71,6 +71,21 @@ namespace Infrastructure.Repositories
             throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
         }
 
+        public async Task<JwtSecurityToken> GetTokenForTwoFactor(IdentityUser user)
+        {
+            var result = await _userManager.FindByEmailAsync(user.Email);
+
+            if (result == null)
+            {
+                throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
+            }
+
+            var roles = await _userManager.GetRolesAsync(result);
+
+            var token = _authHelper.GenerateToken(user, roles);
+            return token;
+        }
+
         public async Task<IdentityResult> Update(IdentityUser user, string password = null)
         {
             var result = await _userManager.FindByIdAsync(user.Id);

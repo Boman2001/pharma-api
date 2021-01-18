@@ -18,6 +18,8 @@ namespace Core.DomainServices.Repositories
 
         Task<IdentityUser> GetCurrentUser(ClaimsPrincipal user);
 
+        Task<JwtSecurityToken> GetTokenForTwoFactor(IdentityUser user);
+
         Task<IdentityUser> GetUserById(string id);
 
         Task<IdentityUser> GetUserByEmail(string email);
