@@ -24,9 +24,11 @@ namespace WebApi.Mappings
             CreateMap<UserInformation, UserInformationDto>();
             CreateMap<LoginDto, IdentityUser>();
             CreateMap<PatientDto, Patient>();
-            CreateMap<Consultation, BaseConsultationDto>();
+            CreateMap<Consultation, ConsultationDto>();
             CreateMap<BaseConsultationDto, Consultation>();
             CreateMap<UpdateConsultationDto, Consultation>();
+            CreateMap<Consultation, CreatedConsultationDto>();
+            CreateMap<Consultation, UpdateConsultationDto>();
         }
     }
 }

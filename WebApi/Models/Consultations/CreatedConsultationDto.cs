@@ -4,9 +4,8 @@
     using System.ComponentModel.DataAnnotations;
     using System.Diagnostics.CodeAnalysis;
 
-    public class UpdateConsultationDto : BaseConsultationDto
+    public class CreatedConsultationDto : BaseConsultationDto
     {
-        [Required(ErrorMessage = "Id is verplicht.")]
         public int Id { get; set; }
     }
 }

@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApi.controllers
 {
     using AutoMapper;
-    using Geocoding;
     using Microsoft.AspNetCore.Identity;
     using Models.Consultations;
     using Models.Users;
@@ -52,7 +51,7 @@ namespace WebApi.controllers
 
             var consultationsDtos = new List<ConsultationDto>();
 
-            foreach (ConsultationDto consultation in consultations)
+            foreach (var consultation in consultations)
             {
                 var user = await _identityRepository.GetUserById(consultation.DoctorId.ToString());
 
@@ -98,7 +97,7 @@ namespace WebApi.controllers
                 return NotFound();
             }
 
-            var consultatioDto = _mapper.Map<Consultation, ConsultationDto>(consultation);
+            var consultationDto = _mapper.Map<Consultation, ConsultationDto>(consultation);
 
             var user = await _identityRepository.GetUserById(consultation.DoctorId.ToString());
 
@@ -120,9 +119,9 @@ namespace WebApi.controllers
 
             _mapper.Map(userInformationDto, userDto);
 
-            consultatioDto.Doctor = userDto;
+            consultationDto.Doctor = userDto;
 
-            return Ok(consultatioDto);
+            return Ok(consultationDto);
         }
 
         [HttpPost]
@@ -136,10 +135,12 @@ namespace WebApi.controllers
             var currentUser = await _identityRepository.GetUserById(userId);
 
             var consultation = _mapper.Map<BaseConsultationDto, Consultation>(baseConsultationDto);
-            
+
             var createdConsultation = await _consultationRepository.Add(consultation, currentUser);
 
-            return CreatedAtAction(nameof(Post), null, createdConsultation);
+            var createdConsultationDto = _mapper.Map<Consultation, CreatedConsultationDto>(createdConsultation);
+
+            return CreatedAtAction(nameof(Post), null, createdConsultationDto);
         }
 
         [HttpPut("{id}")]
@@ -148,16 +149,25 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] UpdateConsultationDto updateConsultationDto)
         {
+            var consultation = await _consultationRepository.Get(id);
+
+            if (consultation == null)
+            {
+                return NotFound();
+            }
+
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            var consultation = _mapper.Map<UpdateConsultationDto, Consultation>(updateConsultationDto);
-            
+            _mapper.Map(updateConsultationDto,consultation);
+
             consultation.Id = id;
 
             var updatedConsultation = await _consultationRepository.Update(consultation, currentUser);
 
-            return Ok(updatedConsultation);
+            var updatedConsultationDto = _mapper.Map<Consultation, UpdateConsultationDto>(updatedConsultation);
+
+            return Ok(updatedConsultationDto);
         }
 
         [HttpDelete("{id}")]
