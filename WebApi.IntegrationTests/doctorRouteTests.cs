@@ -8,14 +8,9 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Domain.Enums;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using WebApi.IntegrationTests.Helper;
 using WebApi.Models.Authentication;
 using WebApi.Models.Users;
 using Xunit;
@@ -70,8 +65,6 @@ namespace WebApi.IntegrationTests
         [Fact, Order(0)]
         public async Task Get_Doctors_With_Token()
         {
-            
-
             var tokenEnvironmentVariable = Environment.GetEnvironmentVariable("Token");
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
