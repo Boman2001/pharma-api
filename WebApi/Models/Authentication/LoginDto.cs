@@ -13,7 +13,5 @@ namespace WebApi.Models.Authentication
         public string Password { get; set; }
         [AllowNull]
         public string? Code { get; set; }
-
-
     }
 }

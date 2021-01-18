@@ -19,17 +19,15 @@ namespace WebApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
-        private readonly IMapper _mapper;
         private readonly MultiFactorAuthenticationHelper _multiFactorAuthenticationHelper;
         private readonly IRepository<UserInformation> _userInformationRepository;
 
         public AuthController(IIdentityRepository identityRepository,
-            IRepository<UserInformation> userInformationRepository, IMapper mapper,
+            IRepository<UserInformation> userInformationRepository,
             UserManager<IdentityUser> userManager)
         {
             _identityRepository = identityRepository;
             _userInformationRepository = userInformationRepository;
-            _mapper = mapper;
             _multiFactorAuthenticationHelper = new MultiFactorAuthenticationHelper(userManager, identityRepository);
         }
 
