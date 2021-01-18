@@ -285,7 +285,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     Date = table.Column<DateTime>("datetime2", nullable: false),
                     ConsultationId = table.Column<int>("int", nullable: false),
                     PatientId = table.Column<int>("int", nullable: false),
-                    ExaminationTypeId = table.Column<int>("int", nullable: true),
+                    ExaminationTypeId = table.Column<int>("int", nullable: false),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
                     CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
