@@ -37,6 +37,11 @@ namespace Infrastructure.Repositories
             return await _dbSet.SingleOrDefaultAsync(e => e.Id == id);
         }
 
+        public T Get(int id, IEnumerable<string> includeProperties)
+        {
+            return Get(e => e.Id == id, includeProperties).FirstOrDefault();
+        }
+
         public IEnumerable<T> Get(Expression<Func<T, bool>> filter)
         {
             IQueryable<T> query = _dbSet;

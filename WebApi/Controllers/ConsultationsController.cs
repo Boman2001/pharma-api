@@ -8,6 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.controllers
 {
+    using AutoMapper;
+    using Geocoding;
+    using Microsoft.AspNetCore.Identity;
+    using Models.Consultations;
+    using Models.Users;
     using System.Linq;
     using System.Security.Claims;
 
@@ -19,20 +24,56 @@ namespace WebApi.controllers
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Consultation> _consultationRepository;
+        private readonly IRepository<UserInformation> _userInformationRepository;
+        private readonly IMapper _mapper;
 
-        public ConsultationsController(IRepository<Consultation> consultationRepository, IIdentityRepository identityRepository)
+        public ConsultationsController(IRepository<Consultation> consultationRepository,
+            IIdentityRepository identityRepository, IRepository<UserInformation> userInformationRepository,
+            IMapper mapper)
         {
             _consultationRepository = consultationRepository;
             _identityRepository = identityRepository;
+            _userInformationRepository = userInformationRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<Consultation>> Get()
+        public async Task<ActionResult<IEnumerable<Consultation>>> Get()
         {
-            return Ok(_consultationRepository.Get());
+            var results = _consultationRepository.Get(new[]
+            {
+                "Patient"
+            });
+
+            var consultations = _mapper.Map<IEnumerable<Consultation>, IEnumerable<ConsultationDto>>(results);
+
+            var consultationsDtos = new List<ConsultationDto>();
+
+            foreach (ConsultationDto consultation in consultations)
+            {
+                var user = await _identityRepository.GetUserById(consultation.DoctorId.ToString());
+                var userInformation = _userInformationRepository.Get(u => u.UserId == consultation.DoctorId)
+                    .FirstOrDefault();
+
+                if (user == null && userInformation == null)
+                {
+                    return Problem();
+                }
+                
+                var userDto = _mapper.Map<IdentityUser, UserDto>(user);
+                var userInformationDto = _mapper.Map<UserInformation, UserInformationDto>(userInformation);
+
+                _mapper.Map(userInformationDto, userDto);
+
+                consultation.Doctor = userDto;
+
+                consultationsDtos.Add(consultation);
+            }
+
+            return Ok(consultationsDtos);
         }
 
         [HttpGet("{id}")]
@@ -41,9 +82,33 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Consultation>> Get(int id)
         {
-            var consultation = await _consultationRepository.Get(id);
+            var consultation = _consultationRepository.Get(id, new[]
+            {
+                "Patient"
+            });
 
-            return consultation != null ? Ok(consultation) : NotFound();
+            if (consultation == null)
+            {
+               return NotFound();
+            }
+
+            var consultatioDto = _mapper.Map<Consultation, ConsultationDto>(consultation);
+
+            var user = await _identityRepository.GetUserById(consultation.DoctorId.ToString());
+            var userInformation = _userInformationRepository.Get(u => u.UserId.ToString() == user.Id)
+                .FirstOrDefault();
+            
+            if (user != null && userInformation != null)
+            {
+                var userDto = _mapper.Map<IdentityUser, UserDto>(user);
+                var userInformationDto = _mapper.Map<UserInformation, UserInformationDto>(userInformation);
+
+                _mapper.Map(userInformationDto, userDto);
+
+                consultatioDto.Doctor = userDto;
+            }
+
+            return Ok(consultatioDto);
         }
 
         [HttpPost]
@@ -55,7 +120,7 @@ namespace WebApi.controllers
         {
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
-            
+
             var createdConsultation = await _consultationRepository.Add(consultation, currentUser);
 
             return CreatedAtAction(nameof(Post), null, createdConsultation);
@@ -72,7 +137,7 @@ namespace WebApi.controllers
 
             consultation.Id = id;
 
-            var updatedConsultation = await _consultationRepository.Update(consultation,currentUser);
+            var updatedConsultation = await _consultationRepository.Update(consultation, currentUser);
 
             return Ok(updatedConsultation);
         }
@@ -86,7 +151,7 @@ namespace WebApi.controllers
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            await _consultationRepository.Delete(id,currentUser);
+            await _consultationRepository.Delete(id, currentUser);
 
             return NoContent();
         }

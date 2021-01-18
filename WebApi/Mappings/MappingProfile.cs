@@ -6,6 +6,7 @@ using WebApi.Models.Users;
 
 namespace WebApi.Mappings
 {
+    using Models.Consultations;
     using Models.Patients;
 
     public class MappingProfile : Profile
@@ -23,6 +24,7 @@ namespace WebApi.Mappings
             CreateMap<UserInformation, UserInformationDto>();
             CreateMap<LoginDto, IdentityUser>();
             CreateMap<PatientDto, Patient>();
+            CreateMap<Consultation, ConsultationDto>();
         }
     }
 }
