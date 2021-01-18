@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -16,17 +12,13 @@ namespace WebApi.Controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class ActivityController : Controller
+    public class ActivitiesController : Controller
     {
-        private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Activity> _activityRepository;
 
-        public ActivityController(
-            IRepository<Activity> activityRepository,
-            IIdentityRepository identityRepository)
+        public ActivitiesController(IRepository<Activity> activityRepository)
         {
             _activityRepository = activityRepository;
-            _identityRepository = identityRepository;
         }
 
         [HttpGet]
