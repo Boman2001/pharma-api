@@ -285,7 +285,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     Date = table.Column<DateTime>("datetime2", nullable: false),
                     ConsultationId = table.Column<int>("int", nullable: false),
                     PatientId = table.Column<int>("int", nullable: false),
-                    ExaminationTypeId = table.Column<int>("int", nullable: false),
+                    ExaminationTypeId = table.Column<int>("int", nullable: true),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
                     CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
@@ -303,8 +303,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                         "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        "FK_PhysicalExaminations_ExaminationTypes_PhysicalExaminationTypeId",
-                        x => x.PhysicalExaminationTypeId,
+                        "FK_PhysicalExaminations_ExaminationTypes_ExaminationTypeId",
+                        x => x.ExaminationTypeId,
                         "ExaminationTypes",
                         "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -441,9 +441,9 @@ namespace Infrastructure.Migrations.ApplicationDb
                 "PatientId");
 
             migrationBuilder.CreateIndex(
-                "IX_PhysicalExaminations_PhysicalExaminationTypeId",
+                "IX_PhysicalExaminations_ExaminationTypeId",
                 "PhysicalExaminations",
-                "PhysicalExaminationTypeId");
+                "ExaminationTypeId");
 
             migrationBuilder.CreateIndex(
                 "IX_Prescriptions_ConsultationId",
