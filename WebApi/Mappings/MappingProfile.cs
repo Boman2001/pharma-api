@@ -2,6 +2,7 @@
 using Core.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using WebApi.Models.Authentication;
+using WebApi.Models.Prescriptions;
 using WebApi.Models.Users;
 
 namespace WebApi.Mappings
@@ -30,6 +31,7 @@ namespace WebApi.Mappings
             CreateMap<Consultation, CreatedConsultationDto>();
             CreateMap<Consultation, UpdateConsultationDto>();
             CreateMap<Patient, PatientDto>();
+            CreateMap<Prescription, PrescriptionDto>();
         }
     }
 }

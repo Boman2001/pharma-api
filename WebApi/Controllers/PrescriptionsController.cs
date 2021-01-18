@@ -1,10 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Models.Consultations;
+using WebApi.Models.Patients;
+using WebApi.Models.Prescriptions;
+using WebApi.Models.Users;
 
 namespace WebApi.controllers
 {
@@ -19,21 +25,68 @@ namespace WebApi.controllers
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Prescription> _prescriptionRepository;
+        private readonly IRepository<UserInformation> _userInformationRepository;
+        private readonly IMapper _mapper;
 
         public PrescriptionsController(IRepository<Prescription> prescriptionRepository,
-            IIdentityRepository identityRepository)
+            IIdentityRepository identityRepository, IRepository<UserInformation> userInformationRepository,
+            IMapper mapper)
         {
             _prescriptionRepository = prescriptionRepository;
             _identityRepository = identityRepository;
+            _userInformationRepository = userInformationRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<Prescription>> Get()
+        public async Task<ActionResult<IEnumerable<Prescription>>> Get()
         {
-            return Ok(_prescriptionRepository.Get());
+            var prescriptions = _prescriptionRepository.Get(new[]
+            {
+                "Consultation", "Patient"
+            });
+
+            var prescriptionsDtos = new List<PrescriptionDto>();
+
+            foreach (var prescription in prescriptions)
+            {
+                var user = await _identityRepository.GetUserById(prescription.Consultation.DoctorId.ToString());
+
+                if (user == null)
+                {
+                    return Problem();
+                }
+
+                var userInformation = _userInformationRepository
+                    .Get(u => u.UserId == prescription.Consultation.DoctorId)
+                    .FirstOrDefault();
+
+                if (userInformation == null)
+                {
+                    return Problem();
+                }
+
+                var consultationDto = _mapper.Map<Consultation, ConsultationDto>(prescription.Consultation);
+                var patientDto = _mapper.Map<Patient, PatientDto>(prescription.Patient);
+                var userDto = _mapper.Map<IdentityUser, UserDto>(user);
+                var userInformationDto = _mapper.Map<UserInformation, UserInformationDto>(userInformation);
+
+                _mapper.Map(userInformationDto, userDto);
+
+                var prescriptionDto = _mapper.Map<Prescription, PrescriptionDto>(prescription);
+
+                prescriptionDto.Patient = patientDto;
+                prescriptionDto.Consultation = consultationDto;
+                prescriptionDto.Consultation.Doctor = userDto;
+                prescriptionDto.Consultation.Patient = patientDto;
+
+                prescriptionsDtos.Add(prescriptionDto);
+            }
+
+            return Ok(prescriptionsDtos);
         }
 
         [HttpGet("{id}")]
@@ -42,9 +95,46 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Prescription>> Get(int id)
         {
-            var prescription = await _prescriptionRepository.Get(id);
+            var prescription = _prescriptionRepository.Get(id, new[]
+            {
+                "Consultation", "Patient"
+            });
 
-            return prescription != null ? Ok(prescription) : NotFound();
+            if (prescription == null)
+            {
+                return NotFound();
+            }
+            
+            var user = await _identityRepository.GetUserById(prescription.Consultation.DoctorId.ToString());
+
+            if (user == null)
+            {
+                return Problem();
+            }
+
+            var userInformation = _userInformationRepository.Get(u => u.UserId == prescription.Consultation.DoctorId)
+                .FirstOrDefault();
+
+            if (userInformation == null)
+            {
+                return Problem();
+            }
+
+            var consultationDto = _mapper.Map<Consultation, ConsultationDto>(prescription.Consultation);
+            var patientDto = _mapper.Map<Patient, PatientDto>(prescription.Patient);
+            var userDto = _mapper.Map<IdentityUser, UserDto>(user);
+            var userInformationDto = _mapper.Map<UserInformation, UserInformationDto>(userInformation);
+
+            _mapper.Map(userInformationDto, userDto);
+
+            var prescriptionDto = _mapper.Map<Prescription, PrescriptionDto>(prescription);
+
+            prescriptionDto.Patient = patientDto;
+            prescriptionDto.Consultation = consultationDto;
+            prescriptionDto.Consultation.Doctor = userDto;
+            prescriptionDto.Consultation.Patient = patientDto;
+
+            return Ok(prescriptionDto);
         }
 
         [HttpPost]

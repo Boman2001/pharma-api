@@ -11,11 +11,5 @@ namespace WebApi.Models.Consultations
 
         [Required(ErrorMessage = "Opmerkingen zijn verplicht.")]
         public string? Comments { get; set; }
-
-        [Required(ErrorMessage = "Arts Id is verplicht.")]
-        public Guid? DoctorId { get; set; }
-
-        [Required(ErrorMessage = "Patiënt Id is verplicht.")]
-        public int? PatientId { get; set; }
     }
 }
