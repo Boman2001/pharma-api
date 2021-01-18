@@ -10,7 +10,6 @@ namespace WebApi.Controllers
     [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class ActivitiesController : Controller
     {
