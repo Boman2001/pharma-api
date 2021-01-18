@@ -5,6 +5,7 @@ using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Models.Patients;
 
 namespace WebApi.controllers
 {
@@ -42,13 +43,11 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<IEnumerable<Consultation>>> Get()
         {
-            var results = _consultationRepository.Get(new[]
+            var consultations = _consultationRepository.Get(new[]
             {
                 "Patient"
             });
-
-            var consultations = _mapper.Map<IEnumerable<Consultation>, IEnumerable<ConsultationDto>>(results);
-
+            
             var consultationsDtos = new List<ConsultationDto>();
 
             foreach (var consultation in consultations)
@@ -68,14 +67,18 @@ namespace WebApi.controllers
                     return Problem();
                 }
 
+                var patientDto = _mapper.Map<Patient, PatientDto>(consultation.Patient);
                 var userDto = _mapper.Map<IdentityUser, UserDto>(user);
                 var userInformationDto = _mapper.Map<UserInformation, UserInformationDto>(userInformation);
 
                 _mapper.Map(userInformationDto, userDto);
 
-                consultation.Doctor = userDto;
+                var consultationDto = _mapper.Map<Consultation, ConsultationDto>(consultation);
 
-                consultationsDtos.Add(consultation);
+                consultationDto.Doctor = userDto;
+                consultationDto.Patient = patientDto;
+
+                consultationsDtos.Add(consultationDto);
             }
 
             return Ok(consultationsDtos);
@@ -114,12 +117,14 @@ namespace WebApi.controllers
                 return Problem();
             }
 
+            var patientDto = _mapper.Map<Patient, PatientDto>(consultation.Patient);
             var userDto = _mapper.Map<IdentityUser, UserDto>(user);
             var userInformationDto = _mapper.Map<UserInformation, UserInformationDto>(userInformation);
 
             _mapper.Map(userInformationDto, userDto);
 
             consultationDto.Doctor = userDto;
+            consultationDto.Patient = patientDto;
 
             return Ok(consultationDto);
         }

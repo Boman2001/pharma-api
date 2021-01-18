@@ -1,4 +1,6 @@
-﻿namespace WebApi.Models.Consultations
+﻿using WebApi.Models.Patients;
+
+namespace WebApi.Models.Consultations
 {
     using Core.Domain.Models;
     using Microsoft.AspNetCore.Identity;
@@ -12,6 +14,6 @@
     {
         public int Id { get; set; }
         public UserDto Doctor { get; set; }
-        public Patient Patient { get; set; }
+        public PatientDto Patient { get; set; }
     }
 }

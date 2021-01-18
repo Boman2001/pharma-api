@@ -29,6 +29,7 @@ namespace WebApi.Mappings
             CreateMap<UpdateConsultationDto, Consultation>();
             CreateMap<Consultation, CreatedConsultationDto>();
             CreateMap<Consultation, UpdateConsultationDto>();
+            CreateMap<Patient, PatientDto>();
         }
     }
 }
