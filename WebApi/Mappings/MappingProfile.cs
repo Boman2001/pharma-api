@@ -41,7 +41,6 @@ namespace WebApi.Mappings
             CreateMap<Prescription, UpdatedPrescriptionDto>();
             CreateMap<AdditionalExaminationType, BaseAdditionalExaminationTypeDto>();
             CreateMap<BaseAdditionalExaminationTypeDto, AdditionalExaminationType>();
-            CreateMap<AdditionalExaminationType, CreatedAdditionalExaminationTypeDto>();
             CreateMap<AdditionalExaminationType, AdditionalExaminationTypeDto>();
         }
     }

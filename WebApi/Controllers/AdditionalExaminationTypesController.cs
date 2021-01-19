@@ -82,7 +82,7 @@ namespace WebApi.controllers
             var createdAdditionalExaminationType =
                 await _additionalExaminationTypeRepository.Add(additionalExaminationType, currentUser);
 
-            var createdPrescriptionDto = _mapper.Map<AdditionalExaminationType, CreatedAdditionalExaminationTypeDto>(createdAdditionalExaminationType);
+            var createdPrescriptionDto = _mapper.Map<AdditionalExaminationType, AdditionalExaminationTypeDto>(createdAdditionalExaminationType);
 
             return CreatedAtAction(nameof(Post), createdPrescriptionDto);
         }
@@ -91,17 +91,28 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Put(int id, [FromBody] AdditionalExaminationType additionalExaminationType)
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateAdditionalExaminationTypeDto updateAdditionalExaminationTypeDto)
         {
+            var additionalExaminationType = await _additionalExaminationTypeRepository.Get(id);
+
+            if (additionalExaminationType == null)
+            {
+                return NotFound();
+            }
+            
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
+
+            _mapper.Map(updateAdditionalExaminationTypeDto, additionalExaminationType);
 
             additionalExaminationType.Id = id;
 
             var updatedAdditionalExaminationType =
                 await _additionalExaminationTypeRepository.Update(additionalExaminationType, currentUser);
 
-            return Ok(updatedAdditionalExaminationType);
+            var additionalExaminationTypeDto = _mapper.Map<AdditionalExaminationType, AdditionalExaminationTypeDto>(updatedAdditionalExaminationType);
+
+            return Ok(additionalExaminationTypeDto);
         }
 
         [HttpDelete("{id}")]

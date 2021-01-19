@@ -3,7 +3,7 @@ using Core.Domain.Models;
 
 namespace WebApi.Models.AdditionalExaminationTypes
 {
-    public class CreatedAdditionalExaminationTypeDto : BaseAdditionalExaminationTypeDto
+    public class UpdateAdditionalExaminationTypeDto : BaseAdditionalExaminationTypeDto
     {
         public int Id { get; set; }
     }
