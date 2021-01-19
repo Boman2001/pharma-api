@@ -11,6 +11,7 @@ using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using WebApi.Mappings;
+using WebApi.Models.AdditionalExaminationResults;
 using WebApi.Tests.Helpers;
 using WebApi.Tests.Mocks.Extends;
 using Xunit;
@@ -23,7 +24,10 @@ namespace WebApi.Tests.ControllerTests
         private List<AdditionalExaminationResult> _fakeEntities;
         private List<IdentityUser> _fakeIdentityUsers;
         private List<Patient> _fakeUsersPatient;
+        private List<Consultation> _consultations;
+        private List<AdditionalExaminationType> _types;
         private AdditionalExaminationResultsController FakeController { get; }
+        
         private IdentityRepository IdentityRepositoryFake { get; }
 
         public AdditionalExaminationResultsTests()
@@ -35,16 +39,23 @@ namespace WebApi.Tests.ControllerTests
                 .Build();
 
             var mockMapper = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile()));
-            mockMapper.CreateMapper();
+           var mock =  mockMapper.CreateMapper();
 
             var userManager = MockUserManager.GetMockUserManager(_fakeIdentityUsers).Object;
             var signInManager = MockSigninManager.GetSignInManager<IdentityUser>(userManager).Object;
 
             IdentityRepositoryFake = new IdentityRepository(userManager, signInManager, config);
             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_fakeEntities);
-
+            var constulationRepo = MockGenericRepository.GetUserInformationMock(_consultations);
+            var patientRepo = MockGenericRepository.GetUserInformationMock(_fakeUsersPatient);
+            var typeRepo = MockGenericRepository.GetUserInformationMock(_types);
             MockGenericExtension.ExtendMock(fakeGenericRepo, _fakeEntities);
-            FakeController = new AdditionalExaminationResultsController(fakeGenericRepo.Object, IdentityRepositoryFake);
+
+            FakeController = new AdditionalExaminationResultsController(IdentityRepositoryFake, fakeGenericRepo.Object, 
+                constulationRepo.Object,
+                patientRepo.Object,
+                typeRepo.Object,
+                mock);
             
             IdentityHelper.SetUser(_fakeIdentityUsers[0], FakeController);
         }
@@ -55,12 +66,12 @@ namespace WebApi.Tests.ControllerTests
         {
             var result = FakeController.Get(null);
             var objectResult = (OkObjectResult) result.Result;
-            var activities = (List<AdditionalExaminationResult>) objectResult.Value;
+            var activities = (List<AdditionalExaminationResultDto>) objectResult.Value;
 
             Assert.Equal(_fakeEntities.Count, activities.Count);
             Assert.Equal(200, objectResult.StatusCode);
-            Assert.Equal(activities[0], _fakeEntities[0]);
-            Assert.IsType<AdditionalExaminationResult>(activities[0]);
+            Assert.Equal(activities[0].Value, _fakeEntities[0].Value);
+            Assert.IsType<AdditionalExaminationResultDto>(activities[0]);
         }
 
         [Trait("Category", "Get Tests")]
@@ -69,21 +80,22 @@ namespace WebApi.Tests.ControllerTests
         {
             var result = await FakeController.Get(_fakeEntities[0].Id);
             var objectResult = (OkObjectResult) result.Result;
-            var entity = (AdditionalExaminationResult) objectResult.Value;
+            var entity = (AdditionalExaminationResultDto) objectResult.Value;
 
             Assert.Equal(200, objectResult.StatusCode);
-            Assert.Equal(entity, _fakeEntities[0]);
-            Assert.IsType<AdditionalExaminationResult>(entity);
+            Assert.Equal(entity.Value, _fakeEntities[0].Value);
+            Assert.IsType<AdditionalExaminationResultDto>(entity);
         }
 
         [Trait("Category", "Post Tests")]
         [Fact]
         public async Task Given_AdditionalExaminationResult_Posts_And_Returns_201_Code()
         {
-            var entity = new AdditionalExaminationResult
+            var entity = new CreateAdditionalExaminationResultDto
             {
                 Value = "value",
-                Date = DateTime.Now
+                Date = DateTime.Now,
+                ConsultationId = _consultations[0].Id
             };
 
             var lengthBefore = _fakeEntities.Count;
@@ -102,10 +114,11 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Given_AdditionalExaminationResult_To_Update_returns_200()
         {
-            var entity = new AdditionalExaminationResult
+            var entity = new UpdateAdditionalExaminationResultDto
             {
                 Value = "valueupdated",
-                Date = DateTime.Now
+                Date = DateTime.Now,
+                ConsultationId = _consultations[0].Id
             };
             var result = await FakeController.Put(_fakeEntities[0].Id, entity);
 
@@ -130,6 +143,9 @@ namespace WebApi.Tests.ControllerTests
         private void SeedData()
         {
             _fakeUsersPatient = new List<Patient>();
+
+
+            _fakeIdentityUsers = IdentityHelper.GetIdentityUsers();
             var patient = new Patient
             {
                 Name = "Name",
@@ -169,18 +185,91 @@ namespace WebApi.Tests.ControllerTests
                 Value = "value",
                 Date = DateTime.Now
             };
+
+
+            var type = new AdditionalExaminationType
+            {
+                Name = "typename",
+                Unit = "GPS"
+            };
+            var additional = new AdditionalExaminationResult
+            {
+                Value = "value",
+                Date = DateTime.Now,
+                AdditionalExaminationType = type
+            };
+            var ipCode = new IcpcCode
+            {
+                Name = "Name",
+                Code = "code"
+            };
+            var ep = new Episode
+            {
+                Description = "Description",
+                Priority = 10,
+                Patient = patient02,
+                IcpcCode = ipCode
+            };
+            var intolerances = new Intolerance
+            {
+                Description = "descrption",
+                EndDate = DateTime.Now,
+                StartDate = DateTime.Now,
+                Patient = patient02
+            };
+            var physical = new PhysicalExamination()
+            {
+                Value = "physical",
+                Date = DateTime.Now,
+                Patient = patient02
+            };
+            var c = new Consultation
+            {
+                Id = 1,
+                Date = DateTime.Now,
+                Comments = "comments",
+                DoctorId = Guid.Parse(_fakeIdentityUsers[0].Id),
+                Doctor = _fakeIdentityUsers[0],
+                Patient = patient02,
+                AdditionalExaminationResults = new List<AdditionalExaminationResult>
+                {
+                    additional
+                },
+                Episodes = new List<Episode>
+                {
+                    ep
+                },
+                Intolerances = new List<Intolerance>
+                {
+                    intolerances
+                },
+                PhysicalExaminations = new List<PhysicalExamination>
+                {
+                    physical
+                }
+            };
+
+
             var activity02 = new AdditionalExaminationResult
             {
                 Id = 2,
                 Value = "value",
-                Date = DateTime.Now
+                Date = DateTime.Now,
+                Patient = patient02,
+                PatientId = patient02.Id,
+                Consultation = c,
+                ConsultationId = c.Id,
+                AdditionalExaminationType = type,
+                AdditionalExaminationTypeId = type.Id
             };
             _fakeEntities = new List<AdditionalExaminationResult>
             {
                 activity, activity02
             };
-
-            _fakeIdentityUsers = IdentityHelper.GetIdentityUsers();
+            _consultations = new List<Consultation>();
+            _consultations.Add(c);
+            _types = new List<AdditionalExaminationType>();
+            _types.Add(type);
         }
     }
 }
