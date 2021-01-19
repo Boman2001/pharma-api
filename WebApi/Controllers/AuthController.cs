@@ -52,9 +52,7 @@ namespace WebApi.Controllers
                 if (!user.TwoFactorEnabled)
                 {
                     user.TwoFactorEnabled = true;
-                    // @TODO User Update?
-                    // (Can't really be done right here right now because the user repo requires a password.)
-                    await this._applicationDbContext.SaveChangesAsync();   
+                    await _identityRepository.Update(user, null);
                 }
 
                 var userDto = new UserDto
