@@ -38,27 +38,21 @@ namespace WebApi.IntegrationTests
         public void Given_Valid_Login_Details_Returns_Ok_And_Valid_Token()
         {
             var newUserDto = new LoginDto { Email = "m@gmail.com", Password = "password" };
+
             var serialize = JsonConvert.SerializeObject(newUserDto);
 
             var content = new StringContent(serialize, Encoding.UTF8, "application/json");
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
             var result = _client.PostAsync("/api/auth/login", content).Result;
 
             var readAsStringAsync = result.Content.ReadAsStringAsync();
             var json = readAsStringAsync.Result;
             var jObject = JObject.Parse(json);
+            var email = jObject["email"].Value<string>();
 
-            _token = jObject["token"].Value<string>();
-            Environment.SetEnvironmentVariable("Token", _token.ToString());
-
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadToken(_token.ToString()) as JwtSecurityToken;
 
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            Assert.IsType<JwtSecurityToken>(token);
-            Assert.InRange(token.Claims.Count(), 5, 10);
-            Assert.InRange(token.Payload.Count, 5, 10);
+            Assert.Equal(email, newUserDto.Email);
         }
 
         [Fact, Order(0)]

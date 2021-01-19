@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Core.Domain.Models;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using WebApi.Controllers;
+using WebApi.Mappings;
 using WebApi.Models.Authentication;
 using WebApi.Tests.Mocks;
 using Xunit;
@@ -33,7 +35,7 @@ namespace WebApi.Tests.ControllerTests
             var fakeIdentityRepository = new Mock<IdentityRepository>(userManager, signInManager, config).Object;
             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_userInformations);
 
-            Controller = new AuthController(fakeIdentityRepository, fakeGenericRepo.Object);
+            Controller = new AuthController(fakeIdentityRepository, fakeGenericRepo.Object, userManager );
         }
 
         private AuthController Controller { get; }
