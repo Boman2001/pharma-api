@@ -20,6 +20,12 @@ namespace WebApi.Tests.Mocks
             repository.Setup(x => x.Get())
                 .Returns(usersInformationList);
 
+            repository.Setup(x => x.Get(It.IsAny<IEnumerable<string>>()))
+                .Returns(usersInformationList);
+
+            repository.Setup(x => x.Get(It.IsAny<int>(),It.IsAny<IEnumerable<string>>()))
+                .Returns((int s, IEnumerable<string> stringm) => usersInformationList.FirstOrDefault(x => x.Id == s));
+
             repository.Setup(t => t.Get(It.IsAny<int>()))
                 .ReturnsAsync((int s) => usersInformationList.FirstOrDefault(x => x.Id == s));
 
@@ -37,10 +43,10 @@ namespace WebApi.Tests.Mocks
                 })
                 .Returns(Task.FromResult(It.IsAny<T>()));
 
-
-
             repository.Setup(t => t.Get(It.IsAny<Expression<Func<T, bool>>>()))
                 .Returns((Expression<Func<T, bool>> query) => usersInformationList.AsQueryable().Where(query).ToList());
+
+
 
 
             return repository;
