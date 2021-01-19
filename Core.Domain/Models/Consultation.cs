@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 
 namespace Core.Domain.Models
@@ -14,7 +15,7 @@ namespace Core.Domain.Models
         [NotMapped] public IdentityUser Doctor { get; set; }
 
         public int PatientId { get; set; }
-        public Patient Patient { get; set; }
+        [JsonIgnore] public Patient Patient { get; set; }
 
         public List<AdditionalExaminationResult> AdditionalExaminationResults { get; set; }
         public List<Episode> Episodes { get; set; }

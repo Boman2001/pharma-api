@@ -153,7 +153,7 @@ namespace WebApi.IntegrationTests
             var userSerializeObject = JsonConvert.SerializeObject(user);
 
             Environment.SetEnvironmentVariable("User", userSerializeObject);
-            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal(HttpStatusCode.Created, result.StatusCode);
             Assert.Equal(newUserDto.Name, user.Name);
         }
 

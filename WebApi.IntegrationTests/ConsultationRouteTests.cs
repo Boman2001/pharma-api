@@ -222,5 +222,4 @@ namespace WebApi.IntegrationTests
             Assert.Equal(HttpStatusCode.NoContent, defaultPage.StatusCode);
         }
     }
-
 }
