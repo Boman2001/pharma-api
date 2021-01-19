@@ -6,6 +6,7 @@ using AutoMapper;
 using Core.Domain.Models;
 using Core.DomainServices.Helpers;
 using Core.DomainServices.Repositories;
+using Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -21,14 +22,17 @@ namespace WebApi.Controllers
         private readonly IIdentityRepository _identityRepository;
         private readonly MultiFactorAuthenticationHelper _multiFactorAuthenticationHelper;
         private readonly IRepository<UserInformation> _userInformationRepository;
+        private readonly ApplicationDbContext _applicationDbContext;
 
         public AuthController(IIdentityRepository identityRepository,
             IRepository<UserInformation> userInformationRepository,
-            UserManager<IdentityUser> userManager)
+            UserManager<IdentityUser> userManager,
+            ApplicationDbContext applicationDbContext)
         {
             _identityRepository = identityRepository;
             _userInformationRepository = userInformationRepository;
             _multiFactorAuthenticationHelper = new MultiFactorAuthenticationHelper(userManager, identityRepository);
+            _applicationDbContext = applicationDbContext;
         }
 
         [HttpPost("login/twofactor")]
@@ -43,9 +47,15 @@ namespace WebApi.Controllers
             {
                 // Strip spaces and hypens
                 var verificationCode = login.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
+                securityToken = await _multiFactorAuthenticationHelper.ValidateTwoFactor(user, verificationCode);
 
-                 securityToken = await _multiFactorAuthenticationHelper.ValidateTwoFactor(user, verificationCode);
-
+                if (!user.TwoFactorEnabled)
+                {
+                    user.TwoFactorEnabled = true;
+                    // @TODO User Update?
+                    // (Can't really be done right here right now because the user repo requires a password.)
+                    await this._applicationDbContext.SaveChangesAsync();   
+                }
 
                 var userDto = new UserDto
                 {
@@ -85,9 +95,10 @@ namespace WebApi.Controllers
             {
                 securityToken = await _identityRepository.Login(identityUser, identityUser.PasswordHash);
                 var user = await _identityRepository.GetUserByEmail(identityUser.Email);
+                
                 return Ok(new
                 {
-                    TwoFactorUrl = await _multiFactorAuthenticationHelper.LoadSharedKeyAndQrCodeUriAsync(user),
+                    TwoFactorUrl = user.TwoFactorEnabled ? null : await _multiFactorAuthenticationHelper.LoadSharedKeyAndQrCodeUriAsync(user),
                     Email = user.Email
                 });
             }
