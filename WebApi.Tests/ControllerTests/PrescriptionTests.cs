@@ -63,7 +63,7 @@ namespace WebApi.Tests.ControllerTests
 
         [Trait("Category", "Get Tests")]
         [Fact]
-        public async Task Get_All_AdditionExaminationResults_With_200_codeAsync()
+        public async Task Get_All_Prescription_With_200_codeAsync()
         {
             var result = await FakeController.Get();
             var objectResult = (OkObjectResult)result.Result;
@@ -73,7 +73,7 @@ namespace WebApi.Tests.ControllerTests
 
         [Trait("Category", "Get Tests")]
         [Fact]
-        public async Task Get_AdditionExaminationResults_By_Id_Returns_AdditionExaminationResult_With_200_codeAsync()
+        public async Task Get_Prescription_By_Id_Returns_Prescription_With_200_codeAsync()
         {
             var result = await FakeController.Get(_fakeEntities[0].Id);
             var objectResult = (OkObjectResult) result.Result;
@@ -85,7 +85,7 @@ namespace WebApi.Tests.ControllerTests
 
         [Trait("Category", "Post Tests")]
         [Fact]
-        public async Task Given_AdditionalExaminationResult_Posts_And_Returns_201_Code()
+        public async Task Given_Prescription_Posts_And_Returns_201_Code()
         {
             NewPrescriptionDto entity = new NewPrescriptionDto
             {
@@ -107,7 +107,7 @@ namespace WebApi.Tests.ControllerTests
 
         [Trait("Category", "Update Tests")]
         [Fact]
-        public async Task Given_AdditionalExaminationResult_To_Update_returns_200()
+        public async Task Given_Prescription_To_Update_returns_200()
         {
             UpdatePrescriptionDto entity = new UpdatePrescriptionDto
             {
@@ -123,7 +123,7 @@ namespace WebApi.Tests.ControllerTests
 
         [Trait("Category", "Delete Tests")]
         [Fact]
-        public async Task Given_Id_To_Delete_Deletes_AdditionalExaminationResult()
+        public async Task Given_Id_To_Delete_Deletes_Prescription()
         {
             var lengthBefore = _fakeEntities.Count;
 

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core.Domain.Models;
@@ -7,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using WebApi.controllers;
+using WebApi.Controllers;
 using WebApi.Mappings;
 using WebApi.Tests.Helpers;
 using WebApi.Tests.Mocks;
@@ -15,14 +19,14 @@ using Xunit;
 
 namespace WebApi.Tests.ControllerTests
 {
-    public class AdditionalExaminationTypesControllerTests
+    public class EpisodeControllerTests
     {
-        private List<AdditionalExaminationType> _fakeEntities;
+        private List<Episode> _fakeEntities;
         private List<IdentityUser> _fakeIdentityUsers;
-        private AdditionalExaminationTypesController FakeController { get; }
+        private EpisodesController FakeController { get; }
         private IdentityRepository IdentityRepositoryFake { get; }
 
-        public AdditionalExaminationTypesControllerTests()
+        public EpisodeControllerTests()
         {
             SeedData();
 
@@ -40,80 +44,76 @@ namespace WebApi.Tests.ControllerTests
             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_fakeEntities);
 
             MockGenericExtension.ExtendMock(fakeGenericRepo, _fakeEntities);
-            FakeController = new AdditionalExaminationTypesController(fakeGenericRepo.Object, IdentityRepositoryFake);
+            FakeController = new EpisodesController(fakeGenericRepo.Object, IdentityRepositoryFake);
 
             IdentityHelper.SetUser(_fakeIdentityUsers[0], FakeController);
         }
 
         [Trait("Category", "Get Tests")]
         [Fact]
-        public void Get_All_AdditionalExaminationType_With_200_code()
+        public void Get_All_Episode_With_200_code()
         {
             var result = FakeController.Get();
             var objectResult = (OkObjectResult) result.Result;
-            var activities = (List<AdditionalExaminationType>) objectResult.Value;
+            var activities = (List<Episode>)objectResult.Value;
 
             Assert.Equal(_fakeEntities.Count, activities.Count);
             Assert.Equal(200, objectResult.StatusCode);
             Assert.Equal(activities[0], _fakeEntities[0]);
-            Assert.IsType<AdditionalExaminationType>(activities[0]);
+            Assert.IsType<Episode>(activities[0]);
         }
 
         [Trait("Category", "Get Tests")]
         [Fact]
-        public async Task Get_AdditionalExaminationType_By_Id_Returns_AdditionExaminationResult_With_200_codeAsync()
+        public async Task Get_Episode_By_Id_Returns_Episode_With_200_codeAsync()
         {
             var result = await FakeController.Get(_fakeEntities[0].Id);
             var objectResult = (OkObjectResult) result.Result;
-            var entity = (AdditionalExaminationType) objectResult.Value;
+            var entity = (Episode)objectResult.Value;
 
             Assert.Equal(200, objectResult.StatusCode);
             Assert.Equal(entity, _fakeEntities[0]);
-            Assert.IsType<AdditionalExaminationType>(entity);
+            Assert.IsType<Episode>(entity);
         }
 
         [Trait("Category", "Post Tests")]
         [Fact]
-        public async Task Given_AdditionalExaminationType_Posts_And_Returns_201_Code()
+        public async Task Given_Episode_Posts_And_Returns_201_Code()
         {
-            var entity = new AdditionalExaminationType
+            var entity = new Episode
             {
-                Name = "Naamm",
-                Unit = "Unitt"
+                Description = "NewDesc",
             };
 
             var lengthBefore = _fakeEntities.Count;
 
             var result = await FakeController.Post(entity);
-            var objActionResult = (CreatedAtActionResult) result.Result;
+            var objActionResult = (CreatedAtActionResult)result.Result;
             var createdPatient = _fakeEntities[lengthBefore];
 
             Assert.Equal(lengthBefore + 1, _fakeEntities.Count);
             Assert.Equal(201, objActionResult.StatusCode);
-            Assert.Equal(createdPatient.Name, entity.Name);
-            Assert.Equal(createdPatient.Unit, entity.Unit);
+            Assert.Equal(createdPatient.Description, entity.Description);
         }
 
         [Trait("Category", "Update Tests")]
         [Fact]
-        public async Task Given_AdditionalExaminationType_To_Update_returns_200()
+        public async Task Given_Episode_To_Update_returns_200()
         {
-            var entity = new AdditionalExaminationType
+            var entity = new Episode
             {
-                Name = "Naamm",
-                Unit = "Unitt"
+                Description = "UpdatedDesc",
             };
-
             var result = await FakeController.Put(_fakeEntities[0].Id, entity);
 
-            var objectResult = (OkObjectResult) result;
+            var objectResult = (OkObjectResult)result;
             Assert.NotNull(_fakeEntities[0].UpdatedAt);
             Assert.Equal(200, objectResult.StatusCode);
         }
 
         [Trait("Category", "Delete Tests")]
         [Fact]
-        public async Task Given_Id_To_Delete_Deletes_AdditionalExaminationType()
+        public async Task Given_Id_To_Delete_Deletes_Episode()
         {
             var lengthBefore = _fakeEntities.Count;
 
@@ -126,21 +126,19 @@ namespace WebApi.Tests.ControllerTests
 
         private void SeedData()
         {
-            var entity = new AdditionalExaminationType
+            var activity = new Episode
             {
                 Id = 1,
-                Name = "Naam",
-                Unit = "Unit"
+                Description = "description"
             };
-            var aentity02 = new AdditionalExaminationType
+            var activity02 = new Episode
             {
                 Id = 2,
-                Name = "Naam",
-                Unit = "Unit"
+                Description = "description"
             };
-            _fakeEntities = new List<AdditionalExaminationType>
+            _fakeEntities = new List<Episode>
             {
-                entity, aentity02
+                activity, activity02
             };
 
             _fakeIdentityUsers = IdentityHelper.GetIdentityUsers();
