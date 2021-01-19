@@ -31,9 +31,20 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<UserJournal>> Get()
+        public ActionResult<IEnumerable<UserJournal>> Get([FromQuery] int? patientId)
         {
-            return Ok(_userJournalRepository.Get());
+            IEnumerable<UserJournal> userJournals;
+
+            if (patientId.HasValue)
+            {
+                userJournals = _userJournalRepository.Get(j => j.PatientId == patientId);
+            }
+            else
+            {
+                userJournals = _userJournalRepository.Get();
+            }
+            
+            return Ok(userJournals);
         }
 
         [HttpGet("{id}")]

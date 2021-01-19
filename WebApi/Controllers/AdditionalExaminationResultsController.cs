@@ -32,9 +32,20 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<AdditionalExaminationResult>> Get()
+        public ActionResult<IEnumerable<AdditionalExaminationResult>> Get([FromQuery] int? patientId)
         {
-            return Ok(_additionalExaminationResultRepository.Get());
+            IEnumerable<AdditionalExaminationResult> additionalExaminationResults;
+
+            if (patientId.HasValue)
+            {
+                additionalExaminationResults = _additionalExaminationResultRepository.Get(j => j.PatientId == patientId);
+            }
+            else
+            {
+                additionalExaminationResults = _additionalExaminationResultRepository.Get();
+            }
+            
+            return Ok(additionalExaminationResults);
         }
 
         [HttpGet("{id}")]

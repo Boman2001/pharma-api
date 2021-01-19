@@ -30,7 +30,9 @@ namespace WebApi.controllers
         private readonly IRepository<Consultation> _consultationRepository;
         private readonly IMapper _mapper;
 
-        public PrescriptionsController(IIdentityRepository identityRepository, IRepository<Prescription> prescriptionRepository, IRepository<UserInformation> userInformationRepository, IRepository<Patient> patientRepository, IRepository<Consultation> consultationRepository, IMapper mapper)
+        public PrescriptionsController(IIdentityRepository identityRepository,
+            IRepository<Prescription> prescriptionRepository, IRepository<UserInformation> userInformationRepository,
+            IRepository<Patient> patientRepository, IRepository<Consultation> consultationRepository, IMapper mapper)
         {
             _identityRepository = identityRepository;
             _prescriptionRepository = prescriptionRepository;
@@ -44,12 +46,24 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<IEnumerable<Prescription>>> Get()
+        public async Task<ActionResult<IEnumerable<Prescription>>> Get([FromQuery] int? patientId)
         {
-            var prescriptions = _prescriptionRepository.Get(new[]
+            IEnumerable<Prescription> prescriptions;
+
+            if (patientId.HasValue)
             {
-                "Consultation", "Patient"
-            });
+                prescriptions = _prescriptionRepository.Get(p => p.PatientId == patientId, new[]
+                {
+                    "Consultation", "Patient"
+                });
+            }
+            else
+            {
+                prescriptions = _prescriptionRepository.Get(new[]
+                {
+                    "Consultation", "Patient"
+                });
+            }
 
             var prescriptionsDtos = new List<PrescriptionDto>();
 
@@ -196,12 +210,12 @@ namespace WebApi.controllers
             {
                 return NotFound();
             }
-            
+
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             _mapper.Map(updatePrescriptionDto, prescription);
-            
+
             prescription.Id = id;
 
             var updatedPrescription = await _prescriptionRepository.Update(prescription, currentUser);
