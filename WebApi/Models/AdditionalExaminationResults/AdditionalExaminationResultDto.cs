@@ -1,20 +1,7 @@
-﻿using System;
-using Core.Domain.Models;
-
-namespace WebApi.Models.AdditionalExaminationResults
+﻿namespace WebApi.Models.AdditionalExaminationResults
 {
-    public class AdditionalExaminationResultDto
+    public class AdditionalExaminationResultDto : BaseAdditionalExaminationResultDto
     {
-        public string Value { get; set; }
-        public DateTime Date { get; set; }
-
-        public int ConsultationId { get; set; }
-        public Consultation Consultation { get; set; }
-
-        public int PatientId { get; set; }
-        public Patient Patient { get; set; }
-
-        public int AdditionalExaminationTypeId { get; set; }
-        public AdditionalExaminationType AdditionalExaminationType { get; set; }
+        public int Id { get; set; }
     }
 }
