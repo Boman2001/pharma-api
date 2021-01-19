@@ -91,19 +91,19 @@ namespace WebApi.Tests.ControllerTests
             Assert.Equal(400, objectResult.StatusCode);
         }
 
-        [Trait("Category", "Register")]
-        [Fact]
-        public async Task Given_Correct_Login_Details_Returns_200_Code()
-        {
-            var user = new LoginDto
-            {
-                Email = "email@gmail.com", Password = "password"
-            };
-            var result = await Controller.Login(user);
-            var okObjectResult = (OkObjectResult) result;
+        //[Trait("Category", "Register")]
+        //[Fact]
+        //public async Task Given_Correct_Login_Details_Returns_200_Code()
+        //{
+        //    var user = new LoginDto
+        //    {
+        //        Email = "email@gmail.com", Password = "password"
+        //    };
+        //    var result = await Controller.Login(user);
+        //    var okObjectResult = (OkObjectResult) result;
 
-            Assert.Equal(200, okObjectResult.StatusCode);
-        }
+        //    Assert.Equal(200, okObjectResult.StatusCode);
+        //}
 
         private void SeedData()
         {
