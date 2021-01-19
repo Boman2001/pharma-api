@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Models.AdditionalExaminationTypes;
 
 namespace WebApi.controllers
 {
@@ -19,13 +21,14 @@ namespace WebApi.controllers
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<AdditionalExaminationType> _additionalExaminationTypeRepository;
+        private readonly IMapper _mapper;
 
-        public AdditionalExaminationTypesController(
-            IRepository<AdditionalExaminationType> additionalExaminationTypeRepository,
-            IIdentityRepository identityRepository)
+        public AdditionalExaminationTypesController(IIdentityRepository identityRepository,
+            IRepository<AdditionalExaminationType> additionalExaminationTypeRepository, IMapper mapper)
         {
-            _additionalExaminationTypeRepository = additionalExaminationTypeRepository;
             _identityRepository = identityRepository;
+            _additionalExaminationTypeRepository = additionalExaminationTypeRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -34,7 +37,14 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<AdditionalExaminationType>> Get()
         {
-            return Ok(_additionalExaminationTypeRepository.Get());
+            var additionalExaminationTypes = _additionalExaminationTypeRepository.Get();
+
+            var additionalExaminationTypeDtos = additionalExaminationTypes
+                .Select(additionalExaminationType =>
+                    _mapper.Map<AdditionalExaminationType, AdditionalExaminationTypeDto>(additionalExaminationType))
+                .ToList();
+
+            return Ok(additionalExaminationTypeDtos);
         }
 
         [HttpGet("{id}")]
@@ -45,7 +55,15 @@ namespace WebApi.controllers
         {
             var additionalExaminationType = await _additionalExaminationTypeRepository.Get(id);
 
-            return additionalExaminationType != null ? Ok(additionalExaminationType) : NotFound();
+            if (additionalExaminationType == null)
+            {
+                return NotFound();
+            }
+
+            var additionalExaminationTypeDto =
+                _mapper.Map<AdditionalExaminationType, AdditionalExaminationTypeDto>(additionalExaminationType);
+
+            return Ok(additionalExaminationTypeDto);
         }
 
         [HttpPost]
@@ -54,15 +72,19 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<AdditionalExaminationType>> Post(
-            [FromBody] AdditionalExaminationType additionalExaminationType)
+            [FromBody] BaseAdditionalExaminationTypeDto baseAdditionalExaminationTypeDto)
         {
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
+            var additionalExaminationType = _mapper.Map<BaseAdditionalExaminationTypeDto, AdditionalExaminationType>(baseAdditionalExaminationTypeDto);
+
             var createdAdditionalExaminationType =
                 await _additionalExaminationTypeRepository.Add(additionalExaminationType, currentUser);
 
-            return CreatedAtAction(nameof(Post), null, createdAdditionalExaminationType);
+            var createdPrescriptionDto = _mapper.Map<AdditionalExaminationType, CreatedAdditionalExaminationTypeDto>(createdAdditionalExaminationType);
+
+            return CreatedAtAction(nameof(Post), createdPrescriptionDto);
         }
 
         [HttpPut("{id}")]

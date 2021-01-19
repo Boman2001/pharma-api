@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.Domain.Models;
 using Microsoft.AspNetCore.Identity;
+using WebApi.Models.AdditionalExaminationTypes;
 using WebApi.Models.Authentication;
 using WebApi.Models.Prescriptions;
 using WebApi.Models.Users;
@@ -38,6 +39,10 @@ namespace WebApi.Mappings
             CreateMap<UpdatePrescriptionDto, Prescription>();
             CreateMap<Prescription, UpdatePrescriptionDto>();
             CreateMap<Prescription, UpdatedPrescriptionDto>();
+            CreateMap<AdditionalExaminationType, BaseAdditionalExaminationTypeDto>();
+            CreateMap<BaseAdditionalExaminationTypeDto, AdditionalExaminationType>();
+            CreateMap<AdditionalExaminationType, CreatedAdditionalExaminationTypeDto>();
+            CreateMap<AdditionalExaminationType, AdditionalExaminationTypeDto>();
         }
     }
 }
