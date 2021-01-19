@@ -135,6 +135,7 @@ namespace Infrastructure.Repositories
             entity.CreatedBy = guid;
 
             await _dbSet.AddAsync(entity);
+            await Save();
             await _context.Entry(entity).GetDatabaseValuesAsync();
 
             await _activities.AddAsync(new Activity
@@ -143,7 +144,8 @@ namespace Infrastructure.Repositories
                 Properties = JsonSerializer.Serialize(entity),
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
-                CreatedBy = guid
+                CreatedBy = guid,
+                CreatedAt = DateTime.Now,
             });
 
             await Save();
@@ -167,16 +169,24 @@ namespace Infrastructure.Repositories
             entity.UpdatedBy = guid;
             entity.UpdatedAt = DateTime.Now;
 
+            var oldEntity = await Get(entity.Id);
+
             _dbSet.Update(entity);
             await Save();
+
+            var properties = new
+            {
+                New = entity, Old = oldEntity
+            };
 
             await _activities.AddAsync(new Activity
             {
                 Description = "Update",
-                Properties = JsonSerializer.Serialize(entity),
+                Properties = JsonSerializer.Serialize(properties),
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
-                CreatedBy = guid
+                CreatedBy = guid,
+                CreatedAt = DateTime.Now,
             });
 
             await Save();
@@ -216,9 +226,10 @@ namespace Infrastructure.Repositories
                 Properties = JsonSerializer.Serialize(entity),
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
-                CreatedBy = guid
+                CreatedBy = guid,
+                CreatedAt = DateTime.Now,
             });
-            
+
             await Save();
         }
 
@@ -249,10 +260,10 @@ namespace Infrastructure.Repositories
                 Properties = JsonSerializer.Serialize(entity),
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
-                DeletedBy = guid,
-                DeletedAt = DateTime.Now,
+                CreatedBy = guid,
+                CreatedAt = DateTime.Now,
             });
-            
+
             await Save();
         }
 
