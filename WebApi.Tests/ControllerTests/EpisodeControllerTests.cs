@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using Core.Domain.Models;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using WebApi.controllers;
-using WebApi.Controllers;
-using WebApi.Mappings;
 using WebApi.Tests.Helpers;
 using WebApi.Tests.Mocks;
 using WebApi.Tests.Mocks.Extends;
@@ -34,9 +28,6 @@ namespace WebApi.Tests.ControllerTests
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var mockMapper = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile()));
-            var mapper = mockMapper.CreateMapper();
-
             var userManager = MockUserManager.GetMockUserManager(_fakeIdentityUsers).Object;
             var signInManager = MockSigninManager.GetSignInManager<IdentityUser>(userManager).Object;
 
@@ -55,7 +46,7 @@ namespace WebApi.Tests.ControllerTests
         {
             var result = FakeController.Get();
             var objectResult = (OkObjectResult) result.Result;
-            var activities = (List<Episode>)objectResult.Value;
+            var activities = (List<Episode>) objectResult.Value;
 
             Assert.Equal(_fakeEntities.Count, activities.Count);
             Assert.Equal(200, objectResult.StatusCode);
@@ -69,7 +60,7 @@ namespace WebApi.Tests.ControllerTests
         {
             var result = await FakeController.Get(_fakeEntities[0].Id);
             var objectResult = (OkObjectResult) result.Result;
-            var entity = (Episode)objectResult.Value;
+            var entity = (Episode) objectResult.Value;
 
             Assert.Equal(200, objectResult.StatusCode);
             Assert.Equal(entity, _fakeEntities[0]);
@@ -88,7 +79,7 @@ namespace WebApi.Tests.ControllerTests
             var lengthBefore = _fakeEntities.Count;
 
             var result = await FakeController.Post(entity);
-            var objActionResult = (CreatedAtActionResult)result.Result;
+            var objActionResult = (CreatedAtActionResult) result.Result;
             var createdPatient = _fakeEntities[lengthBefore];
 
             Assert.Equal(lengthBefore + 1, _fakeEntities.Count);
@@ -106,7 +97,7 @@ namespace WebApi.Tests.ControllerTests
             };
             var result = await FakeController.Put(_fakeEntities[0].Id, entity);
 
-            var objectResult = (OkObjectResult)result;
+            var objectResult = (OkObjectResult) result;
             Assert.NotNull(_fakeEntities[0].UpdatedAt);
             Assert.Equal(200, objectResult.StatusCode);
         }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core.Domain.Enums;
@@ -11,7 +9,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using WebApi.controllers;
-using WebApi.Controllers;
 using WebApi.Mappings;
 using WebApi.Models.Prescriptions;
 using WebApi.Tests.Helpers;
@@ -51,11 +48,11 @@ namespace WebApi.Tests.ControllerTests
             var fakeGenericRepoUserInformationMock = MockGenericRepository.GetUserInformationMock(_fakeUsersInformation);
             MockUserExtension.ExtendMock(fakeGenericRepoUserInformationMock, _fakeUsersInformation);
 
-            var _patientsMock = MockGenericRepository.GetUserInformationMock(_patients);
-            var _constulatationsMock = MockGenericRepository.GetUserInformationMock(_constulatations);
+            var userInformationMock = MockGenericRepository.GetUserInformationMock(_patients);
+            var constulatationsMock = MockGenericRepository.GetUserInformationMock(_constulatations);
             MockGenericExtension.ExtendMock(fakeGenericRepo, _fakeEntities);
-            FakeController = new PrescriptionsController(IdentityRepositoryFake, fakeGenericRepo.Object, fakeGenericRepoUserInformationMock.Object, _patientsMock.Object,
-                _constulatationsMock.Object,
+            FakeController = new PrescriptionsController(IdentityRepositoryFake, fakeGenericRepo.Object, fakeGenericRepoUserInformationMock.Object, userInformationMock.Object,
+                constulatationsMock.Object,
                 mapper);
 
             IdentityHelper.SetUser(_fakeIdentityUsers[0], FakeController);
@@ -66,7 +63,7 @@ namespace WebApi.Tests.ControllerTests
         public async Task Get_All_Prescription_With_200_codeAsync()
         {
             var result = await FakeController.Get();
-            var objectResult = (OkObjectResult)result.Result;
+            var objectResult = (OkObjectResult) result.Result;
 
             Assert.Equal(200, objectResult.StatusCode);
         }
@@ -98,8 +95,7 @@ namespace WebApi.Tests.ControllerTests
             var lengthBefore = _fakeEntities.Count;
 
             var result = await FakeController.Post(entity);
-            var objActionResult = (CreatedAtActionResult)result.Result;
-            var createdPatient = _fakeEntities[lengthBefore];
+            var objActionResult = (CreatedAtActionResult) result.Result;
 
             Assert.Equal(lengthBefore + 1, _fakeEntities.Count);
             Assert.Equal(201, objActionResult.StatusCode);
@@ -116,7 +112,7 @@ namespace WebApi.Tests.ControllerTests
             };
             var result = await FakeController.Put(_fakeEntities[0].Id, entity);
 
-            var objectResult = (OkObjectResult)result;
+            var objectResult = (OkObjectResult) result;
             Assert.NotNull(_fakeEntities[0].UpdatedAt);
             Assert.Equal(200, objectResult.StatusCode);
         }
@@ -128,7 +124,7 @@ namespace WebApi.Tests.ControllerTests
             var lengthBefore = _fakeEntities.Count;
 
             var result = await FakeController.Delete(_fakeEntities[0].Id);
-            var objContentResult = (NoContentResult)result;
+            var objContentResult = (NoContentResult) result;
 
             Assert.Equal(204, objContentResult.StatusCode);
             Assert.Equal(lengthBefore - 1, _fakeEntities.Count);
