@@ -6,6 +6,7 @@ using WebApi.Controllers;
 using WebApi.Tests.Mocks;
 using System.Threading.Tasks;
 using AutoMapper;
+using Core.Domain.Enums;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,7 @@ namespace WebApi.Tests.ControllerTests
     {
         private List<AdditionalExaminationResult> _fakeEntities;
         private List<IdentityUser> _fakeIdentityUsers;
+        private List<Patient> _fakeUsersPatient;
         private AdditionalExaminationResultsController FakeController { get; }
         private IdentityRepository IdentityRepositoryFake { get; }
 
@@ -51,7 +53,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public void Get_All_AdditionExaminationResults_With_200_code()
         {
-            var result = FakeController.Get();
+            var result = FakeController.Get(null);
             var objectResult = (OkObjectResult) result.Result;
             var activities = (List<AdditionalExaminationResult>) objectResult.Value;
 
@@ -127,6 +129,40 @@ namespace WebApi.Tests.ControllerTests
 
         private void SeedData()
         {
+            _fakeUsersPatient = new List<Patient>();
+            var patient = new Patient
+            {
+                Name = "Name",
+                Bsn = "Bsn",
+                Email = "test",
+                Dob = DateTime.Now,
+                Gender = Gender.Male,
+                PhoneNumber = "1321",
+                City = "hank",
+                Street = "lepelaarstraat20",
+                HouseNumber = "20",
+                PostalCode = "23",
+                Country = "qwe"
+            };
+            var patient02 = new Patient
+            {
+                Name = "Name",
+                Bsn = "Bsn",
+                Email = "test",
+                Dob = DateTime.Now,
+                Gender = Gender.Male,
+                PhoneNumber = "1321",
+                City = "hank",
+                Street = "lepelaarstraat20",
+                HouseNumber = "20",
+                PostalCode = "23",
+                Country = "qwe"
+            };
+            _fakeUsersPatient.AddRange(new List<Patient>
+            {
+                patient, patient02
+            });
+
             var activity = new AdditionalExaminationResult
             {
                 Id = 1,
