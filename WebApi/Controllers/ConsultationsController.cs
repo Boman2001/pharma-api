@@ -148,7 +148,7 @@ namespace WebApi.controllers
             
             if (patient == null)
             {
-                return BadRequest("Patient bestaat niet.");
+                return BadRequest("Patiënt bestaat niet.");
             }
             
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
