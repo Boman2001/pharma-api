@@ -112,7 +112,7 @@ namespace WebApi.Tests.ControllerTests
                 PhoneNumberConfirmed = true,
                 NormalizedUserName = "M@GMAIL.COM",
                 NormalizedEmail = "M@GMAIL.COM",
-                EmailConfirmed = true,
+                EmailConfirmed = true
             };
             var extraIdentityUser = new IdentityUser
             {
@@ -121,7 +121,7 @@ namespace WebApi.Tests.ControllerTests
                 PhoneNumberConfirmed = true,
                 NormalizedUserName = "M@GMAIL.COM",
                 NormalizedEmail = "M@GMAIL.COM",
-                EmailConfirmed = true,
+                EmailConfirmed = true
             };
 
             _fakeIdentityUsers = new List<IdentityUser>

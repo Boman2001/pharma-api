@@ -71,7 +71,7 @@ namespace WebApi
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JWT:Secret"])),
                     ValidateIssuer = false,
-                    ValidateAudience = false,
+                    ValidateAudience = false
                 };
             });
 
@@ -115,15 +115,15 @@ namespace WebApi
 
         private static async Task CreateUserRoles(IServiceProvider serviceProvider)
         {
-            RoleManager<IdentityRole> getRoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var getRoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             string[] roleNames =
             {
                 "Admin", "Doctor"
             };
 
-            foreach (string roleName in roleNames)
+            foreach (var roleName in roleNames)
             {
-                bool roleExist = await getRoleManager.RoleExistsAsync(roleName);
+                var roleExist = await getRoleManager.RoleExistsAsync(roleName);
                 if (!roleExist)
                 {
                     await getRoleManager.CreateAsync(new IdentityRole(roleName));

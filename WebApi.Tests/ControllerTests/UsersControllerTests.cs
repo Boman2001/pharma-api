@@ -108,7 +108,7 @@ namespace WebApi.Tests.ControllerTests
                 HouseNumberAddon = null,
                 PostalCode = "Postalcode",
                 Name = "TestDaddy",
-                Password = "Password",
+                Password = "Password"
             };
 
             var result = await FakeController.Post(user);

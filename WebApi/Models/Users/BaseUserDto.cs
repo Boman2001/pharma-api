@@ -4,8 +4,6 @@ using Core.Domain.Enums;
 
 namespace WebApi.Models.Users
 {
-    using System.Diagnostics.CodeAnalysis;
-
     public class BaseUserDto
     {
         [Required(ErrorMessage = "E-mailadres is verplicht.")]

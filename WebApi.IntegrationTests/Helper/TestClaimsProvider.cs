@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WebApi.IntegrationTests.Helper
 {
     public class TestClaimsProvider
     {
-        public IList<Claim> Claims { get; }
+        private IList<Claim> Claims { get; }
 
         public TestClaimsProvider(IList<Claim> claims)
         {

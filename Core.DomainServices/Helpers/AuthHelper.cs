@@ -25,7 +25,7 @@ namespace Core.DomainServices.Helpers
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Sid, user.Id),
-                new(ClaimTypes.Email, user.Email), 
+                new(ClaimTypes.Email, user.Email)
             };
 
             if (roles != null && roles.Count > 0)

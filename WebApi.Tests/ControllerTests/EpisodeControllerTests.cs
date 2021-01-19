@@ -73,7 +73,7 @@ namespace WebApi.Tests.ControllerTests
         {
             var entity = new Episode
             {
-                Description = "NewDesc",
+                Description = "NewDesc"
             };
 
             var lengthBefore = _fakeEntities.Count;
@@ -93,7 +93,7 @@ namespace WebApi.Tests.ControllerTests
         {
             var entity = new Episode
             {
-                Description = "UpdatedDesc",
+                Description = "UpdatedDesc"
             };
             var result = await FakeController.Put(_fakeEntities[0].Id, entity);
 

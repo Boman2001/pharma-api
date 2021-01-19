@@ -21,9 +21,8 @@ namespace WebApi.IntegrationTests
 {
     public class DoctorRouteTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private HttpClient _client;
+        private readonly HttpClient _client;
         private JToken _token;
-        private CustomWebApplicationFactory<Startup> _factory;
 
         public DoctorRouteTests(CustomWebApplicationFactory<Startup> factory)
         {
@@ -96,7 +95,7 @@ namespace WebApi.IntegrationTests
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
-            var defaultPage = await _client.GetAsync("/api/users/" + users[0].Id.ToString());
+            var defaultPage = await _client.GetAsync("/api/users/" + users[0].Id);
             var asStringAsync = defaultPage.Content.ReadAsStringAsync();
             var json = asStringAsync.Result;
             var jToken = JObject.Parse(json);
@@ -169,7 +168,7 @@ namespace WebApi.IntegrationTests
             {
                 Email = "new@gmail.com",
                 Password = "password",
-                City = "hank",
+                City = "hank"
             };
 
             var serialize = JsonConvert.SerializeObject(newUserDto);
@@ -233,13 +232,13 @@ namespace WebApi.IntegrationTests
 
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
-            var defaultPage = await _client.PutAsync("/api/users/" + dto.Id.ToString(), content);
+            var defaultPage = await _client.PutAsync("/api/users/" + dto.Id, content);
             var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
             var json = readAsStringAsync.Result;
             var u = JObject.Parse(json);
             var user = u.ToObject<UserDto>();
 
-            var defaultPager = await _client.GetAsync("/api/users/" + user.Id.ToString());
+            var defaultPager = await _client.GetAsync("/api/users/" + user.Id);
             var asStringAsync = defaultPager.Content.ReadAsStringAsync();
             var result = asStringAsync.Result;
             var parsedJObject = JObject.Parse(result);
@@ -267,10 +266,10 @@ namespace WebApi.IntegrationTests
 
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
-            var defaultPage = await _client.PutAsync("/api/users/" + userDto.Id.ToString(), content);
+            var defaultPage = await _client.PutAsync("/api/users/" + userDto.Id, content);
             var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
 
-            var defaultPager = await _client.GetAsync("/api/users/" + userDto.Id.ToString());
+            var defaultPager = await _client.GetAsync("/api/users/" + userDto.Id);
             var asStringAsync = defaultPager.Content.ReadAsStringAsync();
             var result = asStringAsync.Result;
             var resultObject = JObject.Parse(result);
@@ -296,7 +295,7 @@ namespace WebApi.IntegrationTests
 
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
-            var defaultPage = await _client.PutAsync("/api/users/" + userDto.Id.ToString(), content);
+            var defaultPage = await _client.PutAsync("/api/users/" + userDto.Id, content);
             var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
@@ -310,7 +309,7 @@ namespace WebApi.IntegrationTests
 
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
-            var content = new StringContent($"email={"d@LEander.com"}&name={"new@LEander.com"}&password={"new"}",
+            var content = new StringContent("email=d@LEander.com&name=new@LEander.com&password=new",
                 Encoding.UTF8,
                 "application/x-www-form-urlencoded");
 
@@ -331,7 +330,7 @@ namespace WebApi.IntegrationTests
 
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
-            var defaultPage = await _client.DeleteAsync("/api/users/" + udser.Id.ToString());
+            var defaultPage = await _client.DeleteAsync("/api/users/" + udser.Id);
 
             Assert.Equal(HttpStatusCode.NoContent, defaultPage.StatusCode);
         }
@@ -355,7 +354,7 @@ namespace WebApi.IntegrationTests
         [Fact]
         public async Task UnAuth_Update()
         {
-            var content = new StringContent($"email={"d@LEander.com"}&name={"new@LEander.com"}&password={"new"}",
+            var content = new StringContent("email=d@LEander.com&name=new@LEander.com&password=new",
                 Encoding.UTF8,
                 "application/x-www-form-urlencoded");
 

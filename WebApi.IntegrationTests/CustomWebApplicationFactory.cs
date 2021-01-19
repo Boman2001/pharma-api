@@ -93,19 +93,19 @@ namespace WebApi.IntegrationTests
         }
 
 
-        public void InitializeDbForTests(SecurityDbContext db, ApplicationDbContext dbdata)
+        private void InitializeDbForTests(SecurityDbContext db, ApplicationDbContext dbdata)
         {
             db.Users.AddRange(_users);
             db.SaveChanges();
             dbdata.UserInformation.AddRange(_userInformations);
             dbdata.Activities.AddRange(GetActivities());
-            dbdata.Consultations.AddRange(getConsultations());
+            dbdata.Consultations.AddRange(GetConsultations());
             dbdata.SaveChanges();
         }
 
-        private List<Consultation> getConsultations()
+        private IEnumerable<Consultation> GetConsultations()
         {
-            Patient p = new Patient
+            var p = new Patient
             {
                 Name = "jim",
                 Bsn = "bsn",
@@ -121,43 +121,43 @@ namespace WebApi.IntegrationTests
                 Country = "Netherlands"
             };
           
-            AdditionalExaminationType type = new AdditionalExaminationType
+            var type = new AdditionalExaminationType
             {
                 Name = "typename",
                 Unit = "GPS"
             };
-            AdditionalExaminationResult additional = new AdditionalExaminationResult
+            var additional = new AdditionalExaminationResult
             {
                 Value = "value",
                 Date = DateTime.Now,
                 AdditionalExaminationType = type
             };
-            IcpcCode ipCode = new IcpcCode
+            var ipCode = new IcpcCode
             {
                 Name = "Name",
                 Code = "code"
             };
-            Episode ep = new Episode
+            var ep = new Episode
             {
                 Description = "Description",
                 Priority = 10,
                 Patient = p,
                 IcpcCode = ipCode
             };
-            Intolerance intolerances = new Intolerance
+            var intolerances = new Intolerance
             {
                 Description = "descrption",
                 EndDate = DateTime.Now,
                 StartDate = DateTime.Now,
                 Patient = p
             };
-            PhysicalExamination physical = new PhysicalExamination()
+            var physical = new PhysicalExamination
             {
                 Value = "physical",
                 Date = DateTime.Now,
-                Patient = p,
+                Patient = p
             };
-            Consultation c = new Consultation
+            var c = new Consultation
             {
                 Id = 1,
                 Date = DateTime.Now,
@@ -169,23 +169,23 @@ namespace WebApi.IntegrationTests
                 {
                     additional
                 },
-                Episodes = new List<Episode>()
+                Episodes = new List<Episode>
                 {
                     ep
                 },
-                Intolerances = new List<Intolerance>()
+                Intolerances = new List<Intolerance>
                 {
                     intolerances
                 },
-                PhysicalExaminations = new List<PhysicalExamination>()
+                PhysicalExaminations = new List<PhysicalExamination>
                 {
                     physical
                 }
             };
-            return new List<Consultation>(){c};
+            return new List<Consultation>{c};
         }
 
-        private List<Activity> GetActivities()
+        private static IEnumerable<Activity> GetActivities()
         {
             var activities = new List<Activity>();
             var activity = new Activity
@@ -221,7 +221,7 @@ namespace WebApi.IntegrationTests
                 NormalizedUserName = "M@GMAIL.COM",
                 Email = "m@gmail.com",
                 NormalizedEmail = "M@GMAIL.COM",
-                EmailConfirmed = true,
+                EmailConfirmed = true
             };
 
             var user1 = new IdentityUser
@@ -233,7 +233,7 @@ namespace WebApi.IntegrationTests
                 NormalizedUserName = "M1@GMAIL.COM",
                 Email = "m1@gmail.com",
                 NormalizedEmail = "M1@GMAIL.COM",
-                EmailConfirmed = true,
+                EmailConfirmed = true
             };
 
             var user2 = new IdentityUser
@@ -245,7 +245,7 @@ namespace WebApi.IntegrationTests
                 NormalizedUserName = "M2@GMAIL.COM",
                 Email = "m2@gmail.com",
                 NormalizedEmail = "M2@GMAIL.COM",
-                EmailConfirmed = true,
+                EmailConfirmed = true
             };
             user1.PasswordHash = passwordHasher.HashPassword(user1, "password");
             user2.PasswordHash = passwordHasher.HashPassword(user2, "password");

@@ -31,7 +31,7 @@ namespace WebApi.Tests.ControllerTests
                 .Build();
 
             var mockMapper = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile()));
-            var mapper = mockMapper.CreateMapper();
+            mockMapper.CreateMapper();
 
             var userManager = MockUserManager.GetMockUserManager(_fakeIdentityUsers).Object;
             var signInManager = MockSigninManager.GetSignInManager<IdentityUser>(userManager).Object;

@@ -105,7 +105,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Given_Prescription_To_Update_returns_200()
         {
-            UpdatePrescriptionDto entity = new UpdatePrescriptionDto
+            var entity = new UpdatePrescriptionDto
             {
                 ConsultationId = _constulatations[0].Id,
                 Description = "DEDEDE"
@@ -150,7 +150,7 @@ namespace WebApi.Tests.ControllerTests
                 userInformation
             });
 
-            Patient p = new Patient
+            var p = new Patient
             {
                 Name = "jim",
                 Bsn = "bsn",
@@ -166,43 +166,43 @@ namespace WebApi.Tests.ControllerTests
                 Country = "Netherlands"
             };
 
-            AdditionalExaminationType type = new AdditionalExaminationType
+            var type = new AdditionalExaminationType
             {
                 Name = "typename",
                 Unit = "GPS"
             };
-            AdditionalExaminationResult additional = new AdditionalExaminationResult
+            var additional = new AdditionalExaminationResult
             {
                 Value = "value",
                 Date = DateTime.Now,
                 AdditionalExaminationType = type
             };
-            IcpcCode ipCode = new IcpcCode
+            var ipCode = new IcpcCode
             {
                 Name = "Name",
                 Code = "code"
             };
-            Episode ep = new Episode
+            var ep = new Episode
             {
                 Description = "Description",
                 Priority = 10,
                 Patient = p,
                 IcpcCode = ipCode
             };
-            Intolerance intolerances = new Intolerance
+            var intolerances = new Intolerance
             {
                 Description = "descrption",
                 EndDate = DateTime.Now,
                 StartDate = DateTime.Now,
                 Patient = p
             };
-            PhysicalExamination physical = new PhysicalExamination()
+            var physical = new PhysicalExamination()
             {
                 Value = "physical",
                 Date = DateTime.Now,
-                Patient = p,
+                Patient = p
             };
-            Consultation c = new Consultation
+            var c = new Consultation
             {
                 Id = 1,
                 Date = DateTime.Now,
@@ -210,19 +210,19 @@ namespace WebApi.Tests.ControllerTests
                 DoctorId = Guid.Parse(_fakeIdentityUsers[0].Id),
                 Doctor = _fakeIdentityUsers[0],
                 Patient = p,
-                AdditionalExaminationResults = new List<AdditionalExaminationResult>()
+                AdditionalExaminationResults = new List<AdditionalExaminationResult>
                 {
                     additional
                 },
-                Episodes = new List<Episode>()
+                Episodes = new List<Episode>
                 {
                     ep
                 },
-                Intolerances = new List<Intolerance>()
+                Intolerances = new List<Intolerance>
                 {
                     intolerances
                 },
-                PhysicalExaminations = new List<PhysicalExamination>()
+                PhysicalExaminations = new List<PhysicalExamination>
                 {
                     physical
                 }

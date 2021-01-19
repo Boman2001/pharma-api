@@ -63,7 +63,7 @@ namespace Infrastructure.Tests
         [Fact]
         public void Given_Non_Existing_User_Throws_Exception()
         {
-            var identityUser = new IdentityUser()
+            var identityUser = new IdentityUser
             {
                 UserName = "GenericUsername",
                 PasswordHash = "GenericUsername",
@@ -77,7 +77,7 @@ namespace Infrastructure.Tests
         [Fact]
         public void Given_Non_Existing_User_To_Update_Returns_Exception()
         {
-            var identityUser = new IdentityUser()
+            var identityUser = new IdentityUser
             {
                 UserName = "GenericUsername",
                 PasswordHash = "GenericUsername",
@@ -96,9 +96,9 @@ namespace Infrastructure.Tests
                 Id = _fakeIdentityUsers[0].Id,
                 UserName = _fakeIdentityUsers[0].UserName,
                 PasswordHash = _fakeIdentityUsers[0].PasswordHash,
-                Email = _fakeIdentityUsers[0].Email
+                Email = _fakeIdentityUsers[0].Email,
+                PhoneNumber = "phoneNumber"
             };
-            identityUser.PhoneNumber = "phoneNumber";
 
             var result = await Controller.Update(identityUser);
 
@@ -202,8 +202,8 @@ namespace Infrastructure.Tests
 
             Assert.Null(result);
         }
-        
-        internal void SeedData()
+
+        private void SeedData()
         {
             _fakeUser = new IdentityUser
             {

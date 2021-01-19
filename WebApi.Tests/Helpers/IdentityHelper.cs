@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Tests.Helpers
 {
-    public class IdentityHelper
+    public static class IdentityHelper
     {
         public static List<IdentityUser> GetIdentityUsers()
         {
-            var _fakeIdentityUser = new IdentityUser
+            var fakeIdentityUser = new IdentityUser
             {
                 PasswordHash = "password",
                 Email = "email@gmail.com",
@@ -23,7 +19,7 @@ namespace WebApi.Tests.Helpers
                 PhoneNumberConfirmed = true,
                 NormalizedUserName = "M@GMAIL.COM",
                 NormalizedEmail = "M@GMAIL.COM",
-                EmailConfirmed = true,
+                EmailConfirmed = true
             };
             var extraIdentityUser = new IdentityUser
             {
@@ -34,25 +30,25 @@ namespace WebApi.Tests.Helpers
                 PhoneNumberConfirmed = true,
                 NormalizedUserName = "M@GMAIL.COM",
                 NormalizedEmail = "M@GMAIL.COM",
-                EmailConfirmed = true,
+                EmailConfirmed = true
             };
 
             return new List<IdentityUser>
             {
-                _fakeIdentityUser, extraIdentityUser
+                fakeIdentityUser, extraIdentityUser
             };
         }
 
-        public static void SetUser(IdentityUser identity, ControllerBase FakeController)
+        public static void SetUser(IdentityUser identity, ControllerBase fakeController)
         {
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(ClaimTypes.Name, identity.Id), new Claim(ClaimTypes.Sid, identity.Id)
             }, "mock"));
 
-            FakeController.ControllerContext = new ControllerContext()
+            fakeController.ControllerContext = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext()
+                HttpContext = new DefaultHttpContext
                 {
                     User = user
                 }

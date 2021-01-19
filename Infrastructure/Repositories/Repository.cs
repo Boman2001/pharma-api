@@ -6,7 +6,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
-using Geocoding;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
@@ -261,7 +260,7 @@ namespace Infrastructure.Repositories
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
                 CreatedBy = guid,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.Now
             });
 
             await Save();

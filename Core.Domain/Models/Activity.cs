@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Core.Domain.Models
+﻿namespace Core.Domain.Models
 {
     public class Activity : BaseEntity
     {

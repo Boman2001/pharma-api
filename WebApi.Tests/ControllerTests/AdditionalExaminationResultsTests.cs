@@ -33,7 +33,7 @@ namespace WebApi.Tests.ControllerTests
                 .Build();
 
             var mockMapper = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile()));
-            var mapper = mockMapper.CreateMapper();
+            mockMapper.CreateMapper();
 
             var userManager = MockUserManager.GetMockUserManager(_fakeIdentityUsers).Object;
             var signInManager = MockSigninManager.GetSignInManager<IdentityUser>(userManager).Object;
@@ -81,7 +81,7 @@ namespace WebApi.Tests.ControllerTests
             var entity = new AdditionalExaminationResult
             {
                 Value = "value",
-                Date = DateTime.Now,
+                Date = DateTime.Now
             };
 
             var lengthBefore = _fakeEntities.Count;
@@ -103,7 +103,7 @@ namespace WebApi.Tests.ControllerTests
             var entity = new AdditionalExaminationResult
             {
                 Value = "valueupdated",
-                Date = DateTime.Now,
+                Date = DateTime.Now
             };
             var result = await FakeController.Put(_fakeEntities[0].Id, entity);
 
@@ -131,13 +131,13 @@ namespace WebApi.Tests.ControllerTests
             {
                 Id = 1,
                 Value = "value",
-                Date = DateTime.Now,
+                Date = DateTime.Now
             };
             var activity02 = new AdditionalExaminationResult
             {
                 Id = 2,
                 Value = "value",
-                Date = DateTime.Now,
+                Date = DateTime.Now
             };
             _fakeEntities = new List<AdditionalExaminationResult>
             {
