@@ -51,8 +51,12 @@ namespace WebApi.Tests.ControllerTests
             var fakeGenericRepoUserInformationMock = MockGenericRepository.GetUserInformationMock(_fakeUsersInformation);
             MockUserExtension.ExtendMock(fakeGenericRepoUserInformationMock, _fakeUsersInformation);
 
+            var _patientsMock = MockGenericRepository.GetUserInformationMock(_patients);
+            var _constulatationsMock = MockGenericRepository.GetUserInformationMock(_constulatations);
             MockGenericExtension.ExtendMock(fakeGenericRepo, _fakeEntities);
-            FakeController = new PrescriptionsController(fakeGenericRepo.Object, IdentityRepositoryFake, fakeGenericRepoUserInformationMock.Object, mapper);
+            FakeController = new PrescriptionsController(IdentityRepositoryFake, fakeGenericRepo.Object, fakeGenericRepoUserInformationMock.Object, _patientsMock.Object,
+                _constulatationsMock.Object,
+                mapper);
 
             IdentityHelper.SetUser(_fakeIdentityUsers[0], FakeController);
         }
@@ -83,9 +87,17 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Given_AdditionalExaminationResult_Posts_And_Returns_201_Code()
         {
+            NewPrescriptionDto entity = new NewPrescriptionDto
+            {
+                Description = "DEDEDE",
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now,
+                ConsultationId = _constulatations[0].Id,
+                PatientId = _patients[0].Id
+            };
             var lengthBefore = _fakeEntities.Count;
 
-            var result = await FakeController.Post(_fakeEntities[0]);
+            var result = await FakeController.Post(entity);
             var objActionResult = (CreatedAtActionResult)result.Result;
             var createdPatient = _fakeEntities[lengthBefore];
 
@@ -97,8 +109,11 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Given_AdditionalExaminationResult_To_Update_returns_200()
         {
-            var entity = _fakeEntities[0];
-            entity.Description = " dedede";
+            UpdatePrescriptionDto entity = new UpdatePrescriptionDto
+            {
+                ConsultationId = _constulatations[0].Id,
+                Description = "DEDEDE"
+            };
             var result = await FakeController.Put(_fakeEntities[0].Id, entity);
 
             var objectResult = (OkObjectResult)result;

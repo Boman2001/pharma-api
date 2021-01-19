@@ -75,63 +75,63 @@ namespace WebApi.IntegrationTests
             Assert.Equal(HttpStatusCode.NotFound, defaultPage.StatusCode);
         }
 
-        [Fact, Order(3)]
-        public void Given_Valid_Post_Data_Posts()
-        {
-            var tokenEnvironmentVariable = Environment.GetEnvironmentVariable("Token");
+        //[Fact, Order(3)]
+        //public void Given_Valid_Post_Data_Posts()
+        //{
+        //    var tokenEnvironmentVariable = Environment.GetEnvironmentVariable("Token");
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
+        //    _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
-            var admin = new IdentityUser
-            {
-                Id = "6105002a-295f-49b1-ace3-2072c7edbb69",
-                UserName = "m@gmail.com",
-                PhoneNumber = "+31623183611",
-                PhoneNumberConfirmed = true,
-                NormalizedUserName = "M@GMAIL.COM",
-                Email = "m@gmail.com",
-                NormalizedEmail = "M@GMAIL.COM",
-                EmailConfirmed = true,
-            };
-            Patient p = new Patient
-            {
-                Name = "jim",
-                Bsn = "bsn",
-                Email = "jim@jim.com",
-                Dob = DateTime.Now,
-                Gender = Gender.Other,
-                PhoneNumber = "124124",
-                City = "hank",
-                Street = "lepelaarstraat",
-                HouseNumber = "20",
-                HouseNumberAddon = "",
-                PostalCode = "4273cv",
-                Country = "Netherlands"
-            };
-            Consultation c = new Consultation
-            {
-                Id = 1,
-                Date = DateTime.Now,
-                Comments = "comments",
-                DoctorId = Guid.Parse(admin.Id),
-                Doctor = admin,
-                Patient = p,
-            };
+        //    var admin = new IdentityUser
+        //    {
+        //        Id = "6105002a-295f-49b1-ace3-2072c7edbb69",
+        //        UserName = "m@gmail.com",
+        //        PhoneNumber = "+31623183611",
+        //        PhoneNumberConfirmed = true,
+        //        NormalizedUserName = "M@GMAIL.COM",
+        //        Email = "m@gmail.com",
+        //        NormalizedEmail = "M@GMAIL.COM",
+        //        EmailConfirmed = true,
+        //    };
+        //    Patient p = new Patient
+        //    {
+        //        Name = "jim",
+        //        Bsn = "bsn",
+        //        Email = "jim@jim.com",
+        //        Dob = DateTime.Now,
+        //        Gender = Gender.Other,
+        //        PhoneNumber = "124124",
+        //        City = "hank",
+        //        Street = "lepelaarstraat",
+        //        HouseNumber = "20",
+        //        HouseNumberAddon = "",
+        //        PostalCode = "4273cv",
+        //        Country = "Netherlands"
+        //    };
+        //    Consultation c = new Consultation
+        //    {
+        //        Id = 1,
+        //        Date = DateTime.Now,
+        //        Comments = "comments",
+        //        DoctorId = Guid.Parse(admin.Id),
+        //        Doctor = admin,
+        //        Patient = p,
+        //    };
 
-            var serialize = JsonConvert.SerializeObject(c);
+        //    var serialize = JsonConvert.SerializeObject(c);
 
-            var content = new StringContent(serialize, Encoding.UTF8, "application/json");
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        //    var content = new StringContent(serialize, Encoding.UTF8, "application/json");
+        //    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
            
-            var result = _client.PostAsync("/api/consultations/", content).Result;
-            var readAsStringAsync = result.Content.ReadAsStringAsync();
-            var json = readAsStringAsync.Result;
-            var u = JObject.Parse(json);
-            var user = u.ToObject<Consultation>();
-            var userSerializeObject = JsonConvert.SerializeObject(user);
+        //    var result = _client.PostAsync("/api/consultations/", content).Result;
+        //    var readAsStringAsync = result.Content.ReadAsStringAsync();
+        //    var json = readAsStringAsync.Result;
+        //    var u = JObject.Parse(json);
+        //    var user = u.ToObject<Consultation>();
+        //    var userSerializeObject = JsonConvert.SerializeObject(user);
 
-            Assert.Equal(HttpStatusCode.Created, result.StatusCode);
-        }
+        //    Assert.Equal(HttpStatusCode.Created, result.StatusCode);
+        //}
 
         [Fact, Order(3)]
         public void Given_Invalid_Post_Data_Gives_Error()
@@ -158,37 +158,37 @@ namespace WebApi.IntegrationTests
             Assert.InRange(readAsStringAsync.Result.Length, 10, int.MaxValue);
         }
 
-        [Fact, Order(4)]
-        public async Task Update_Consultation_And_test_If_User_Changed()
-        {
-            var environmentVariable = Environment.GetEnvironmentVariable("consultation");
-            var jObject = JObject.Parse(environmentVariable);
-            var dto = jObject.ToObject<Consultation>();
-            dto.Comments = "NEW COMMENT";
+        //[Fact, Order(4)]
+        //public async Task Update_Consultation_And_test_If_User_Changed()
+        //{
+        //    var environmentVariable = Environment.GetEnvironmentVariable("consultation");
+        //    var jObject = JObject.Parse(environmentVariable);
+        //    var dto = jObject.ToObject<Consultation>();
+        //    dto.Comments = "NEW COMMENT";
 
-            var serialize = JsonConvert.SerializeObject(dto);
-            var content = new StringContent(serialize, Encoding.UTF8, "application/json");
+        //    var serialize = JsonConvert.SerializeObject(dto);
+        //    var content = new StringContent(serialize, Encoding.UTF8, "application/json");
 
-            var defaultPage = await _client.PutAsync("/api/consultations/" +dto.Id, content);
-            var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
-            var json = readAsStringAsync.Result;
-            var u = JObject.Parse(json);
-            var user = u.ToObject<Consultation>();
+        //    var defaultPage = await _client.PutAsync("/api/consultations/" +dto.Id, content);
+        //    var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
+        //    var json = readAsStringAsync.Result;
+        //    var u = JObject.Parse(json);
+        //    var user = u.ToObject<Consultation>();
 
-            var defaultPager = await _client.GetAsync("/api/consultations/" + dto.Id);
-            var asStringAsync = defaultPager.Content.ReadAsStringAsync();
-            var result = asStringAsync.Result;
-            var parsedJObject = JObject.Parse(result);
-            var userDto = parsedJObject.ToObject<Consultation>();
+        //    var defaultPager = await _client.GetAsync("/api/consultations/" + dto.Id);
+        //    var asStringAsync = defaultPager.Content.ReadAsStringAsync();
+        //    var result = asStringAsync.Result;
+        //    var parsedJObject = JObject.Parse(result);
+        //    var userDto = parsedJObject.ToObject<Consultation>();
 
-            Assert.Equal(HttpStatusCode.OK, defaultPager.StatusCode);
-            Assert.NotNull(environmentVariable);
-            Assert.IsType<Consultation>(userDto);
-            Assert.Equal(userDto.Comments, user.Comments);
-            Assert.Equal(HttpStatusCode.OK, defaultPage.StatusCode);
-            Assert.NotNull(user);
-            Assert.Equal(dto.Comments, user.Comments);
-        }
+        //    Assert.Equal(HttpStatusCode.OK, defaultPager.StatusCode);
+        //    Assert.NotNull(environmentVariable);
+        //    Assert.IsType<Consultation>(userDto);
+        //    Assert.Equal(userDto.Comments, user.Comments);
+        //    Assert.Equal(HttpStatusCode.OK, defaultPage.StatusCode);
+        //    Assert.NotNull(user);
+        //    Assert.Equal(dto.Comments, user.Comments);
+        //}
 
         [Fact, Order(4)]
         public async Task Given_Invalid_Data_Update_Return_Bad_Request()
