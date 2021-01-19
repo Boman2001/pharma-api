@@ -165,7 +165,7 @@ namespace WebApi.IntegrationTests
                 DoctorId = Guid.Parse(_users[0].Id),
                 Doctor = _users[0],
                 Patient = p,
-                AdditionalExaminationResults = new List<AdditionalExaminationResult>()
+                AdditionalExaminationResults = new List<AdditionalExaminationResult>
                 {
                     additional
                 },
