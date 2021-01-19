@@ -201,7 +201,7 @@ namespace WebApi.controllers
 
             if (patient == null)
             {
-                return BadRequest("Patient bestaat niet.");
+                return BadRequest("Patiënt bestaat niet.");
             }
 
             var prescription = await _prescriptionRepository.Get(id);
