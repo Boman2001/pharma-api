@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using WebApi.controllers;
 using WebApi.Mappings;
+using WebApi.Models.Consultations;
 using WebApi.Models.Prescriptions;
 using WebApi.Tests.Helpers;
 using WebApi.Tests.Mocks;
@@ -25,11 +26,10 @@ namespace WebApi.Tests.ControllerTests
 {
     public class ConstulationsControllerTests
     {
-        private List<Prescription> _fakeEntities;
-        private List<Consultation> _constulatations;
+        private List<Consultation> _fakeEntities;
         private List<Patient> _patients;
         private List<IdentityUser> _fakeIdentityUsers;
-        private PrescriptionsController FakeController { get; }
+        private ConsultationsController FakeController { get; }
         private IdentityRepository IdentityRepositoryFake { get; }
         private List<UserInformation> _fakeUsersInformation;
 
@@ -49,18 +49,90 @@ namespace WebApi.Tests.ControllerTests
 
             IdentityRepositoryFake = new IdentityRepository(userManager, signInManager, config);
             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_fakeEntities);
-
+            var patientRepo = MockGenericRepository.GetUserInformationMock(_patients);
             var fakeGenericRepoUserInformationMock = MockGenericRepository.GetUserInformationMock(_fakeUsersInformation);
             MockUserExtension.ExtendMock(fakeGenericRepoUserInformationMock, _fakeUsersInformation);
 
-            var userInformationMock = MockGenericRepository.GetUserInformationMock(_patients);
-            var constulatationsMock = MockGenericRepository.GetUserInformationMock(_constulatations);
             MockGenericExtension.ExtendMock(fakeGenericRepo, _fakeEntities);
-            FakeController = new PrescriptionsController(IdentityRepositoryFake, fakeGenericRepo.Object, fakeGenericRepoUserInformationMock.Object, userInformationMock.Object,
-                constulatationsMock.Object,
+
+            FakeController = new ConsultationsController(IdentityRepositoryFake, fakeGenericRepo.Object, fakeGenericRepoUserInformationMock.Object,
+                patientRepo.Object,
                 mapper);
 
             IdentityHelper.SetUser(_fakeIdentityUsers[0], FakeController);
+        }
+
+        [Trait("Category", "Get Tests")]
+        [Fact]
+        public async Task Get_All_Consultations_With_200_codeAsync()
+        {
+            var result = await FakeController.Get();
+            var objectResult = (OkObjectResult) result.Result;
+
+            Assert.Equal(200, objectResult.StatusCode);
+        }
+
+        [Trait("Category", "Get Tests")]
+        [Fact]
+        public async Task Get_Consultations_By_Id_Returns_Consultation_With_200_codeAsync()
+        {
+            var result = await FakeController.Get(_fakeEntities[0].Id);
+            var objectResult = (OkObjectResult) result.Result;
+            var entity = (ConsultationDto) objectResult.Value;
+
+            Assert.Equal(200, objectResult.StatusCode);
+            Assert.IsType<ConsultationDto>(entity);
+        }
+
+        [Trait("Category", "Post Tests")]
+        [Fact]
+        public async Task Given_Prescription_Posts_And_Returns_201_Code()
+        {
+            NewConsultationDto entity = new NewConsultationDto
+            {
+                Comments = "comments",
+                Date = DateTime.Now,
+                PatientId = _patients[0].Id,
+                DoctorId = Guid.Parse(_fakeIdentityUsers[0].Id),
+            };
+            var lengthBefore = _fakeEntities.Count;
+
+            var result = await FakeController.Post(entity);
+            var objActionResult = (CreatedAtActionResult)result.Result;
+
+            Assert.Equal(lengthBefore + 1, _fakeEntities.Count);
+            Assert.Equal(201, objActionResult.StatusCode);
+        }
+
+        [Trait("Category", "Update Tests")]
+        [Fact]
+        public async Task Given_AdditionalExaminationResult_To_Update_returns_200()
+        {
+            var entity = new UpdateConsultationDto()
+            {
+                Comments = "commentsUpdate",
+                Date = DateTime.Now,
+                PatientId = _patients[0].Id,
+                DoctorId = Guid.Parse(_fakeIdentityUsers[0].Id),
+            };
+            var result = await FakeController.Put(_fakeEntities[0].Id, entity);
+
+            var objectResult = (OkObjectResult) result;
+            Assert.NotNull(_fakeEntities[0].UpdatedAt);
+            Assert.Equal(200, objectResult.StatusCode);
+        }
+
+        [Trait("Category", "Delete Tests")]
+        [Fact]
+        public async Task Given_Id_To_Delete_Deletes_AdditionalExaminationResult()
+        {
+            var lengthBefore = _fakeEntities.Count;
+
+            var result = await FakeController.Delete(_fakeEntities[0].Id);
+            var objContentResult = (NoContentResult) result;
+
+            Assert.Equal(204, objContentResult.StatusCode);
+            Assert.Equal(lengthBefore - 1, _fakeEntities.Count);
         }
 
         private void SeedData()
@@ -160,6 +232,31 @@ namespace WebApi.Tests.ControllerTests
                 }
             };
 
+            var ce = new Consultation
+            {
+                Id = 3,
+                Date = DateTime.Now,
+                Comments = "comments",
+                DoctorId = Guid.Parse(_fakeIdentityUsers[0].Id),
+                Doctor = _fakeIdentityUsers[0],
+                Patient = p,
+                AdditionalExaminationResults = new List<AdditionalExaminationResult>
+                {
+                    additional
+                },
+                Episodes = new List<Episode>
+                {
+                    ep
+                },
+                Intolerances = new List<Intolerance>
+                {
+                    intolerances
+                },
+                PhysicalExaminations = new List<PhysicalExamination>
+                {
+                    physical
+                }
+            };
             var activity = new Prescription
             {
                 Id = 1,
@@ -178,14 +275,10 @@ namespace WebApi.Tests.ControllerTests
                 Patient = p,
                 Consultation = c
             };
-            _fakeEntities = new List<Prescription>
+            var d = c;
+            _fakeEntities = new List<Consultation>
             {
-                activity, activity02
-            };
-
-            _constulatations = new List<Consultation>
-            {
-                c
+                c,ce
             };
             _patients = new List<Patient>
             {
