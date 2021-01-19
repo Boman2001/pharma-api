@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using WebApi.controllers;
 using WebApi.Mappings;
+using WebApi.Models.AdditionalExaminationTypes;
 using WebApi.Tests.Helpers;
 using WebApi.Tests.Mocks;
 using WebApi.Tests.Mocks.Extends;
@@ -31,7 +32,7 @@ namespace WebApi.Tests.ControllerTests
                 .Build();
 
             var mockMapper = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile()));
-            mockMapper.CreateMapper();
+            var mapper = mockMapper.CreateMapper();
 
             var userManager = MockUserManager.GetMockUserManager(_fakeIdentityUsers).Object;
             var signInManager = MockSigninManager.GetSignInManager<IdentityUser>(userManager).Object;
@@ -40,7 +41,7 @@ namespace WebApi.Tests.ControllerTests
             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_fakeEntities);
 
             MockGenericExtension.ExtendMock(fakeGenericRepo, _fakeEntities);
-            FakeController = new AdditionalExaminationTypesController(fakeGenericRepo.Object, IdentityRepositoryFake);
+            FakeController = new AdditionalExaminationTypesController(IdentityRepositoryFake, fakeGenericRepo.Object, mapper);
 
             IdentityHelper.SetUser(_fakeIdentityUsers[0], FakeController);
         }
@@ -51,12 +52,12 @@ namespace WebApi.Tests.ControllerTests
         {
             var result = FakeController.Get();
             var objectResult = (OkObjectResult) result.Result;
-            var activities = (List<AdditionalExaminationType>) objectResult.Value;
+            var activities = (List<AdditionalExaminationTypeDto>) objectResult.Value;
 
             Assert.Equal(_fakeEntities.Count, activities.Count);
             Assert.Equal(200, objectResult.StatusCode);
-            Assert.Equal(activities[0], _fakeEntities[0]);
-            Assert.IsType<AdditionalExaminationType>(activities[0]);
+            Assert.Equal(activities[0].Name, _fakeEntities[0].Name);
+            Assert.IsType<AdditionalExaminationTypeDto>(activities[0]);
         }
 
         [Trait("Category", "Get Tests")]
@@ -65,18 +66,18 @@ namespace WebApi.Tests.ControllerTests
         {
             var result = await FakeController.Get(_fakeEntities[0].Id);
             var objectResult = (OkObjectResult) result.Result;
-            var entity = (AdditionalExaminationType) objectResult.Value;
+            var entity = (AdditionalExaminationTypeDto) objectResult.Value;
 
             Assert.Equal(200, objectResult.StatusCode);
-            Assert.Equal(entity, _fakeEntities[0]);
-            Assert.IsType<AdditionalExaminationType>(entity);
+            Assert.Equal(entity.Name, _fakeEntities[0].Name);
+            Assert.IsType<AdditionalExaminationTypeDto>(entity);
         }
 
         [Trait("Category", "Post Tests")]
         [Fact]
         public async Task Given_AdditionalExaminationType_Posts_And_Returns_201_Code()
         {
-            var entity = new AdditionalExaminationType
+            var entity = new AdditionalExaminationTypeDto
             {
                 Name = "Naamm",
                 Unit = "Unitt"

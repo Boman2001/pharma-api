@@ -95,19 +95,40 @@ namespace WebApi.IntegrationTests
 
         public void InitializeDbForTests(SecurityDbContext db, ApplicationDbContext dbdata)
         {
+            var activities = GetActivities();
+            var constultations = getConsultations();
+            var patients = getPatients();
+            var prescription = getPrescriptions(constultations[0], patients[0]);
             db.Users.AddRange(_users);
             db.SaveChanges();
             dbdata.UserInformation.AddRange(_userInformations);
-            dbdata.Activities.AddRange(GetActivities());
-            dbdata.Consultations.AddRange(getConsultations());
-            dbdata.Patients.AddRange(getPatients());
+            dbdata.Activities.AddRange(activities);
+            dbdata.Consultations.AddRange(constultations);
+            dbdata.Patients.AddRange(patients);
+            dbdata.Prescriptions.AddRange(prescription);
             dbdata.SaveChanges();
+        }
+
+        private List<Prescription> getPrescriptions(Consultation cons, Patient pa)
+        {
+            
+
+            Prescription ap = new Prescription
+            {
+                Description = "desc",
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now,
+                ConsultationId = cons.Id,
+                PatientId = pa.Id
+            };
+            return new List<Prescription>() {ap};
         }
 
         private List<Patient> getPatients()
         {
             Patient p = new Patient
             {
+                Id = 1,
                 Name = "jim",
                 Bsn = "bsn",
                 Email = "jim@jim.com",
