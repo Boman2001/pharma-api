@@ -99,7 +99,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Given_AdditionalExaminationType_To_Update_returns_200()
         {
-            var entity = new AdditionalExaminationType
+            var entity = new UpdateAdditionalExaminationTypeDto
             {
                 Name = "Naamm",
                 Unit = "Unitt"

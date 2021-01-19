@@ -62,7 +62,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Get_All_Prescription_With_200_codeAsync()
         {
-            var result = await FakeController.Get();
+            var result = await FakeController.Get(null);
             var objectResult = (OkObjectResult) result.Result;
 
             Assert.Equal(200, objectResult.StatusCode);

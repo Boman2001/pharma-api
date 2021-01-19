@@ -99,6 +99,7 @@ namespace WebApi.IntegrationTests
             var constultations = getConsultations();
             var patients = getPatients();
             var prescription = getPrescriptions(constultations[0], patients[0]);
+            var geAdditional = getAdditionalExaminationTypes();
             db.Users.AddRange(_users);
             db.SaveChanges();
             dbdata.UserInformation.AddRange(_userInformations);
@@ -106,13 +107,28 @@ namespace WebApi.IntegrationTests
             dbdata.Consultations.AddRange(constultations);
             dbdata.Patients.AddRange(patients);
             dbdata.Prescriptions.AddRange(prescription);
+            dbdata.AdditionalExaminationTypes.AddRange(geAdditional);
             dbdata.SaveChanges();
+        }
+
+        private List<AdditionalExaminationType> getAdditionalExaminationTypes()
+        {
+            AdditionalExaminationType type = new AdditionalExaminationType
+            {
+                Name = "name",
+                Unit = "unit"
+            };
+
+            AdditionalExaminationType typee = new AdditionalExaminationType
+            {
+                Name = "nam3e",
+                Unit = "uni3t"
+            };
+            return new List<AdditionalExaminationType>() {type, typee };
         }
 
         private List<Prescription> getPrescriptions(Consultation cons, Patient pa)
         {
-            
-
             Prescription ap = new Prescription
             {
                 Description = "desc",

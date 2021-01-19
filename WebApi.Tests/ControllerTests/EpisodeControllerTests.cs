@@ -44,7 +44,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public void Get_All_Episode_With_200_code()
         {
-            var result = FakeController.Get();
+            var result = FakeController.Get(null);
             var objectResult = (OkObjectResult) result.Result;
             var activities = (List<Episode>) objectResult.Value;
 
