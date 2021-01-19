@@ -91,7 +91,7 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Put(int id, [FromBody] UpdateAdditionalExaminationTypeDto updateAdditionalExaminationTypeDto)
+        public async Task<IActionResult> Put(int id, [FromBody] AdditionalExaminationTypeDto updateAdditionalExaminationTypeDto)
         {
             var additionalExaminationType = await _additionalExaminationTypeRepository.Get(id);
 
