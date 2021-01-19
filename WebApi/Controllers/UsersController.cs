@@ -168,7 +168,7 @@ namespace WebApi.Controllers
                 Country = userInformation.Country
             };
 
-            return Ok(user);
+            return Created(nameof(Post), user);
         }
 
         [HttpPut("{id}")]

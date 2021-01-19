@@ -32,6 +32,12 @@ namespace WebApi.Mappings
             CreateMap<Consultation, UpdateConsultationDto>();
             CreateMap<Patient, PatientDto>();
             CreateMap<Prescription, PrescriptionDto>();
+            CreateMap<NewConsultationDto, Consultation>();
+            CreateMap<NewPrescriptionDto, Prescription>();
+            CreateMap<Prescription, CreatedPrescriptionDto>();
+            CreateMap<UpdatePrescriptionDto, Prescription>();
+            CreateMap<Prescription, UpdatePrescriptionDto>();
+            CreateMap<Prescription, UpdatedPrescriptionDto>();
         }
     }
 }

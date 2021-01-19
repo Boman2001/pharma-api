@@ -7,9 +7,9 @@
     public class NewConsultationDto : BaseConsultationDto
     {
         [Required(ErrorMessage = "Arts Id is verplicht.")]
-        public Guid? DoctorId { get; set; }
+        public Guid DoctorId { get; set; }
 
         [Required(ErrorMessage = "Patiënt Id is verplicht.")]
-        public int? PatientId { get; set; }
+        public int PatientId { get; set; }
     }
 }

@@ -112,9 +112,9 @@ namespace WebApi.Tests.ControllerTests
             };
 
             var result = await FakeController.Post(user);
-            var objectResult = (OkObjectResult) result.Result;
+            var objectResult = (CreatedResult) result.Result;
 
-            Assert.Equal(200, objectResult.StatusCode);
+            Assert.Equal(201, objectResult.StatusCode);
             Assert.NotNull(objectResult.Value);
             Assert.Equal(lengthBefore + 1, _fakeUsersInformation.Count);
         }

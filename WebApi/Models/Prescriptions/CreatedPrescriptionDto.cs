@@ -5,11 +5,8 @@ using WebApi.Models.Patients;
 
 namespace WebApi.Models.Prescriptions
 {
-    public class PrescriptionDto : BasePrescriptionDto
+    public class CreatedPrescriptionDto : BasePrescriptionDto
     {
         public int Id { get; set; }
-        
-        public ConsultationDto Consultation { get; set; }
-        public PatientDto Patient { get; set; }
     }
 }

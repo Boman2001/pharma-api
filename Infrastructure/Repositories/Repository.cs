@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
+using Geocoding;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
-    using Newtonsoft.Json;
 
     public class Repository<T> : IRepository<T>
         where T : BaseEntity
@@ -140,7 +140,7 @@ namespace Infrastructure.Repositories
             await _activities.AddAsync(new Activity
             {
                 Description = "Add",
-                Properties = JsonConvert.SerializeObject(entity),
+                Properties = JsonSerializer.Serialize(entity),
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
                 CreatedBy = guid
@@ -173,7 +173,7 @@ namespace Infrastructure.Repositories
             await _activities.AddAsync(new Activity
             {
                 Description = "Update",
-                Properties = JsonConvert.SerializeObject(entity),
+                Properties = JsonSerializer.Serialize(entity),
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
                 CreatedBy = guid
@@ -213,7 +213,7 @@ namespace Infrastructure.Repositories
             await _activities.AddAsync(new Activity
             {
                 Description = "Delete",
-                Properties = JsonConvert.SerializeObject(entity),
+                Properties = JsonSerializer.Serialize(entity),
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
                 CreatedBy = guid
@@ -246,7 +246,7 @@ namespace Infrastructure.Repositories
             await _activities.AddAsync(new Activity
             {
                 Description = "Delete",
-                Properties = JsonConvert.SerializeObject(entity),
+                Properties = JsonSerializer.Serialize(entity),
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
                 DeletedBy = guid,

@@ -25,15 +25,17 @@ namespace WebApi.controllers
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Consultation> _consultationRepository;
         private readonly IRepository<UserInformation> _userInformationRepository;
+        private readonly IRepository<Patient> _patientRepository;
         private readonly IMapper _mapper;
 
-        public ConsultationsController(IRepository<Consultation> consultationRepository,
-            IIdentityRepository identityRepository, IRepository<UserInformation> userInformationRepository,
-            IMapper mapper)
+        public ConsultationsController(IIdentityRepository identityRepository,
+            IRepository<Consultation> consultationRepository, IRepository<UserInformation> userInformationRepository,
+            IRepository<Patient> patientRepository, IMapper mapper)
         {
-            _consultationRepository = consultationRepository;
             _identityRepository = identityRepository;
+            _consultationRepository = consultationRepository;
             _userInformationRepository = userInformationRepository;
+            _patientRepository = patientRepository;
             _mapper = mapper;
         }
 
@@ -47,7 +49,7 @@ namespace WebApi.controllers
             {
                 "Patient"
             });
-            
+
             var consultationsDtos = new List<ConsultationDto>();
 
             foreach (var consultation in consultations)
@@ -134,12 +136,25 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<Consultation>> Post([FromBody] BaseConsultationDto baseConsultationDto)
+        public async Task<ActionResult<Consultation>> Post([FromBody] NewConsultationDto newConsultationDto)
         {
+            var doctor = await _identityRepository.GetUserById(newConsultationDto.DoctorId.ToString());
+            var patient = await _patientRepository.Get(newConsultationDto.PatientId);
+
+            if (doctor == null)
+            {
+                return BadRequest("Arts bestaat niet.");
+            }
+            
+            if (patient == null)
+            {
+                return BadRequest("Patient bestaat niet.");
+            }
+            
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            var consultation = _mapper.Map<BaseConsultationDto, Consultation>(baseConsultationDto);
+            var consultation = _mapper.Map<NewConsultationDto, Consultation>(newConsultationDto);
 
             var createdConsultation = await _consultationRepository.Add(consultation, currentUser);
 
@@ -154,6 +169,19 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] UpdateConsultationDto updateConsultationDto)
         {
+            var doctor = await _identityRepository.GetUserById(updateConsultationDto.DoctorId.ToString());
+            var patient = await _patientRepository.Get(updateConsultationDto.PatientId);
+
+            if (doctor == null)
+            {
+                return BadRequest("Arts bestaat niet.");
+            }
+            
+            if (patient == null)
+            {
+                return BadRequest("Patient bestaat niet.");
+            }
+
             var consultation = await _consultationRepository.Get(id);
 
             if (consultation == null)
@@ -164,7 +192,7 @@ namespace WebApi.controllers
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            _mapper.Map(updateConsultationDto,consultation);
+            _mapper.Map(updateConsultationDto, consultation);
 
             consultation.Id = id;
 
