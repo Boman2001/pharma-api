@@ -5,6 +5,7 @@ using WebApi.Models.AdditionalExaminationResults;
 using WebApi.Models.AdditionalExaminationTypes;
 using WebApi.Models.Authentication;
 using WebApi.Models.Episodes;
+using WebApi.Models.Intolerances;
 using WebApi.Models.Prescriptions;
 using WebApi.Models.Users;
 
@@ -54,6 +55,10 @@ namespace WebApi.Mappings
             CreateMap<BaseEpisodeDto, Episode>();
             CreateMap<BaseConsultationDto, Consultation>();
             CreateMap<BaseAdditionalExaminationResultDto, AdditionalExaminationResult>();
+            CreateMap<BaseIntoleranceDto, Intolerance>();
+            CreateMap<Intolerance, CreatedIntoleranceDto>();
+            CreateMap<Intolerance, UpdatedIntoleranceDto>();
+            CreateMap<Intolerance, IntoleranceDto>();
         }
     }
 }
