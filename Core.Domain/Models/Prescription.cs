@@ -7,12 +7,12 @@ namespace Core.Domain.Models
     {
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         public int ConsultationId { get; set; }
-        [JsonIgnore]    public Consultation Consultation { get; set; }
+        [JsonIgnore] public Consultation Consultation { get; set; }
 
         public int PatientId { get; set; }
-        [JsonIgnore]  public Patient Patient { get; set; }
+        [JsonIgnore] public Patient Patient { get; set; }
     }
 }
