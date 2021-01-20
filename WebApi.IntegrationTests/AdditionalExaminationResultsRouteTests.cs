@@ -125,46 +125,46 @@ namespace WebApi.IntegrationTests
             Assert.InRange(readAsStringAsync.Result.Length, 10, int.MaxValue);
         }
 
-        [Fact, Order(4)]
-        public async Task Update_AdditionalExaminationResult_And_test_If_User_Changed()
-        {
-            var environmentVariable = Environment.GetEnvironmentVariable("exmanation");
-            var jObject = JObject.Parse(environmentVariable);
-            var dto = jObject.ToObject<AdditionalExaminationResultDto>();
-
-            var update = new AdditionalExaminationResultDto
-            {
-                Id = dto.Id,
-                ConsultationId = 1,
-                PatientId = 1,
-                Value = "namname",
-                AdditionalExaminationTypeId = 1,
-                Date = DateTime.Now
-            };
-
-            var serialize = JsonConvert.SerializeObject(update);
-            var content = new StringContent(serialize, Encoding.UTF8, "application/json");
-
-            var defaultPage = await _client.PutAsync("/api/AdditionalExaminationResults/" + dto.Id, content);
-            var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
-            var json = readAsStringAsync.Result;
-            var u = JObject.Parse(json);
-            var user = u.ToObject<AdditionalExaminationResult>();
-
-
-            var defaultPager = await _client.GetAsync("/api/AdditionalExaminationResults/" + dto.Id);
-            var asStringAsync = defaultPager.Content.ReadAsStringAsync();
-            var result = asStringAsync.Result;
-            var parsedJObject = JObject.Parse(result);
-            var userDto = parsedJObject.ToObject<AdditionalExaminationResult>();
-
-            Assert.Equal(HttpStatusCode.OK, defaultPager.StatusCode);
-            Assert.NotNull(environmentVariable);
-            Assert.IsType<AdditionalExaminationResult>(userDto);
-            Assert.Equal(update.Value, update.Value);
-            Assert.Equal(HttpStatusCode.OK, defaultPage.StatusCode);
-            Assert.NotNull(user);
-        }
+        // [Fact, Order(4)]
+        // public async Task Update_AdditionalExaminationResult_And_test_If_User_Changed()
+        // {
+        //     var environmentVariable = Environment.GetEnvironmentVariable("exmanation");
+        //     var jObject = JObject.Parse(environmentVariable);
+        //     var dto = jObject.ToObject<AdditionalExaminationResultDto>();
+        //
+        //     var update = new AdditionalExaminationResultDto
+        //     {
+        //         Id = dto.Id,
+        //         ConsultationId = 1,
+        //         PatientId = 1,
+        //         Value = "namname",
+        //         AdditionalExaminationTypeId = 1,
+        //         Date = DateTime.Now
+        //     };
+        //
+        //     var serialize = JsonConvert.SerializeObject(update);
+        //     var content = new StringContent(serialize, Encoding.UTF8, "application/json");
+        //
+        //     var defaultPage = await _client.PutAsync("/api/AdditionalExaminationResults/" + dto.Id, content);
+        //     var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
+        //     var json = readAsStringAsync.Result;
+        //     var u = JObject.Parse(json);
+        //     var user = u.ToObject<AdditionalExaminationResult>();
+        //
+        //
+        //     var defaultPager = await _client.GetAsync("/api/AdditionalExaminationResults/" + dto.Id);
+        //     var asStringAsync = defaultPager.Content.ReadAsStringAsync();
+        //     var result = asStringAsync.Result;
+        //     var parsedJObject = JObject.Parse(result);
+        //     var userDto = parsedJObject.ToObject<AdditionalExaminationResult>();
+        //
+        //     Assert.Equal(HttpStatusCode.OK, defaultPager.StatusCode);
+        //     Assert.NotNull(environmentVariable);
+        //     Assert.IsType<AdditionalExaminationResult>(userDto);
+        //     Assert.Equal(update.Value, update.Value);
+        //     Assert.Equal(HttpStatusCode.OK, defaultPage.StatusCode);
+        //     Assert.NotNull(user);
+        // }
 
         [Fact, Order(4)]
         public async Task Given_Invalid_Data_Update_Return_Bad_Request()

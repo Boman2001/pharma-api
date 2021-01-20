@@ -6,6 +6,7 @@ using WebApi.Models.AdditionalExaminationTypes;
 using WebApi.Models.Authentication;
 using WebApi.Models.Episodes;
 using WebApi.Models.ExaminationTypes;
+using WebApi.Models.IcpcCodes;
 using WebApi.Models.Prescriptions;
 using WebApi.Models.Users;
 
@@ -58,6 +59,9 @@ namespace WebApi.Mappings
             CreateMap<BaseExaminationTypeDto, ExaminationType>();
             CreateMap<ExaminationTypeDto, ExaminationType>();
             CreateMap<ExaminationType, ExaminationTypeDto>();
+            CreateMap<BaseIcpcCodeDto, IcpcCode>();
+            CreateMap<IcpcCodeDto, IcpcCode>();
+            CreateMap<IcpcCode, IcpcCodeDto>();
         }
     }
 }
