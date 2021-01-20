@@ -1,7 +1,6 @@
 ﻿// using System;
 // using System.Collections.Generic;
 // using System.Threading.Tasks;
-// using AutoMapper;
 // using Core.Domain.Models;
 // using Infrastructure.Repositories;
 // using Microsoft.AspNetCore.Identity;
@@ -9,12 +8,11 @@
 // using Microsoft.Extensions.Configuration;
 // using Moq;
 // using WebApi.Controllers;
-// using WebApi.Mappings;
 // using WebApi.Models.Authentication;
 // using WebApi.Tests.Mocks;
 // using Xunit;
 //
-// namespace WebApi.Tests
+// namespace WebApi.Tests.ControllerTests
 // {
 //     public class AuthControllerTests
 //     {
@@ -35,7 +33,7 @@
 //             var fakeIdentityRepository = new Mock<IdentityRepository>(userManager, signInManager, config).Object;
 //             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_userInformations);
 //
-//             Controller = new AuthController(fakeIdentityRepository, fakeGenericRepo.Object, userManager );
+//             Controller = new AuthController(fakeIdentityRepository, fakeGenericRepo.Object, userManager);
 //         }
 //
 //         private AuthController Controller { get; }
@@ -91,19 +89,19 @@
 //             Assert.Equal(400, objectResult.StatusCode);
 //         }
 //
-//         [Trait("Category", "Register")]
-//         [Fact]
-//         public async Task Given_Correct_Login_Details_Returns_200_Code()
-//         {
-//             var user = new LoginDto
-//             {
-//                 Email = "email@gmail.com", Password = "password"
-//             };
-//             var result = await Controller.Login(user);
-//             var okObjectResult = (OkObjectResult)result;
+//         //[Trait("Category", "Register")]
+//         //[Fact]
+//         //public async Task Given_Correct_Login_Details_Returns_200_Code()
+//         //{
+//         //    var user = new LoginDto
+//         //    {
+//         //        Email = "email@gmail.com", Password = "password"
+//         //    };
+//         //    var result = await Controller.Login(user);
+//         //    var okObjectResult = (OkObjectResult) result;
 //
-//             Assert.Equal(200, okObjectResult.StatusCode);
-//         }
+//         //    Assert.Equal(200, okObjectResult.StatusCode);
+//         //}
 //
 //         private void SeedData()
 //         {
@@ -114,7 +112,7 @@
 //                 PhoneNumberConfirmed = true,
 //                 NormalizedUserName = "M@GMAIL.COM",
 //                 NormalizedEmail = "M@GMAIL.COM",
-//                 EmailConfirmed = true,
+//                 EmailConfirmed = true
 //             };
 //             var extraIdentityUser = new IdentityUser
 //             {
@@ -123,14 +121,16 @@
 //                 PhoneNumberConfirmed = true,
 //                 NormalizedUserName = "M@GMAIL.COM",
 //                 NormalizedEmail = "M@GMAIL.COM",
-//                 EmailConfirmed = true,
+//                 EmailConfirmed = true
 //             };
+//
 //             _fakeIdentityUsers = new List<IdentityUser>
 //             {
 //                 _fakeIdentityUser, extraIdentityUser
 //             };
 //
 //             _userInformations = new List<UserInformation>();
+//
 //             var userInformation = new UserInformation
 //             {
 //                 Name = "name",
@@ -141,6 +141,7 @@
 //                 Country = "qwe",
 //                 UserId = Guid.Parse(_fakeIdentityUser.Id)
 //             };
+//
 //             _userInformations.AddRange(new List<UserInformation>
 //             {
 //                 userInformation

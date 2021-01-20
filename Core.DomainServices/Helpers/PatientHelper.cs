@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 namespace Core.DomainServices.Helpers
 {
     using System;
-    using System.Collections.Generic;
 
     public class PatientHelper
     {
@@ -36,7 +35,7 @@ namespace Core.DomainServices.Helpers
                 patient.Latitude = enumerable.First().Coordinates.Latitude;
                 patient.Longitude = enumerable.First().Coordinates.Longitude;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new ArgumentException("Invalid address.");
             }

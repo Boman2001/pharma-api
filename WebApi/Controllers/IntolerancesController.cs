@@ -15,7 +15,7 @@ namespace WebApi.controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class IntolerancesController : Controller
+    public class IntolerancesController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Intolerance> _intoleranceRepository;
@@ -31,9 +31,20 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<Intolerance>> Get()
+        public ActionResult<IEnumerable<Intolerance>> Get([FromQuery] int? patientId)
         {
-            return Ok(_intoleranceRepository.Get());
+            IEnumerable<Intolerance> intolerances;
+
+            if (patientId.HasValue)
+            {
+                intolerances = _intoleranceRepository.Get(i => i.PatientId == patientId);
+            }
+            else
+            {
+                intolerances = _intoleranceRepository.Get();
+            }
+            
+            return Ok(intolerances);
         }
 
         [HttpGet("{id}")]

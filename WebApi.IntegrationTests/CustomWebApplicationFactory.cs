@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Domain.Enums;
 using Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -28,14 +29,14 @@ namespace WebApi.IntegrationTests
             builder.ConfigureTestServices(services =>
             {
                 services.AddMvc(options =>
-                    {
-                        options.Filters.Add(new AllowAnonymousFilter());
-                        options.Filters.Add(new FakeUserFilter());
-                    })
+                {
+                    options.Filters.Add(new AllowAnonymousFilter());
+                    options.Filters.Add(new FakeUserFilter());
+                })
                     .AddApplicationPart(typeof(Startup).Assembly);
                 services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
             });
-     
+
 
             builder.ConfigureServices(services =>
             {
@@ -71,7 +72,7 @@ namespace WebApi.IntegrationTests
                 var scopedServices = scope.ServiceProvider;
                 var securedb = scopedServices.GetRequiredService<SecurityDbContext>();
                 var db = scopedServices.GetRequiredService<ApplicationDbContext>();
-                
+
 
                 var logger = scopedServices
                     .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
@@ -90,15 +91,176 @@ namespace WebApi.IntegrationTests
                 }
             });
         }
-      
+
 
         public void InitializeDbForTests(SecurityDbContext db, ApplicationDbContext dbdata)
         {
+            var geAdditional = getAdditionalExaminationTypes();
+            var activities = GetActivities();
+            var additionalExamination = getAdditionalExaminationResults(geAdditional[0]);
+            var icpcCode = getIcpcCodes();
+            var patients = getPatients();
+            var episodes = getEpisodes(patients[0], icpcCode[0]);
+            var constultations = GetConsultations(additionalExamination[0], episodes[0]);
+            var prescription = getPrescriptions(constultations[0], patients[0]);
             db.Users.AddRange(_users);
             db.SaveChanges();
             dbdata.UserInformation.AddRange(_userInformations);
-            dbdata.Activities.AddRange(GetActivities());
+            dbdata.Activities.AddRange(activities);
+            dbdata.Consultations.AddRange(constultations);
+            dbdata.Patients.AddRange(patients);
+            dbdata.Prescriptions.AddRange(prescription);
+            dbdata.AdditionalExaminationResults.AddRange(additionalExamination);
+            dbdata.AdditionalExaminationTypes.AddRange(geAdditional);
             dbdata.SaveChanges();
+        }
+
+        private List<AdditionalExaminationResult> getAdditionalExaminationResults(AdditionalExaminationType type)
+        {
+            var additional = new AdditionalExaminationResult
+            {
+                Value = "value",
+                Date = DateTime.Now,
+                AdditionalExaminationType = type
+            };
+            return new List<AdditionalExaminationResult>() {additional};
+        }
+
+        private List<AdditionalExaminationType> getAdditionalExaminationTypes()
+        {
+            var type = new AdditionalExaminationType
+            {
+                Id = 1,
+                Name = "name",
+                Unit = "unit"
+            };
+
+            var typee = new AdditionalExaminationType
+            {
+                Id = 2,
+                Name = "nam3e",
+                Unit = "uni3t"
+            };
+            return new List<AdditionalExaminationType>() {type, typee};
+        }
+
+        private List<IcpcCode> getIcpcCodes()
+        {
+            var ipCode = new IcpcCode
+            {
+                Name = "Name",
+                Code = "code"
+            };
+            return new List<IcpcCode>() {ipCode};
+        }
+
+        private List<Prescription> getPrescriptions(Consultation cons, Patient pa)
+        {
+            var ap = new Prescription
+            {
+                Id = 1,
+                Description = "desc",
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now,
+                ConsultationId = cons.Id,
+                PatientId = pa.Id
+            };
+            return new List<Prescription>() {ap};
+        }
+
+        private List<Episode> getEpisodes(Patient p, IcpcCode icpcCode)
+        {
+            var ep = new Episode
+            {
+                Description = "Description",
+                Priority = 10,
+                Patient = p,
+                IcpcCode = icpcCode
+            };
+            return new List<Episode>() {ep};
+        }
+
+        private List<Patient> getPatients()
+        {
+            var p = new Patient
+            {
+                Id = 1,
+                Name = "jim",
+                Bsn = "bsn",
+                Email = "jim@jim.com",
+                Dob = DateTime.Now,
+                Gender = Gender.Male,
+                PhoneNumber = "124124",
+                City = "hank",
+                Street = "lepelaarstraat",
+                HouseNumber = "20",
+                HouseNumberAddon = "",
+                PostalCode = "4273cv",
+                Country = "Netherlands"
+            };
+
+            return new List<Patient>() {p};
+        }
+
+        private List<Consultation> GetConsultations(AdditionalExaminationResult additional, Episode ep)
+        {
+            var p = new Patient
+            {
+                Id = 5,
+                Name = "jim",
+                Bsn = "bsn",
+                Email = "jim@jim.com",
+                Dob = DateTime.Now,
+                Gender = Gender.Male,
+                PhoneNumber = "124124",
+                City = "hank",
+                Street = "lepelaarstraat",
+                HouseNumber = "20",
+                HouseNumberAddon = "",
+                PostalCode = "4273cv",
+                Country = "Netherlands"
+            };
+            
+            var intolerances = new Intolerance
+            {
+                Description = "descrption",
+                EndDate = DateTime.Now,
+                StartDate = DateTime.Now,
+                Patient = p
+            };
+            var physical = new PhysicalExamination()
+            {
+                Value = "physical",
+                Date = DateTime.Now,
+                Patient = p,
+            };
+            var c = new Consultation
+            {
+                Id = 1,
+                Date = DateTime.Now,
+                Comments = "comments",
+                DoctorId = Guid.Parse(_users[0].Id),
+                Doctor = _users[0],
+                PatientId = p.Id,
+                Patient = p,
+                AdditionalExaminationResults = new List<AdditionalExaminationResult>()
+                {
+                    additional
+                },
+                Episodes = new List<Episode>()
+                {
+                    ep
+                },
+                Intolerances = new List<Intolerance>()
+                {
+                    intolerances
+                },
+                PhysicalExaminations = new List<PhysicalExamination>()
+                {
+                    physical
+                }
+            };
+            return new List<Consultation>() {c};
         }
 
         private List<Activity> GetActivities()

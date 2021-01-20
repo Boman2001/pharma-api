@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
@@ -9,9 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
-    using Newtonsoft.Json;
 
     public class Repository<T> : IRepository<T>
         where T : BaseEntity
@@ -35,6 +34,11 @@ namespace Infrastructure.Repositories
         public async Task<T> Get(int id)
         {
             return await _dbSet.SingleOrDefaultAsync(e => e.Id == id);
+        }
+
+        public T Get(int id, IEnumerable<string> includeProperties)
+        {
+            return Get(e => e.Id == id, includeProperties).FirstOrDefault();
         }
 
         public IEnumerable<T> Get(Expression<Func<T, bool>> filter)
@@ -130,15 +134,17 @@ namespace Infrastructure.Repositories
             entity.CreatedBy = guid;
 
             await _dbSet.AddAsync(entity);
+            await Save();
             await _context.Entry(entity).GetDatabaseValuesAsync();
 
             await _activities.AddAsync(new Activity
             {
                 Description = "Add",
-                Properties = JsonConvert.SerializeObject(entity),
+                Properties = JsonSerializer.Serialize(entity),
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
-                CreatedBy = guid
+                CreatedBy = guid,
+                CreatedAt = DateTime.Now,
             });
 
             await Save();
@@ -162,16 +168,24 @@ namespace Infrastructure.Repositories
             entity.UpdatedBy = guid;
             entity.UpdatedAt = DateTime.Now;
 
+            var oldEntity = await Get(entity.Id);
+
             _dbSet.Update(entity);
             await Save();
+
+            var properties = new
+            {
+                New = entity, Old = oldEntity
+            };
 
             await _activities.AddAsync(new Activity
             {
                 Description = "Update",
-                Properties = JsonConvert.SerializeObject(entity),
+                Properties = JsonSerializer.Serialize(properties),
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
-                CreatedBy = guid
+                CreatedBy = guid,
+                CreatedAt = DateTime.Now,
             });
 
             await Save();
@@ -208,12 +222,13 @@ namespace Infrastructure.Repositories
             await _activities.AddAsync(new Activity
             {
                 Description = "Delete",
-                Properties = JsonConvert.SerializeObject(entity),
+                Properties = JsonSerializer.Serialize(entity),
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
-                CreatedBy = guid
+                CreatedBy = guid,
+                CreatedAt = DateTime.Now,
             });
-            
+
             await Save();
         }
 
@@ -241,13 +256,13 @@ namespace Infrastructure.Repositories
             await _activities.AddAsync(new Activity
             {
                 Description = "Delete",
-                Properties = JsonConvert.SerializeObject(entity),
+                Properties = JsonSerializer.Serialize(entity),
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
-                DeletedBy = guid,
-                DeletedAt = DateTime.Now,
+                CreatedBy = guid,
+                CreatedAt = DateTime.Now
             });
-            
+
             await Save();
         }
 

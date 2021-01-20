@@ -14,7 +14,7 @@ namespace WebApi.IntegrationTests
 {
    public class ActivityRouteTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private HttpClient _client;
+        private readonly HttpClient _client;
 
         public ActivityRouteTests(CustomWebApplicationFactory<Startup> factory)
         {

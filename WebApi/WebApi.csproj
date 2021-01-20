@@ -36,5 +36,12 @@
       <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Models\AdditionalExaminationResults\UpdateAdditionalExaminationResultDto.cs" />
+      <Compile Remove="Models\AdditionalExaminationResults\CreateAdditionalExaminationResultDto.cs" />
+      <Compile Remove="Models\Consultations\NewConsultationDto.cs" />
+      <Compile Remove="Models\Prescriptions\NewPrescriptionDto.cs" />
+    </ItemGroup>
+
 
 </Project>

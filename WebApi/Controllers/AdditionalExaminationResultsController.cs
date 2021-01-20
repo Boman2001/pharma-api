@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Models.AdditionalExaminationResults;
 
 namespace WebApi.Controllers
 {
@@ -15,26 +17,53 @@ namespace WebApi.Controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class AdditionalExaminationResultsController : Controller
+    public class AdditionalExaminationResultsController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<AdditionalExaminationResult> _additionalExaminationResultRepository;
+        private readonly IRepository<Consultation> _consultationRepository;
+        private readonly IRepository<Patient> _patientRepository;
+        private readonly IRepository<AdditionalExaminationType> _additionalExaminationTypeRepository;
+        private readonly IMapper _mapper;
 
-        public AdditionalExaminationResultsController(
+        public AdditionalExaminationResultsController(IIdentityRepository identityRepository,
             IRepository<AdditionalExaminationResult> additionalExaminationResultRepository,
-            IIdentityRepository identityRepository)
+            IRepository<Consultation> consultationRepository, IRepository<Patient> patientRepository,
+            IRepository<AdditionalExaminationType> additionalExaminationTypeRepository, IMapper mapper)
         {
-            _additionalExaminationResultRepository = additionalExaminationResultRepository;
             _identityRepository = identityRepository;
+            _additionalExaminationResultRepository = additionalExaminationResultRepository;
+            _consultationRepository = consultationRepository;
+            _patientRepository = patientRepository;
+            _additionalExaminationTypeRepository = additionalExaminationTypeRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<AdditionalExaminationResult>> Get()
+        public ActionResult<IEnumerable<AdditionalExaminationResult>> Get([FromQuery] int? patientId)
         {
-            return Ok(_additionalExaminationResultRepository.Get());
+            IEnumerable<AdditionalExaminationResult> additionalExaminationResults;
+
+            if (patientId.HasValue)
+            {
+                additionalExaminationResults =
+                    _additionalExaminationResultRepository.Get(j => j.PatientId == patientId);
+            }
+            else
+            {
+                additionalExaminationResults = _additionalExaminationResultRepository.Get();
+            }
+
+            var additionalExaminationTypeDtos = additionalExaminationResults
+                .Select(additionalExaminationResult =>
+                    _mapper.Map<AdditionalExaminationResult, AdditionalExaminationResultDto>(
+                        additionalExaminationResult))
+                .ToList();
+
+            return Ok(additionalExaminationTypeDtos);
         }
 
         [HttpGet("{id}")]
@@ -45,7 +74,15 @@ namespace WebApi.Controllers
         {
             var additionalExaminationResult = await _additionalExaminationResultRepository.Get(id);
 
-            return additionalExaminationResult != null ? Ok(additionalExaminationResult) : NotFound();
+            if (additionalExaminationResult == null)
+            {
+                return NotFound();
+            }
+
+            var additionalExaminationTypeDto =
+                _mapper.Map<AdditionalExaminationResult, AdditionalExaminationResultDto>(additionalExaminationResult);
+
+            return Ok(additionalExaminationTypeDto);
         }
 
         [HttpPost]
@@ -53,32 +90,122 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<AdditionalExaminationResult>> Post([FromBody] AdditionalExaminationResult additionalExaminationResult)
+        public async Task<ActionResult<AdditionalExaminationResult>> Post(
+            [FromBody] BaseAdditionalExaminationResultDto createAdditionalExaminationResultDto)
         {
+            if (createAdditionalExaminationResultDto.ConsultationId != null)
+            {
+                var consultation =
+                    await _consultationRepository.Get(createAdditionalExaminationResultDto.ConsultationId.Value);
+
+                if (consultation == null)
+                {
+                    return BadRequest("Consult bestaat niet.");
+                }
+            }
+
+            if (createAdditionalExaminationResultDto.PatientId != null)
+            {
+                var patient = await _patientRepository.Get(createAdditionalExaminationResultDto.PatientId.Value);
+
+                if (patient == null)
+                {
+                    return BadRequest("Patiënt bestaat niet.");
+                }
+            }
+
+            if (createAdditionalExaminationResultDto.AdditionalExaminationTypeId != null)
+            {
+                var additionalExaminationType =
+                    await _additionalExaminationTypeRepository.Get(createAdditionalExaminationResultDto
+                        .AdditionalExaminationTypeId.Value);
+
+                if (additionalExaminationType == null)
+                {
+                    return BadRequest("Aanvullend onderzoek type bestaat niet.");
+                }
+            }
+
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
+
+            var additionalExaminationResult =
+                _mapper.Map<BaseAdditionalExaminationResultDto, AdditionalExaminationResult>(
+                    createAdditionalExaminationResultDto);
 
             var createdAdditionalExaminationResult =
                 await _additionalExaminationResultRepository.Add(additionalExaminationResult, currentUser);
 
-            return CreatedAtAction(nameof(Post), null, createdAdditionalExaminationResult);
+            var createdPrescriptionDto =
+                _mapper.Map<AdditionalExaminationResult, AdditionalExaminationResultDto>(
+                    createdAdditionalExaminationResult);
+
+            return CreatedAtAction(nameof(Post), createdPrescriptionDto);
         }
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Put(int id, [FromBody] AdditionalExaminationResult additionalExaminationResult)
+        public async Task<IActionResult> Put(int id,
+            [FromBody] AdditionalExaminationResultDto updateAdditionalExaminationResultDto)
         {
+            var additionalExaminationResult = await _additionalExaminationResultRepository.Get(id);
+
+            if (additionalExaminationResult == null)
+            {
+                return BadRequest("Aanvullend onderzoek type bestaat niet.");
+            }
+
+            if (updateAdditionalExaminationResultDto.ConsultationId != null)
+            {
+                var consultation =
+                    await _consultationRepository.Get(updateAdditionalExaminationResultDto.ConsultationId.Value);
+
+                if (consultation == null)
+                {
+                    return BadRequest("Consult bestaat niet.");
+                }
+            }
+
+            if (updateAdditionalExaminationResultDto.PatientId != null)
+            {
+                var patient = await _patientRepository.Get(updateAdditionalExaminationResultDto.PatientId.Value);
+
+                if (patient == null)
+                {
+                    return BadRequest("Patiënt bestaat niet.");
+                }
+            }
+
+            if (updateAdditionalExaminationResultDto
+                .AdditionalExaminationTypeId != null)
+            {
+                var additionalExaminationType =
+                    await _additionalExaminationTypeRepository.Get(updateAdditionalExaminationResultDto
+                        .AdditionalExaminationTypeId.Value);
+
+                if (additionalExaminationType == null)
+                {
+                    return NotFound();
+                }
+            }
+
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
+
+            _mapper.Map(updateAdditionalExaminationResultDto, additionalExaminationResult);
 
             additionalExaminationResult.Id = id;
 
             var updatedAdditionalExaminationResult =
-                await _additionalExaminationResultRepository.Update(additionalExaminationResult,currentUser);
+                await _additionalExaminationResultRepository.Update(additionalExaminationResult, currentUser);
 
-            return Ok(updatedAdditionalExaminationResult);
+            var updatedAdditionalExaminationType =
+                _mapper.Map<AdditionalExaminationResult, AdditionalExaminationResultDto>(
+                    updatedAdditionalExaminationResult);
+
+            return Ok(updatedAdditionalExaminationType);
         }
 
         [HttpDelete("{id}")]
@@ -90,7 +217,7 @@ namespace WebApi.Controllers
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            await _additionalExaminationResultRepository.Delete(id,currentUser);
+            await _additionalExaminationResultRepository.Delete(id, currentUser);
 
             return NoContent();
         }
