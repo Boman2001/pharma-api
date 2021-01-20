@@ -114,7 +114,7 @@ namespace WebApi.IntegrationTests
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
-            var newUserDto = new NewUserDto
+            var newUserDto = new CreateUserDto
             {
                 Email = "new@gmail.com",
                 Password = "password",
@@ -154,7 +154,7 @@ namespace WebApi.IntegrationTests
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
-            var newUserDto = new NewUserDto
+            var newUserDto = new CreateUserDto
             {
                 Email = "new@gmail.com",
                 Password = "password",
@@ -180,7 +180,7 @@ namespace WebApi.IntegrationTests
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
-            var newUserDto = new NewUserDto
+            var newUserDto = new CreateUserDto
             {
                 Email = "m1@gmail.com",
                 Password = "password",

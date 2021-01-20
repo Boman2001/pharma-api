@@ -66,7 +66,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public void Get_All_Episode_With_200_code()
         {
-            var result = FakeController.Get(null);
+            var result = FakeController.Get(null, null);
             var objectResult = (OkObjectResult) result.Result;
             var activities = (List<EpisodeDto>) objectResult.Value;
 

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core.Domain.Models;
@@ -42,13 +44,24 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<Episode>> Get([FromQuery] int? patientId)
+        public ActionResult<IEnumerable<Episode>> Get([FromQuery] int? patientId, [FromQuery] DateTime? endDate)
         {
             IEnumerable<Episode> episodes;
 
-            if (patientId.HasValue)
+            if (patientId.HasValue && endDate.HasValue)
             {
-                episodes = _episodeRepository.Get(e => e.PatientId == patientId);
+                episodes = _episodeRepository.Get(e =>
+                    e.PatientId == patientId.Value &&
+                    (e.EndDate.Value.Date <= endDate.Value.Date || e.EndDate == null)
+                );
+            }
+            else if (patientId.HasValue)
+            {
+                episodes = _episodeRepository.Get(e => e.PatientId == patientId.Value);
+            }
+            else if (endDate.HasValue)
+            {
+                episodes = _episodeRepository.Get(e => e.EndDate.Value.Date <= endDate.Value.Date || e.EndDate == null);
             }
             else
             {
@@ -119,7 +132,7 @@ namespace WebApi.controllers
             var currentUser = await _identityRepository.GetUserById(userId);
 
             var episode = _mapper.Map<BaseEpisodeDto, Episode>(createEpisodeDto);
-            
+
             var createdEpisode = await _episodeRepository.Add(episode, currentUser);
 
             var createdEpisodeDto = _mapper.Map<Episode, EpisodeDto>(createdEpisode);
@@ -174,13 +187,13 @@ namespace WebApi.controllers
             var currentUser = await _identityRepository.GetUserById(userId);
 
             _mapper.Map(updateEpisodeDto, episode);
-            
+
             episode.Id = id;
 
             var updatedEpisode = await _episodeRepository.Update(episode, currentUser);
 
             var updatedEpisoded = _mapper.Map<Episode, EpisodeDto>(updatedEpisode);
-            
+
             return Ok(updatedEpisoded);
         }
 
