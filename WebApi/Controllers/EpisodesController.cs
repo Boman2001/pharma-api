@@ -44,24 +44,32 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<Episode>> Get([FromQuery] int? patientId, [FromQuery] DateTime? endDate)
+        public ActionResult<IEnumerable<Episode>> Get([FromQuery] int? patientId, [FromQuery] DateTime? consultDate, [FromQuery] bool expired)
         {
             IEnumerable<Episode> episodes;
 
-            if (patientId.HasValue && endDate.HasValue)
+            if (patientId.HasValue && consultDate.HasValue && expired)
             {
                 episodes = _episodeRepository.Get(e =>
                     e.PatientId == patientId.Value &&
-                    (e.EndDate.Value.Date <= endDate.Value.Date || e.EndDate == null)
+                    (e.EndDate.Value.Date < consultDate.Value.Date)
+                );
+            }
+            else if (patientId.HasValue && consultDate.HasValue)
+            {
+                episodes = _episodeRepository.Get(e =>
+                    e.PatientId == patientId.Value &&
+                    e.StartDate.Date <= consultDate.Value.Date &&
+                    (e.EndDate.Value.Date >= consultDate.Value.Date || e.EndDate == null)
                 );
             }
             else if (patientId.HasValue)
             {
                 episodes = _episodeRepository.Get(e => e.PatientId == patientId.Value);
             }
-            else if (endDate.HasValue)
+            else if (consultDate.HasValue)
             {
-                episodes = _episodeRepository.Get(e => e.EndDate.Value.Date <= endDate.Value.Date || e.EndDate == null);
+                episodes = _episodeRepository.Get(e => e.EndDate.Value.Date <= consultDate.Value.Date || e.EndDate == null);
             }
             else
             {
