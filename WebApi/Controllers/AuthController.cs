@@ -6,8 +6,10 @@ using AutoMapper;
 using Core.Domain.Models;
 using Core.DomainServices.Helpers;
 using Core.DomainServices.Repositories;
+using Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using WebApi.Models.Authentication;
 using WebApi.Models.Users;
@@ -24,11 +26,12 @@ namespace WebApi.Controllers
 
         public AuthController(IIdentityRepository identityRepository,
             IRepository<UserInformation> userInformationRepository,
-            UserManager<IdentityUser> userManager)
+            UserManager<IdentityUser> userManager,
+            IConfiguration configuration)
         {
             _identityRepository = identityRepository;
             _userInformationRepository = userInformationRepository;
-            _multiFactorAuthenticationHelper = new MultiFactorAuthenticationHelper(userManager, identityRepository);
+            _multiFactorAuthenticationHelper = new MultiFactorAuthenticationHelper(userManager, identityRepository, configuration);
         }
 
         [HttpPost("login/twofactor")]
@@ -43,9 +46,13 @@ namespace WebApi.Controllers
             {
                 // Strip spaces and hypens
                 var verificationCode = login.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
+                securityToken = await _multiFactorAuthenticationHelper.ValidateTwoFactor(user, verificationCode);
 
-                 securityToken = await _multiFactorAuthenticationHelper.ValidateTwoFactor(user, verificationCode);
-
+                if (!user.TwoFactorEnabled)
+                {
+                    user.TwoFactorEnabled = true;
+                    await _identityRepository.Update(user, null);
+                }
 
                 var userDto = new UserDto
                 {
@@ -85,9 +92,10 @@ namespace WebApi.Controllers
             {
                 securityToken = await _identityRepository.Login(identityUser, identityUser.PasswordHash);
                 var user = await _identityRepository.GetUserByEmail(identityUser.Email);
+                
                 return Ok(new
                 {
-                    TwoFactorUrl = await _multiFactorAuthenticationHelper.LoadSharedKeyAndQrCodeUriAsync(user),
+                    TwoFactorUrl = user.TwoFactorEnabled ? null : await _multiFactorAuthenticationHelper.LoadSharedKeyAndQrCodeUriAsync(user),
                     Email = user.Email
                 });
             }
