@@ -2,7 +2,7 @@
 
 namespace WebApi.Models.Users
 {
-    public class NewUserDto : BaseUserDto
+    public class CreateUserDto : BaseUserDto
     {
         [Required(ErrorMessage = "Wachtwoord is verplicht.")]
         public string Password { get; set; }
