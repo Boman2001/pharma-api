@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Core.Domain.Models
 {
@@ -10,12 +11,12 @@ namespace Core.Domain.Models
         public DateTime EndDate { get; set; }
 
         public int ConsultationId { get; set; }
-        public Consultation Consultation { get; set; }
+        [JsonIgnore] public Consultation Consultation { get; set; }
 
         public int PatientId { get; set; }
-        public Patient Patient { get; set; }
+        [JsonIgnore] public Patient Patient { get; set; }
 
         public int IcpcCodeId { get; set; }
-        public IcpcCode IcpcCode { get; set; }
+        [JsonIgnore] public IcpcCode IcpcCode { get; set; }
     }
 }

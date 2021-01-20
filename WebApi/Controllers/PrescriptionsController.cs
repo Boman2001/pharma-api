@@ -161,13 +161,14 @@ namespace WebApi.controllers
         public async Task<ActionResult<Prescription>> Post([FromBody] NewPrescriptionDto newPrescriptionDto)
         {
             var consultation = await _consultationRepository.Get(newPrescriptionDto.ConsultationId);
-            var patient = await _patientRepository.Get(newPrescriptionDto.PatientId);
 
             if (consultation == null)
             {
                 return BadRequest("Consult bestaat niet.");
             }
-
+            
+            var patient = await _patientRepository.Get(newPrescriptionDto.PatientId);
+            
             if (patient == null)
             {
                 return BadRequest("Patient bestaat niet.");
@@ -191,24 +192,25 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] UpdatePrescriptionDto updatePrescriptionDto)
         {
+            var prescription = await _prescriptionRepository.Get(id);
+
+            if (prescription == null)
+            {
+                return NotFound();
+            }
+            
             var consultation = await _consultationRepository.Get(updatePrescriptionDto.ConsultationId);
-            var patient = await _patientRepository.Get(updatePrescriptionDto.PatientId);
 
             if (consultation == null)
             {
                 return BadRequest("Consult bestaat niet.");
             }
 
+            var patient = await _patientRepository.Get(updatePrescriptionDto.PatientId);
+
             if (patient == null)
             {
                 return BadRequest("Patiënt bestaat niet.");
-            }
-
-            var prescription = await _prescriptionRepository.Get(id);
-
-            if (prescription == null)
-            {
-                return NotFound();
             }
 
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using WebApi.Models.AdditionalExaminationResults;
 using WebApi.Models.AdditionalExaminationTypes;
 using WebApi.Models.Authentication;
+using WebApi.Models.Episodes;
 using WebApi.Models.Prescriptions;
 using WebApi.Models.Users;
 
@@ -47,6 +48,8 @@ namespace WebApi.Mappings
             CreateMap<CreateAdditionalExaminationResultDto, AdditionalExaminationResult>();
             CreateMap<UpdateAdditionalExaminationResultDto, AdditionalExaminationResult>();
             CreateMap<AdditionalExaminationResult, UpdateAdditionalExaminationResultDto>();
+            CreateMap<Episode, EpisodeDto>();
+            CreateMap<EpisodeDto, Episode>();
         }
     }
 }
