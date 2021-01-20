@@ -98,8 +98,10 @@ namespace WebApi.IntegrationTests
             var geAdditional = getAdditionalExaminationTypes();
             var activities = GetActivities();
             var additionalExamination = getAdditionalExaminationResults(geAdditional[0]);
-            var constultations = GetConsultations(additionalExamination[0]);
+            var icpcCode = getIcpcCodes();
             var patients = getPatients();
+            var episodes = getEpisodes(patients[0], icpcCode[0]);
+            var constultations = GetConsultations(additionalExamination[0], episodes[0]);
             var prescription = getPrescriptions(constultations[0], patients[0]);
             db.Users.AddRange(_users);
             db.SaveChanges();
@@ -142,6 +144,16 @@ namespace WebApi.IntegrationTests
             return new List<AdditionalExaminationType>() {type, typee};
         }
 
+        private List<IcpcCode> getIcpcCodes()
+        {
+            var ipCode = new IcpcCode
+            {
+                Name = "Name",
+                Code = "code"
+            };
+            return new List<IcpcCode>() {ipCode};
+        }
+
         private List<Prescription> getPrescriptions(Consultation cons, Patient pa)
         {
             var ap = new Prescription
@@ -154,6 +166,18 @@ namespace WebApi.IntegrationTests
                 PatientId = pa.Id
             };
             return new List<Prescription>() {ap};
+        }
+
+        private List<Episode> getEpisodes(Patient p, IcpcCode icpcCode)
+        {
+            var ep = new Episode
+            {
+                Description = "Description",
+                Priority = 10,
+                Patient = p,
+                IcpcCode = icpcCode
+            };
+            return new List<Episode>() {ep};
         }
 
         private List<Patient> getPatients()
@@ -178,7 +202,7 @@ namespace WebApi.IntegrationTests
             return new List<Patient>() {p};
         }
 
-        private List<Consultation> GetConsultations(AdditionalExaminationResult additional)
+        private List<Consultation> GetConsultations(AdditionalExaminationResult additional, Episode ep)
         {
             var p = new Patient
             {
@@ -196,19 +220,7 @@ namespace WebApi.IntegrationTests
                 PostalCode = "4273cv",
                 Country = "Netherlands"
             };
-
-            var ipCode = new IcpcCode
-            {
-                Name = "Name",
-                Code = "code"
-            };
-            var ep = new Episode
-            {
-                Description = "Description",
-                Priority = 10,
-                Patient = p,
-                IcpcCode = ipCode
-            };
+            
             var intolerances = new Intolerance
             {
                 Description = "descrption",
