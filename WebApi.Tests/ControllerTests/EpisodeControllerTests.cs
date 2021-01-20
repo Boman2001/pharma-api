@@ -77,9 +77,9 @@ namespace WebApi.Tests.ControllerTests
 
         [Trait("Category", "Get Tests")]
         [Fact]
-        public async Task Get_Episode_By_Id_Returns_Episode_With_200_codeAsync()
+        public void Get_Episode_By_Id_Returns_Episode_With_200_codeAsync()
         {
-            var result = await FakeController.Get(_fakeEntities[0].Id);
+            var result = FakeController.Get(_fakeEntities[0].Id);
             var objectResult = (OkObjectResult) result.Result;
             var entity = (EpisodeDto) objectResult.Value;
 
