@@ -51,10 +51,10 @@ namespace Infrastructure.Repositories
             {
                 throw new ArgumentException("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
             }
-
+            
             var loginResult = await _signInManager.PasswordSignInAsync(user.UserName, password, false, false);
 
-            if (!loginResult.Succeeded)
+            if (!loginResult.RequiresTwoFactor && !loginResult.Succeeded)
             {
                 throw new ArgumentException("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
             }
