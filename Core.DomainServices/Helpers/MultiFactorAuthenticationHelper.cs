@@ -5,6 +5,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace Core.DomainServices.Helpers
 {
@@ -13,15 +14,19 @@ namespace Core.DomainServices.Helpers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly UrlEncoder _urlEncoder;
         private readonly IIdentityRepository _identityRepository;
-
+        private readonly IConfiguration _configuration;
+        
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
 
         public MultiFactorAuthenticationHelper(
-            UserManager<IdentityUser> userManager, IIdentityRepository identityRepository)
+            UserManager<IdentityUser> userManager, 
+            IIdentityRepository identityRepository,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _urlEncoder = UrlEncoder.Default;
             _identityRepository = identityRepository;
+            _configuration = configuration;
         }
 
         public async Task<string> LoadSharedKeyAndQrCodeUriAsync(IdentityUser user)
@@ -67,7 +72,7 @@ namespace Core.DomainServices.Helpers
             var email = await _userManager.GetEmailAsync(user);
             return string.Format(
                 AuthenticatorUriFormat,
-                _urlEncoder.Encode("WebApi"),
+                _urlEncoder.Encode(_configuration["AppName"]),
                 _urlEncoder.Encode(email),
                 unformattedKey);
         }

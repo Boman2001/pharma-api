@@ -9,6 +9,7 @@ using Core.DomainServices.Repositories;
 using Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using WebApi.Models.Authentication;
 using WebApi.Models.Users;
@@ -27,11 +28,12 @@ namespace WebApi.Controllers
         public AuthController(IIdentityRepository identityRepository,
             IRepository<UserInformation> userInformationRepository,
             UserManager<IdentityUser> userManager,
-            ApplicationDbContext applicationDbContext)
+            ApplicationDbContext applicationDbContext,
+            IConfiguration configuration)
         {
             _identityRepository = identityRepository;
             _userInformationRepository = userInformationRepository;
-            _multiFactorAuthenticationHelper = new MultiFactorAuthenticationHelper(userManager, identityRepository);
+            _multiFactorAuthenticationHelper = new MultiFactorAuthenticationHelper(userManager, identityRepository, configuration);
             _applicationDbContext = applicationDbContext;
         }
 
