@@ -95,11 +95,14 @@ namespace WebApi.IntegrationTests
 
         public void InitializeDbForTests(SecurityDbContext db, ApplicationDbContext dbdata)
         {
+
+            var geAdditional = getAdditionalExaminationTypes();
             var activities = GetActivities();
-            var constultations = getConsultations();
+
+            var additionalExamination = getAdditionalExaminationResults(geAdditional[0]);
+            var constultations = getConsultations(additionalExamination[0]);
             var patients = getPatients();
             var prescription = getPrescriptions(constultations[0], patients[0]);
-            var geAdditional = getAdditionalExaminationTypes();
             db.Users.AddRange(_users);
             db.SaveChanges();
             dbdata.UserInformation.AddRange(_userInformations);
@@ -107,20 +110,34 @@ namespace WebApi.IntegrationTests
             dbdata.Consultations.AddRange(constultations);
             dbdata.Patients.AddRange(patients);
             dbdata.Prescriptions.AddRange(prescription);
+            dbdata.AdditionalExaminationResults.AddRange(additionalExamination);
             dbdata.AdditionalExaminationTypes.AddRange(geAdditional);
             dbdata.SaveChanges();
+        }
+
+        private List<AdditionalExaminationResult> getAdditionalExaminationResults(AdditionalExaminationType type)
+        {
+            AdditionalExaminationResult additional = new AdditionalExaminationResult
+            {
+                Value = "value",
+                Date = DateTime.Now,
+                AdditionalExaminationType = type
+            };
+            return new List<AdditionalExaminationResult>() { additional };
         }
 
         private List<AdditionalExaminationType> getAdditionalExaminationTypes()
         {
             AdditionalExaminationType type = new AdditionalExaminationType
             {
+                Id = 1,
                 Name = "name",
                 Unit = "unit"
             };
 
             AdditionalExaminationType typee = new AdditionalExaminationType
             {
+                Id = 2,
                 Name = "nam3e",
                 Unit = "uni3t"
             };
@@ -131,6 +148,7 @@ namespace WebApi.IntegrationTests
         {
             Prescription ap = new Prescription
             {
+                Id = 1,
                 Description = "desc",
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now,
@@ -162,7 +180,7 @@ namespace WebApi.IntegrationTests
             return new List<Patient>() { p };
         }
 
-        private List<Consultation> getConsultations()
+        private List<Consultation> getConsultations(AdditionalExaminationResult additional)
         {
             Patient p = new Patient
             {
@@ -181,17 +199,6 @@ namespace WebApi.IntegrationTests
                 Country = "Netherlands"
             };
 
-            AdditionalExaminationType type = new AdditionalExaminationType
-            {
-                Name = "typename",
-                Unit = "GPS"
-            };
-            AdditionalExaminationResult additional = new AdditionalExaminationResult
-            {
-                Value = "value",
-                Date = DateTime.Now,
-                AdditionalExaminationType = type
-            };
             IcpcCode ipCode = new IcpcCode
             {
                 Name = "Name",
