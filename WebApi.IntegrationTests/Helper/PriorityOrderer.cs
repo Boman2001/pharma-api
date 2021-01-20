@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -39,9 +36,7 @@ namespace WebApi.IntegrationTests.Helper
 
         static TValue GetOrCreate<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key) where TValue : new()
         {
-            TValue result;
-
-            if (dictionary.TryGetValue(key, out result))
+            if (dictionary.TryGetValue(key, out var result))
             {
                 return result;
             }
@@ -53,7 +48,7 @@ namespace WebApi.IntegrationTests.Helper
         }
     }
 
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Method)]
     public class TestPriorityAttribute : Attribute
     {
         public TestPriorityAttribute(int priority)
@@ -61,6 +56,6 @@ namespace WebApi.IntegrationTests.Helper
             Priority = priority;
         }
 
-        public int Priority { get; private set; }
+        private int Priority { get; }
     }
 }

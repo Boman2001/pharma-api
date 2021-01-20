@@ -15,7 +15,7 @@ namespace WebApi.controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class IcpcCodesController : Controller
+    public class IcpcCodesController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<IcpcCode> _icpcCodeRepository;

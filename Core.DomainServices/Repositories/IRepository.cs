@@ -13,6 +13,7 @@ namespace Core.DomainServices.Repositories
     {
         IEnumerable<T> Get();
         Task<T> Get(int id);
+        T Get(int id, IEnumerable<string> includeProperties);
         IEnumerable<T> Get(Expression<Func<T, bool>> filter);
         IEnumerable<T> Get(IEnumerable<string> includeProperties);
         IEnumerable<T> Get(Func<IQueryable<T>, IOrderedQueryable<T>> orderBy);

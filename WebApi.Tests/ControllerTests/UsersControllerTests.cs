@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core.Domain.Enums;
 using Core.Domain.Models;
 using Infrastructure.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -14,11 +12,12 @@ using Moq;
 using WebApi.Controllers;
 using WebApi.Mappings;
 using WebApi.Models.Users;
+using WebApi.Tests.Helpers;
 using WebApi.Tests.Mocks;
 using WebApi.Tests.Mocks.Extends;
 using Xunit;
 
-namespace WebApi.Tests
+namespace WebApi.Tests.ControllerTests
 {
     [Collection("UsersTest")]
     public class UsersControllerTests
@@ -49,7 +48,7 @@ namespace WebApi.Tests
 
             FakeController = new UsersController(mapper, fakeGenericRepo.Object, fakeIdentityRepository, userManager);
 
-            setUser(_fakeIdentityUsers[0]);
+            IdentityHelper.SetUser(_fakeIdentityUsers[0], FakeController);
         }
 
         //Get Tests
@@ -109,13 +108,13 @@ namespace WebApi.Tests
                 HouseNumberAddon = null,
                 PostalCode = "Postalcode",
                 Name = "TestDaddy",
-                Password = "Password",
+                Password = "Password"
             };
 
             var result = await FakeController.Post(user);
-            var objectResult = (OkObjectResult) result.Result;
+            var objectResult = (CreatedResult) result.Result;
 
-            Assert.Equal(200, objectResult.StatusCode);
+            Assert.Equal(201, objectResult.StatusCode);
             Assert.NotNull(objectResult.Value);
             Assert.Equal(lengthBefore + 1, _fakeUsersInformation.Count);
         }
@@ -197,21 +196,7 @@ namespace WebApi.Tests
 
             Assert.IsType<NoContentResult>(result);
         }
-
-        private void setUser(IdentityUser identity)
-        {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Name, identity.Id),
-                new Claim(ClaimTypes.Sid, identity.Id)
-            }, "mock"));
-
-            FakeController.ControllerContext = new ControllerContext()
-            {
-                HttpContext = new DefaultHttpContext() { User = user }
-            };
-        }
-
+        
         private void SeedData()
         {
             _fakeUser00 = new IdentityUser

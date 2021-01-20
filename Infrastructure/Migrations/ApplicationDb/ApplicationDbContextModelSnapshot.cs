@@ -26,9 +26,6 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<Guid>("CauserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -49,6 +46,9 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
+
+                    b.Property<string>("SubjectType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -173,8 +173,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("DoctorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
@@ -217,6 +217,9 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("IcpcCodeId")
                         .HasColumnType("int");
 
@@ -225,6 +228,9 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -241,6 +247,42 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.HasIndex("PatientId");
 
                     b.ToTable("Episodes");
+                });
+
+            modelBuilder.Entity("Core.Domain.Models.ExaminationType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ExaminationTypes");
                 });
 
             modelBuilder.Entity("Core.Domain.Models.IcpcCode", b =>
@@ -374,7 +416,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
 
-                    b.Property<double>("longitude")
+                    b.Property<double>("Longitude")
                         .HasColumnType("float");
 
                     b.Property<string>("Name")
@@ -431,9 +473,6 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PhysicalExaminationTypeId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -447,47 +486,11 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasIndex("ConsultationId");
 
+                    b.HasIndex("ExaminationTypeId");
+
                     b.HasIndex("PatientId");
 
-                    b.HasIndex("PhysicalExaminationTypeId");
-
                     b.ToTable("PhysicalExaminations");
-                });
-
-            modelBuilder.Entity("Core.Domain.Models.PhysicalExaminationType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Unit")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ExaminationTypes");
                 });
 
             modelBuilder.Entity("Core.Domain.Models.Prescription", b =>
@@ -556,6 +559,12 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Dob")
@@ -731,21 +740,23 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Core.Domain.Models.ExaminationType", "ExaminationType")
+                        .WithMany("PhysicalExaminations")
+                        .HasForeignKey("ExaminationTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Core.Domain.Models.Patient", "Patient")
                         .WithMany("PhysicalExaminations")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Domain.Models.PhysicalExaminationType", "PhysicalExaminationType")
-                        .WithMany("PhysicalExaminations")
-                        .HasForeignKey("PhysicalExaminationTypeId");
-
                     b.Navigation("Consultation");
 
-                    b.Navigation("Patient");
+                    b.Navigation("ExaminationType");
 
-                    b.Navigation("PhysicalExaminationType");
+                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("Core.Domain.Models.Prescription", b =>
@@ -806,6 +817,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Navigation("UserJournals");
                 });
 
+            modelBuilder.Entity("Core.Domain.Models.ExaminationType", b =>
+                {
+                    b.Navigation("PhysicalExaminations");
+                });
+
             modelBuilder.Entity("Core.Domain.Models.IcpcCode", b =>
                 {
                     b.Navigation("Episodes");
@@ -826,11 +842,6 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Navigation("Prescriptions");
 
                     b.Navigation("UserJournals");
-                });
-
-            modelBuilder.Entity("Core.Domain.Models.PhysicalExaminationType", b =>
-                {
-                    b.Navigation("PhysicalExaminations");
                 });
 #pragma warning restore 612, 618
         }

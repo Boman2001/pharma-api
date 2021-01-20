@@ -30,8 +30,6 @@ namespace WebApi.Models.Users
 
         [Required(ErrorMessage = "Huisnummer is verplicht.")]
         public string HouseNumber { get; set; }
-
-        [Required(ErrorMessage = "Toevoeging is verplicht.")]
         public string HouseNumberAddon { get; set; }
 
         [Required(ErrorMessage = "Postcode is verplicht.")]

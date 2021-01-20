@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace WebApi.Models.Authentication
 {
@@ -10,5 +11,7 @@ namespace WebApi.Models.Authentication
 
         [Required(ErrorMessage = "Wachtwoord is verplicht.")]
         public string Password { get; set; }
+        [AllowNull]
+        public string? Code { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace WebApi.controllers
     [ApiController]
     [Authorize]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class PhysicalExaminationsController : Controller
+    public class PhysicalExaminationsController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<PhysicalExamination> _physicalExaminationRepository;
@@ -31,9 +31,20 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<PhysicalExamination>> Get()
+        public ActionResult<IEnumerable<PhysicalExamination>> Get([FromQuery] int? patientId)
         {
-            return Ok(_physicalExaminationRepository.Get());
+            IEnumerable<PhysicalExamination> physicalExaminations;
+
+            if (patientId.HasValue)
+            {
+                physicalExaminations = _physicalExaminationRepository.Get(p => p.PatientId == patientId);
+            }
+            else
+            {
+                physicalExaminations = _physicalExaminationRepository.Get();
+            }
+            
+            return Ok(physicalExaminations);
         }
 
         [HttpGet("{id}")]

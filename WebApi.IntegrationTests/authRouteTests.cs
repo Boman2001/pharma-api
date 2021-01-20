@@ -1,6 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -16,8 +14,6 @@ namespace WebApi.IntegrationTests
     public class AuthRouteTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
         private readonly HttpClient _client;
-
-        private JToken _token;
 
         public AuthRouteTests(CustomWebApplicationFactory<Startup> factory)
         {
@@ -42,16 +38,13 @@ namespace WebApi.IntegrationTests
             var readAsStringAsync = result.Content.ReadAsStringAsync();
             var json = readAsStringAsync.Result;
             var jObject = JObject.Parse(json);
-            _token = jObject["token"].Value<string>();
+            var email = jObject["email"].Value<string>();
 
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadToken(_token.ToString()) as JwtSecurityToken;
 
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-            Assert.IsType<JwtSecurityToken>(token);
-            Assert.InRange(token.Claims.Count(), 5, 10);
-            Assert.InRange(token.Payload.Count, 5, 10);
+            Assert.Equal(email, newUserDto.Email);
         }
+
 
         [Trait("Category", "Routes")]
         [Fact]

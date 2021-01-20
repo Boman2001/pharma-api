@@ -51,16 +51,31 @@ namespace Infrastructure.Repositories
             {
                 throw new ArgumentException("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
             }
-
+            
             var loginResult = await _signInManager.PasswordSignInAsync(user.UserName, password, false, false);
 
-            if (!loginResult.Succeeded)
+            if (!loginResult.RequiresTwoFactor && !loginResult.Succeeded)
             {
                 throw new ArgumentException("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
             }
 
             var roles = await _userManager.GetRolesAsync(result);
             var token = _authHelper.GenerateToken(result, roles);
+            return token;
+        }
+
+        public async Task<JwtSecurityToken> GetTokenForTwoFactor(IdentityUser user)
+        {
+            var result = await _userManager.FindByEmailAsync(user.Email);
+
+            if (result == null)
+            {
+                throw new Exception("Deze combinatie van e-mailadres en wachtwoord is incorrect.");
+            }
+
+            var roles = await _userManager.GetRolesAsync(result);
+
+            var token = _authHelper.GenerateToken(user, roles);
             return token;
         }
 
