@@ -94,17 +94,16 @@ namespace WebApi.IntegrationTests
             var jArrayr = JArray.Parse(jsonResult);
             var consulList = jArrayr.ToObject<List<Consultation>>();
 
-            var c = new Prescription
+            var prescriptionDto = new PrescriptionDto
             {
-                Id = 1,
                 Description = "descriptie",
-                Patient = patientList[0],
+                StartDate = new DateTime(2020,1,1),
+                EndDate = new DateTime(2021,1,1),
                 PatientId = patientList[0].Id,
-                ConsultationId = consulList[0].Id,
-                Consultation = consulList[0]
+                ConsultationId = consulList[0].Id
             };
 
-            var serialize = JsonConvert.SerializeObject(c);
+            var serialize = JsonConvert.SerializeObject(prescriptionDto);
 
             var content = new StringContent(serialize, Encoding.UTF8, "application/json");
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -113,8 +112,7 @@ namespace WebApi.IntegrationTests
 
             Assert.Equal(HttpStatusCode.Created, result.StatusCode);
         }
-
-
+        
         [Fact, Order(3)]
         public void Given_Invalid_Post_Data_Gives_Error()
         {

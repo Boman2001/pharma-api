@@ -136,25 +136,29 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<Consultation>> Post([FromBody] NewConsultationDto newConsultationDto)
+        public async Task<ActionResult<Consultation>> Post([FromBody] BaseConsultationDto createConsultationDto)
         {
-            var doctor = await _identityRepository.GetUserById(newConsultationDto.DoctorId.ToString());
-            var patient = await _patientRepository.Get(newConsultationDto.PatientId);
+            var doctor = await _identityRepository.GetUserById(createConsultationDto.DoctorId.ToString());
 
             if (doctor == null)
             {
                 return BadRequest("Arts bestaat niet.");
             }
-            
-            if (patient == null)
+
+            if (createConsultationDto.PatientId != null)
             {
-                return BadRequest("Patiënt bestaat niet.");
-            }
+                var patient = await _patientRepository.Get(createConsultationDto.PatientId.Value);
             
+                if (patient == null)
+                {
+                    return BadRequest("Patiënt bestaat niet.");
+                }
+            }
+
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            var consultation = _mapper.Map<NewConsultationDto, Consultation>(newConsultationDto);
+            var consultation = _mapper.Map<BaseConsultationDto, Consultation>(createConsultationDto);
 
             var createdConsultation = await _consultationRepository.Add(consultation, currentUser);
 
@@ -169,24 +173,28 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] UpdateConsultationDto updateConsultationDto)
         {
-            var doctor = await _identityRepository.GetUserById(updateConsultationDto.DoctorId.ToString());
-            var patient = await _patientRepository.Get(updateConsultationDto.PatientId);
-
-            if (doctor == null)
-            {
-                return BadRequest("Arts bestaat niet.");
-            }
-            
-            if (patient == null)
-            {
-                return BadRequest("Patient bestaat niet.");
-            }
-
             var consultation = await _consultationRepository.Get(id);
 
             if (consultation == null)
             {
                 return NotFound();
+            }
+            
+            var doctor = await _identityRepository.GetUserById(updateConsultationDto.DoctorId.ToString());
+
+            if (doctor == null)
+            {
+                return BadRequest("Arts bestaat niet.");
+            }
+
+            if (updateConsultationDto.PatientId != null)
+            {
+                var patient = await _patientRepository.Get(updateConsultationDto.PatientId.Value);
+            
+                if (patient == null)
+                {
+                    return BadRequest("Patient bestaat niet.");
+                }
             }
 
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;

@@ -101,18 +101,15 @@ namespace WebApi.IntegrationTests
             var jArray = JArray.Parse(jsonPatient);
             var patientList = jArray.ToObject<List<Patient>>();
 
-            var c = new Consultation
+            var consultationDto = new ConsultationDto
             {
-                Id = 1,
                 Date = DateTime.Now,
                 Comments = "comments",
                 DoctorId = Guid.Parse(admin.Id),
-                Doctor = admin,
-                Patient = patientList[0],
                 PatientId = patientList[0].Id
             };
 
-            var serialize = JsonConvert.SerializeObject(c);
+            var serialize = JsonConvert.SerializeObject(consultationDto);
 
             var content = new StringContent(serialize, Encoding.UTF8, "application/json");
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");

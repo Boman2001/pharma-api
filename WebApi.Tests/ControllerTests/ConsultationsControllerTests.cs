@@ -82,7 +82,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Given_Consultation_Posts_And_Returns_201_Code()
         {
-            var entity = new NewConsultationDto
+            var entity = new ConsultationDto
             {
                 Comments = "comments",
                 Date = DateTime.Now,

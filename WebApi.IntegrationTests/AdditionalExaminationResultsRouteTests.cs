@@ -81,7 +81,7 @@ namespace WebApi.IntegrationTests
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
 
-            var c = new CreateAdditionalExaminationResultDto()
+            var c = new AdditionalExaminationResultDto()
             {
                 ConsultationId = 1,
                 PatientId = 1,
@@ -132,7 +132,7 @@ namespace WebApi.IntegrationTests
             var jObject = JObject.Parse(environmentVariable);
             var dto = jObject.ToObject<AdditionalExaminationResultDto>();
 
-            var update = new UpdateAdditionalExaminationResultDto
+            var update = new AdditionalExaminationResultDto
             {
                 Id = dto.Id,
                 ConsultationId = 1,

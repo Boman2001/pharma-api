@@ -91,7 +91,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Given_AdditionalExaminationResult_Posts_And_Returns_201_Code()
         {
-            var entity = new CreateAdditionalExaminationResultDto
+            var entity = new AdditionalExaminationResultDto
             {
                 Value = "value",
                 Date = DateTime.Now,
@@ -114,7 +114,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Given_AdditionalExaminationResult_To_Update_returns_200()
         {
-            var entity = new UpdateAdditionalExaminationResultDto
+            var entity = new AdditionalExaminationResultDto
             {
                 Value = "valueupdated",
                 Date = DateTime.Now,

@@ -91,36 +91,46 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<AdditionalExaminationResult>> Post(
-            [FromBody] CreateAdditionalExaminationResultDto createAdditionalExaminationResultDto)
+            [FromBody] BaseAdditionalExaminationResultDto createAdditionalExaminationResultDto)
         {
-            var consultation = await _consultationRepository.Get(createAdditionalExaminationResultDto.ConsultationId);
-
-            if (consultation == null)
+            if (createAdditionalExaminationResultDto.ConsultationId != null)
             {
-                return BadRequest("Consult bestaat niet.");
+                var consultation =
+                    await _consultationRepository.Get(createAdditionalExaminationResultDto.ConsultationId.Value);
+
+                if (consultation == null)
+                {
+                    return BadRequest("Consult bestaat niet.");
+                }
             }
 
-            var patient = await _patientRepository.Get(createAdditionalExaminationResultDto.PatientId);
-
-            if (patient == null)
+            if (createAdditionalExaminationResultDto.PatientId != null)
             {
-                return BadRequest("Patiënt bestaat niet.");
+                var patient = await _patientRepository.Get(createAdditionalExaminationResultDto.PatientId.Value);
+
+                if (patient == null)
+                {
+                    return BadRequest("Patiënt bestaat niet.");
+                }
             }
 
-            var additionalExaminationType =
-                await _additionalExaminationTypeRepository.Get(createAdditionalExaminationResultDto
-                    .AdditionalExaminationTypeId);
-
-            if (additionalExaminationType == null)
+            if (createAdditionalExaminationResultDto.AdditionalExaminationTypeId != null)
             {
-                return BadRequest("Aanvullend onderzoek type bestaat niet.");
+                var additionalExaminationType =
+                    await _additionalExaminationTypeRepository.Get(createAdditionalExaminationResultDto
+                        .AdditionalExaminationTypeId.Value);
+
+                if (additionalExaminationType == null)
+                {
+                    return BadRequest("Aanvullend onderzoek type bestaat niet.");
+                }
             }
 
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
             var additionalExaminationResult =
-                _mapper.Map<CreateAdditionalExaminationResultDto, AdditionalExaminationResult>(
+                _mapper.Map<BaseAdditionalExaminationResultDto, AdditionalExaminationResult>(
                     createAdditionalExaminationResultDto);
 
             var createdAdditionalExaminationResult =
@@ -138,22 +148,8 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id,
-            [FromBody] UpdateAdditionalExaminationResultDto updateAdditionalExaminationResultDto)
+            [FromBody] AdditionalExaminationResultDto updateAdditionalExaminationResultDto)
         {
-            var consultation = await _consultationRepository.Get(updateAdditionalExaminationResultDto.ConsultationId);
-
-            if (consultation == null)
-            {
-                return BadRequest("Consult bestaat niet.");
-            }
-
-            var patient = await _patientRepository.Get(updateAdditionalExaminationResultDto.PatientId);
-
-            if (patient == null)
-            {
-                return BadRequest("Patiënt bestaat niet.");
-            }
-
             var additionalExaminationResult = await _additionalExaminationResultRepository.Get(id);
 
             if (additionalExaminationResult == null)
@@ -161,13 +157,38 @@ namespace WebApi.Controllers
                 return BadRequest("Aanvullend onderzoek type bestaat niet.");
             }
 
-            var additionalExaminationType =
-                await _additionalExaminationTypeRepository.Get(updateAdditionalExaminationResultDto
-                    .AdditionalExaminationTypeId);
-
-            if (additionalExaminationType == null)
+            if (updateAdditionalExaminationResultDto.ConsultationId != null)
             {
-                return NotFound();
+                var consultation =
+                    await _consultationRepository.Get(updateAdditionalExaminationResultDto.ConsultationId.Value);
+
+                if (consultation == null)
+                {
+                    return BadRequest("Consult bestaat niet.");
+                }
+            }
+
+            if (updateAdditionalExaminationResultDto.PatientId != null)
+            {
+                var patient = await _patientRepository.Get(updateAdditionalExaminationResultDto.PatientId.Value);
+
+                if (patient == null)
+                {
+                    return BadRequest("Patiënt bestaat niet.");
+                }
+            }
+
+            if (updateAdditionalExaminationResultDto
+                .AdditionalExaminationTypeId != null)
+            {
+                var additionalExaminationType =
+                    await _additionalExaminationTypeRepository.Get(updateAdditionalExaminationResultDto
+                        .AdditionalExaminationTypeId.Value);
+
+                if (additionalExaminationType == null)
+                {
+                    return NotFound();
+                }
             }
 
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;

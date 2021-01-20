@@ -8,7 +8,6 @@ namespace WebApi.Models.Users
     {
         [Required(ErrorMessage = "E-mailadres is verplicht.")]
         [EmailAddress(ErrorMessage = "E-mailadres is geen geldig e-mailadres.")]
-
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Telefoonnummer is verplicht.")]
@@ -31,7 +30,6 @@ namespace WebApi.Models.Users
 
         [Required(ErrorMessage = "Huisnummer is verplicht.")]
         public string HouseNumber { get; set; }
-
         public string HouseNumberAddon { get; set; }
 
         [Required(ErrorMessage = "Postcode is verplicht.")]

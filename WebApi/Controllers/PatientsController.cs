@@ -63,6 +63,8 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<Patient>> Post([FromBody] PatientDto patientDto)
         {
+            patientDto.Id = 0;
+
             Patient createdPatient;
 
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;

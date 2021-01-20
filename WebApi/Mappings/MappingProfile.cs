@@ -35,8 +35,8 @@ namespace WebApi.Mappings
             CreateMap<Consultation, UpdateConsultationDto>();
             CreateMap<Patient, PatientDto>();
             CreateMap<Prescription, PrescriptionDto>();
-            CreateMap<NewConsultationDto, Consultation>();
-            CreateMap<NewPrescriptionDto, Prescription>();
+            CreateMap<ConsultationDto, Consultation>();
+            CreateMap<PrescriptionDto, Prescription>();
             CreateMap<Prescription, CreatedPrescriptionDto>();
             CreateMap<UpdatePrescriptionDto, Prescription>();
             CreateMap<Prescription, UpdatePrescriptionDto>();
@@ -45,11 +45,15 @@ namespace WebApi.Mappings
             CreateMap<BaseAdditionalExaminationTypeDto, AdditionalExaminationType>();
             CreateMap<AdditionalExaminationType, AdditionalExaminationTypeDto>();
             CreateMap<AdditionalExaminationResult, AdditionalExaminationResultDto>();
-            CreateMap<CreateAdditionalExaminationResultDto, AdditionalExaminationResult>();
-            CreateMap<UpdateAdditionalExaminationResultDto, AdditionalExaminationResult>();
-            CreateMap<AdditionalExaminationResult, UpdateAdditionalExaminationResultDto>();
+            CreateMap<AdditionalExaminationResultDto, AdditionalExaminationResult>();
+            CreateMap<AdditionalExaminationResultDto, AdditionalExaminationResult>();
+            CreateMap<AdditionalExaminationResult, AdditionalExaminationResultDto>();
             CreateMap<Episode, EpisodeDto>();
             CreateMap<EpisodeDto, Episode>();
+            CreateMap<BasePrescriptionDto, Prescription>();
+            CreateMap<BaseEpisodeDto, Episode>();
+            CreateMap<BaseConsultationDto, Consultation>();
+            CreateMap<BaseAdditionalExaminationResultDto, AdditionalExaminationResult>();
         }
     }
 }

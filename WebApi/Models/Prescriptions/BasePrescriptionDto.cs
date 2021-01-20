@@ -14,5 +14,11 @@ namespace WebApi.Models.Prescriptions
 
         [Required(ErrorMessage = "Eind datum is verplicht.")]
         public DateTime? EndDate { get; set; }
+
+        [Required(ErrorMessage = "Consult Id is verplicht.")]
+        public int? ConsultationId { get; set; }
+
+        [Required(ErrorMessage = "Patiënt Id is verplicht.")]
+        public int? PatientId { get; set; }
     }
 }

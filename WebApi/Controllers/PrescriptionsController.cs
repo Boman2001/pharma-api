@@ -158,26 +158,32 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<Prescription>> Post([FromBody] NewPrescriptionDto newPrescriptionDto)
+        public async Task<ActionResult<Prescription>> Post([FromBody] BasePrescriptionDto createPrescriptionDto)
         {
-            var consultation = await _consultationRepository.Get(newPrescriptionDto.ConsultationId);
+            if (createPrescriptionDto.ConsultationId != null)
+            {
+                var consultation = await _consultationRepository.Get(createPrescriptionDto.ConsultationId.Value);
 
-            if (consultation == null)
-            {
-                return BadRequest("Consult bestaat niet.");
+                if (consultation == null)
+                {
+                    return BadRequest("Consult bestaat niet.");
+                }
             }
-            
-            var patient = await _patientRepository.Get(newPrescriptionDto.PatientId);
-            
-            if (patient == null)
+
+            if (createPrescriptionDto.PatientId != null)
             {
-                return BadRequest("Patient bestaat niet.");
+                var patient = await _patientRepository.Get(createPrescriptionDto.PatientId.Value);
+            
+                if (patient == null)
+                {
+                    return BadRequest("Patient bestaat niet.");
+                }
             }
 
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            var prescription = _mapper.Map<NewPrescriptionDto, Prescription>(newPrescriptionDto);
+            var prescription = _mapper.Map<BasePrescriptionDto, Prescription>(createPrescriptionDto);
 
             var createdPrescription = await _prescriptionRepository.Add(prescription, currentUser);
 
@@ -198,19 +204,25 @@ namespace WebApi.controllers
             {
                 return NotFound();
             }
-            
-            var consultation = await _consultationRepository.Get(updatePrescriptionDto.ConsultationId);
 
-            if (consultation == null)
+            if (updatePrescriptionDto.ConsultationId != null)
             {
-                return BadRequest("Consult bestaat niet.");
+                var consultation = await _consultationRepository.Get(updatePrescriptionDto.ConsultationId.Value);
+
+                if (consultation == null)
+                {
+                    return BadRequest("Consult bestaat niet.");
+                }
             }
 
-            var patient = await _patientRepository.Get(updatePrescriptionDto.PatientId);
-
-            if (patient == null)
+            if (updatePrescriptionDto.PatientId != null)
             {
-                return BadRequest("Patiënt bestaat niet.");
+                var patient = await _patientRepository.Get(updatePrescriptionDto.PatientId.Value);
+
+                if (patient == null)
+                {
+                    return BadRequest("Patiënt bestaat niet.");
+                }
             }
 
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;

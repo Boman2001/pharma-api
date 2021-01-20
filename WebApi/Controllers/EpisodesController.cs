@@ -83,7 +83,7 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<Episode>> Post([FromBody] EpisodeDto createEpisodeDto)
+        public async Task<ActionResult<Episode>> Post([FromBody] BaseEpisodeDto createEpisodeDto)
         {
             if (createEpisodeDto.ConsultationId != null)
             {
@@ -118,7 +118,7 @@ namespace WebApi.controllers
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            var episode = _mapper.Map<EpisodeDto, Episode>(createEpisodeDto);
+            var episode = _mapper.Map<BaseEpisodeDto, Episode>(createEpisodeDto);
             
             var createdEpisode = await _episodeRepository.Add(episode, currentUser);
 

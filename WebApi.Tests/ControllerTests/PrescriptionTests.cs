@@ -84,7 +84,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Given_Prescription_Posts_And_Returns_201_Code()
         {
-            var entity = new NewPrescriptionDto
+            var entity = new PrescriptionDto
             {
                 Description = "DEDEDE",
                 StartDate = DateTime.Now,
