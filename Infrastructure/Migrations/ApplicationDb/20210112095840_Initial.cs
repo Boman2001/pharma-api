@@ -210,6 +210,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     ConsultationId = table.Column<int>("int", nullable: false),
                     PatientId = table.Column<int>("int", nullable: false),
                     IcpcCodeId = table.Column<int>("int", nullable: false),
+                    StartDate = table.Column<DateTime>("datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>("datetime2", nullable: true),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
                     CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
