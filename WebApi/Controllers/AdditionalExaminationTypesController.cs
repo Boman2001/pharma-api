@@ -82,9 +82,9 @@ namespace WebApi.controllers
             var createdAdditionalExaminationType =
                 await _additionalExaminationTypeRepository.Add(additionalExaminationType, currentUser);
 
-            var createdPrescriptionDto = _mapper.Map<AdditionalExaminationType, AdditionalExaminationTypeDto>(createdAdditionalExaminationType);
+            var additionalExaminationTypeDto = _mapper.Map<AdditionalExaminationType, AdditionalExaminationTypeDto>(createdAdditionalExaminationType);
 
-            return CreatedAtAction(nameof(Post), createdPrescriptionDto);
+            return CreatedAtAction(nameof(Post), additionalExaminationTypeDto);
         }
 
         [HttpPut("{id}")]
