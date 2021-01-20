@@ -39,7 +39,7 @@ namespace WebApi.Tests.ControllerTests
                 .Build();
 
             var mockMapper = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile()));
-           var mock =  mockMapper.CreateMapper();
+            var mock = mockMapper.CreateMapper();
 
             var userManager = MockUserManager.GetMockUserManager(_fakeIdentityUsers).Object;
             var signInManager = MockSigninManager.GetSignInManager<IdentityUser>(userManager).Object;
@@ -66,12 +66,12 @@ namespace WebApi.Tests.ControllerTests
         {
             var result = FakeController.Get(null);
             var objectResult = (OkObjectResult) result.Result;
-            var activities = (List<AdditionalExaminationResultDto>) objectResult.Value;
+            var entity = (List<AdditionalExaminationResultDto>) objectResult.Value;
 
-            Assert.Equal(_fakeEntities.Count, activities.Count);
+            Assert.Equal(_fakeEntities.Count, entity.Count);
             Assert.Equal(200, objectResult.StatusCode);
-            Assert.Equal(activities[0].Value, _fakeEntities[0].Value);
-            Assert.IsType<AdditionalExaminationResultDto>(activities[0]);
+            Assert.Equal(entity[0].Value, _fakeEntities[0].Value);
+            Assert.IsType<AdditionalExaminationResultDto>(entity[0]);
         }
 
         [Trait("Category", "Get Tests")]
@@ -102,12 +102,12 @@ namespace WebApi.Tests.ControllerTests
 
             var result = await FakeController.Post(entity);
             var objActionResult = (CreatedAtActionResult) result.Result;
-            var createdPatient = _fakeEntities[lengthBefore];
+            var createdEntity = _fakeEntities[lengthBefore];
 
             Assert.Equal(lengthBefore + 1, _fakeEntities.Count);
             Assert.Equal(201, objActionResult.StatusCode);
-            Assert.Equal(createdPatient.Date, entity.Date);
-            Assert.Equal(createdPatient.Value, entity.Value);
+            Assert.Equal(createdEntity.Date, entity.Date);
+            Assert.Equal(createdEntity.Value, entity.Value);
         }
 
         [Trait("Category", "Update Tests")]
@@ -121,8 +121,8 @@ namespace WebApi.Tests.ControllerTests
                 ConsultationId = _consultations[0].Id
             };
             var result = await FakeController.Put(_fakeEntities[0].Id, entity);
-
             var objectResult = (OkObjectResult) result;
+
             Assert.NotNull(_fakeEntities[0].UpdatedAt);
             Assert.Equal(200, objectResult.StatusCode);
         }
@@ -143,7 +143,6 @@ namespace WebApi.Tests.ControllerTests
         private void SeedData()
         {
             _fakeUsersPatient = new List<Patient>();
-
 
             _fakeIdentityUsers = IdentityHelper.GetIdentityUsers();
             var patient = new Patient
@@ -203,14 +202,14 @@ namespace WebApi.Tests.ControllerTests
                 Name = "Name",
                 Code = "code"
             };
-            var ep = new Episode
+            var episode = new Episode
             {
                 Description = "Description",
                 Priority = 10,
                 Patient = patient02,
                 IcpcCode = ipCode
             };
-            var intolerances = new Intolerance
+            var intolerance = new Intolerance
             {
                 Description = "descrption",
                 EndDate = DateTime.Now,
@@ -223,7 +222,7 @@ namespace WebApi.Tests.ControllerTests
                 Date = DateTime.Now,
                 Patient = patient02
             };
-            var c = new Consultation
+            var consultation = new Consultation
             {
                 Id = 1,
                 Date = DateTime.Now,
@@ -237,11 +236,11 @@ namespace WebApi.Tests.ControllerTests
                 },
                 Episodes = new List<Episode>
                 {
-                    ep
+                    episode
                 },
                 Intolerances = new List<Intolerance>
                 {
-                    intolerances
+                    intolerance
                 },
                 PhysicalExaminations = new List<PhysicalExamination>
                 {
@@ -257,8 +256,8 @@ namespace WebApi.Tests.ControllerTests
                 Date = DateTime.Now,
                 Patient = patient02,
                 PatientId = patient02.Id,
-                Consultation = c,
-                ConsultationId = c.Id,
+                Consultation = consultation,
+                ConsultationId = consultation.Id,
                 AdditionalExaminationType = type,
                 AdditionalExaminationTypeId = type.Id
             };
@@ -267,7 +266,7 @@ namespace WebApi.Tests.ControllerTests
                 activity, activity02
             };
             _consultations = new List<Consultation>();
-            _consultations.Add(c);
+            _consultations.Add(consultation);
             _types = new List<AdditionalExaminationType>();
             _types.Add(type);
         }

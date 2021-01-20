@@ -1,31 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Domain.Enums;
 using Core.Domain.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using WebApi.Models.Consultations;
 using WebApi.Models.Prescriptions;
 using Xunit;
 using Xunit.Extensions.Ordering;
 
 namespace WebApi.IntegrationTests
 {
-    public class prescriptionRouteTests : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class PrescriptionRouteTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private HttpClient _client;
-        private JToken _token;
-        private CustomWebApplicationFactory<Startup> _factory;
+        private readonly HttpClient _client;
 
-        public prescriptionRouteTests(CustomWebApplicationFactory<Startup> factory)
+        public PrescriptionRouteTests(CustomWebApplicationFactory<Startup> factory)
         {
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
             {
@@ -85,34 +79,6 @@ namespace WebApi.IntegrationTests
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
-            var admin = new IdentityUser
-            {
-                Id = "6105002a-295f-49b1-ace3-2072c7edbb69",
-                UserName = "m@gmail.com",
-                PhoneNumber = "+31623183611",
-                PhoneNumberConfirmed = true,
-                NormalizedUserName = "M@GMAIL.COM",
-                Email = "m@gmail.com",
-                NormalizedEmail = "M@GMAIL.COM",
-                EmailConfirmed = true,
-            };
-            Patient p = new Patient
-            {
-                Name = "jim",
-                Bsn = "bsn",
-                Email = "jim@jim.com",
-                Dob = DateTime.Now,
-                Gender = Gender.Other,
-                PhoneNumber = "124124",
-                City = "hank",
-                Street = "lepelaarstraat",
-                HouseNumber = "20",
-                HouseNumberAddon = "",
-                PostalCode = "4273cv",
-                Country = "Netherlands"
-            };
-
-
             var resultPatient = _client.GetAsync("/api/patients/").Result;
             var readAsStringAsyncPatient = resultPatient.Content.ReadAsStringAsync();
             var jsonPatient = readAsStringAsyncPatient.Result;
@@ -128,7 +94,7 @@ namespace WebApi.IntegrationTests
             var jArrayr = JArray.Parse(jsonResult);
             var consulList = jArrayr.ToObject<List<Consultation>>();
 
-            Prescription c = new Prescription
+            var c = new Prescription
             {
                 Id = 1,
                 Description = "descriptie",
@@ -144,11 +110,6 @@ namespace WebApi.IntegrationTests
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var result = _client.PostAsync("/api/prescriptions/", content).Result;
-            var readAsStringAsync = result.Content.ReadAsStringAsync();
-            var json = readAsStringAsync.Result;
-            var u = JObject.Parse(json);
-            var user = u.ToObject<Prescription>();
-            var userSerializeObject = JsonConvert.SerializeObject(user);
 
             Assert.Equal(HttpStatusCode.Created, result.StatusCode);
         }
@@ -162,7 +123,7 @@ namespace WebApi.IntegrationTests
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
-            Consultation c = new Consultation
+            var c = new Consultation
             {
                 Id = 1,
                 Date = DateTime.Now,
@@ -186,7 +147,7 @@ namespace WebApi.IntegrationTests
             var jObject = JObject.Parse(environmentVariable);
             var dto = jObject.ToObject<Prescription>();
 
-            UpdatePrescriptionDto update = new UpdatePrescriptionDto
+            var update = new UpdatePrescriptionDto
             {
                 Description = "commentscomments",
                 PatientId = dto.Patient.Id,

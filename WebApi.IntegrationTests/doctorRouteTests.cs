@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -22,7 +20,6 @@ namespace WebApi.IntegrationTests
     public class DoctorRouteTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
         private readonly HttpClient _client;
-        private JToken _token;
 
         public DoctorRouteTests(CustomWebApplicationFactory<Startup> factory)
         {
@@ -30,14 +27,13 @@ namespace WebApi.IntegrationTests
             {
                 AllowAutoRedirect = false
             });
-            
         }
 
         [Trait("Category", "api/doctors")]
         [Fact, Order(0)]
         public void Given_Valid_Login_Details_Returns_Ok_And_Valid_Token()
         {
-            var newUserDto = new LoginDto { Email = "m@gmail.com", Password = "password" };
+            var newUserDto = new LoginDto {Email = "m@gmail.com", Password = "password"};
 
             var serialize = JsonConvert.SerializeObject(newUserDto);
 

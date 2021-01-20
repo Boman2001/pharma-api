@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core.Domain.Enums;
@@ -16,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using WebApi.controllers;
 using WebApi.Mappings;
 using WebApi.Models.Consultations;
-using WebApi.Models.Prescriptions;
 using WebApi.Tests.Helpers;
 using WebApi.Tests.Mocks;
 using WebApi.Tests.Mocks.Extends;
@@ -24,7 +18,7 @@ using Xunit;
 
 namespace WebApi.Tests.ControllerTests
 {
-    public class ConstulationsControllerTests
+    public class ConsultationsControllerTests
     {
         private List<Consultation> _fakeEntities;
         private List<Patient> _patients;
@@ -33,7 +27,7 @@ namespace WebApi.Tests.ControllerTests
         private IdentityRepository IdentityRepositoryFake { get; }
         private List<UserInformation> _fakeUsersInformation;
 
-        public ConstulationsControllerTests()
+        public ConsultationsControllerTests()
         {
             SeedData();
 
@@ -86,9 +80,9 @@ namespace WebApi.Tests.ControllerTests
 
         [Trait("Category", "Post Tests")]
         [Fact]
-        public async Task Given_Prescription_Posts_And_Returns_201_Code()
+        public async Task Given_Consultation_Posts_And_Returns_201_Code()
         {
-            NewConsultationDto entity = new NewConsultationDto
+            var entity = new NewConsultationDto
             {
                 Comments = "comments",
                 Date = DateTime.Now,
@@ -98,7 +92,7 @@ namespace WebApi.Tests.ControllerTests
             var lengthBefore = _fakeEntities.Count;
 
             var result = await FakeController.Post(entity);
-            var objActionResult = (CreatedAtActionResult)result.Result;
+            var objActionResult = (CreatedAtActionResult) result.Result;
 
             Assert.Equal(lengthBefore + 1, _fakeEntities.Count);
             Assert.Equal(201, objActionResult.StatusCode);
@@ -106,7 +100,7 @@ namespace WebApi.Tests.ControllerTests
 
         [Trait("Category", "Update Tests")]
         [Fact]
-        public async Task Given_AdditionalExaminationResult_To_Update_returns_200()
+        public async Task Given_Consultation_To_Update_returns_200()
         {
             var entity = new UpdateConsultationDto()
             {
@@ -124,7 +118,7 @@ namespace WebApi.Tests.ControllerTests
 
         [Trait("Category", "Delete Tests")]
         [Fact]
-        public async Task Given_Id_To_Delete_Deletes_AdditionalExaminationResult()
+        public async Task Given_Id_To_Delete_Deletes_Consultation()
         {
             var lengthBefore = _fakeEntities.Count;
 
@@ -154,7 +148,7 @@ namespace WebApi.Tests.ControllerTests
                 userInformation
             });
 
-            var p = new Patient
+            var patient = new Patient
             {
                 Name = "jim",
                 Bsn = "bsn",
@@ -186,45 +180,45 @@ namespace WebApi.Tests.ControllerTests
                 Name = "Name",
                 Code = "code"
             };
-            var ep = new Episode
+            var episode = new Episode
             {
                 Description = "Description",
                 Priority = 10,
-                Patient = p,
+                Patient = patient,
                 IcpcCode = ipCode
             };
-            var intolerances = new Intolerance
+            var intolerance = new Intolerance
             {
                 Description = "descrption",
                 EndDate = DateTime.Now,
                 StartDate = DateTime.Now,
-                Patient = p
+                Patient = patient
             };
             var physical = new PhysicalExamination()
             {
                 Value = "physical",
                 Date = DateTime.Now,
-                Patient = p
+                Patient = patient
             };
-            var c = new Consultation
+            var consultation = new Consultation
             {
                 Id = 1,
                 Date = DateTime.Now,
                 Comments = "comments",
                 DoctorId = Guid.Parse(_fakeIdentityUsers[0].Id),
                 Doctor = _fakeIdentityUsers[0],
-                Patient = p,
+                Patient = patient,
                 AdditionalExaminationResults = new List<AdditionalExaminationResult>
                 {
                     additional
                 },
                 Episodes = new List<Episode>
                 {
-                    ep
+                    episode
                 },
                 Intolerances = new List<Intolerance>
                 {
-                    intolerances
+                    intolerance
                 },
                 PhysicalExaminations = new List<PhysicalExamination>
                 {
@@ -232,57 +226,38 @@ namespace WebApi.Tests.ControllerTests
                 }
             };
 
-            var ce = new Consultation
+            var consultation02 = new Consultation
             {
                 Id = 3,
                 Date = DateTime.Now,
                 Comments = "comments",
                 DoctorId = Guid.Parse(_fakeIdentityUsers[0].Id),
                 Doctor = _fakeIdentityUsers[0],
-                Patient = p,
+                Patient = patient,
                 AdditionalExaminationResults = new List<AdditionalExaminationResult>
                 {
                     additional
                 },
                 Episodes = new List<Episode>
                 {
-                    ep
+                    episode
                 },
                 Intolerances = new List<Intolerance>
                 {
-                    intolerances
+                    intolerance
                 },
                 PhysicalExaminations = new List<PhysicalExamination>
                 {
                     physical
                 }
             };
-            var activity = new Prescription
-            {
-                Id = 1,
-                Description = "description",
-                StartDate = DateTime.Now,
-                EndDate = DateTime.MaxValue,
-                Patient = p,
-                Consultation = c
-            };
-            var activity02 = new Prescription
-            {
-                Id = 2,
-                Description = "description",
-                StartDate = DateTime.Now,
-                EndDate = DateTime.MaxValue,
-                Patient = p,
-                Consultation = c
-            };
-            var d = c;
             _fakeEntities = new List<Consultation>
             {
-                c,ce
+                consultation, consultation02
             };
             _patients = new List<Patient>
             {
-                p
+                patient
             };
         }
     }

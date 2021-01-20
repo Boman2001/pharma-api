@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
+using Core.Domain.Enums;
 using Core.Domain.Models;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using WebApi.controllers;
+using WebApi.Mappings;
+using WebApi.Models.Episodes;
 using WebApi.Tests.Helpers;
 using WebApi.Tests.Mocks;
 using WebApi.Tests.Mocks.Extends;
@@ -17,8 +22,11 @@ namespace WebApi.Tests.ControllerTests
     {
         private List<Episode> _fakeEntities;
         private List<IdentityUser> _fakeIdentityUsers;
+        private List<Consultation> _constulatations;
+        private List<IcpcCode> _icpcCodes;
         private EpisodesController FakeController { get; }
         private IdentityRepository IdentityRepositoryFake { get; }
+        private List<Patient> _patients;
 
         public EpisodeControllerTests()
         {
@@ -28,14 +36,28 @@ namespace WebApi.Tests.ControllerTests
                 .AddJsonFile("appsettings.json")
                 .Build();
 
+            var mockMapper = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile()));
+            var mapper = mockMapper.CreateMapper();
+
             var userManager = MockUserManager.GetMockUserManager(_fakeIdentityUsers).Object;
             var signInManager = MockSigninManager.GetSignInManager<IdentityUser>(userManager).Object;
 
             IdentityRepositoryFake = new IdentityRepository(userManager, signInManager, config);
             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_fakeEntities);
 
+            var constulatationsMock = MockGenericRepository.GetUserInformationMock(_constulatations);
+
+            var userInformationMock = MockGenericRepository.GetUserInformationMock(_patients);
+            var icpcCodesMock = MockGenericRepository.GetUserInformationMock(_icpcCodes);
+
             MockGenericExtension.ExtendMock(fakeGenericRepo, _fakeEntities);
-            FakeController = new EpisodesController(fakeGenericRepo.Object, IdentityRepositoryFake);
+            FakeController = new EpisodesController(
+                IdentityRepositoryFake, 
+                fakeGenericRepo.Object,
+                constulatationsMock.Object,
+                userInformationMock.Object,
+                icpcCodesMock.Object,
+                mapper);
 
             IdentityHelper.SetUser(_fakeIdentityUsers[0], FakeController);
         }
@@ -46,12 +68,12 @@ namespace WebApi.Tests.ControllerTests
         {
             var result = FakeController.Get(null);
             var objectResult = (OkObjectResult) result.Result;
-            var activities = (List<Episode>) objectResult.Value;
+            var activities = (List<EpisodeDto>) objectResult.Value;
 
             Assert.Equal(_fakeEntities.Count, activities.Count);
             Assert.Equal(200, objectResult.StatusCode);
-            Assert.Equal(activities[0], _fakeEntities[0]);
-            Assert.IsType<Episode>(activities[0]);
+            Assert.Equal(activities[0].Description, _fakeEntities[0].Description);
+            Assert.IsType<EpisodeDto>(activities[0]);
         }
 
         [Trait("Category", "Get Tests")]
@@ -60,18 +82,18 @@ namespace WebApi.Tests.ControllerTests
         {
             var result = await FakeController.Get(_fakeEntities[0].Id);
             var objectResult = (OkObjectResult) result.Result;
-            var entity = (Episode) objectResult.Value;
+            var entity = (EpisodeDto) objectResult.Value;
 
             Assert.Equal(200, objectResult.StatusCode);
-            Assert.Equal(entity, _fakeEntities[0]);
-            Assert.IsType<Episode>(entity);
+            Assert.Equal(entity.Description, _fakeEntities[0].Description);
+            Assert.IsType<EpisodeDto>(entity);
         }
 
         [Trait("Category", "Post Tests")]
         [Fact]
         public async Task Given_Episode_Posts_And_Returns_201_Code()
         {
-            var entity = new Episode
+            var entity = new EpisodeDto
             {
                 Description = "NewDesc"
             };
@@ -91,7 +113,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Given_Episode_To_Update_returns_200()
         {
-            var entity = new Episode
+            var entity = new EpisodeDto
             {
                 Description = "UpdatedDesc"
             };
@@ -117,6 +139,7 @@ namespace WebApi.Tests.ControllerTests
 
         private void SeedData()
         {
+            _fakeIdentityUsers = IdentityHelper.GetIdentityUsers();
             var activity = new Episode
             {
                 Id = 1,
@@ -132,7 +155,103 @@ namespace WebApi.Tests.ControllerTests
                 activity, activity02
             };
 
-            _fakeIdentityUsers = IdentityHelper.GetIdentityUsers();
+            var patient = new Patient
+            {
+                Name = "jim",
+                Bsn = "bsn",
+                Email = "jim@jim.com",
+                Dob = DateTime.Now,
+                Gender = Gender.Male,
+                PhoneNumber = "124124",
+                City = "hank",
+                Street = "lepelaarstraat",
+                HouseNumber = "20",
+                HouseNumberAddon = "",
+                PostalCode = "4273cv",
+                Country = "Netherlands"
+            };
+
+            var type = new AdditionalExaminationType
+            {
+                Name = "typename",
+                Unit = "GPS"
+            };
+            var additional = new AdditionalExaminationResult
+            {
+                Value = "value",
+                Date = DateTime.Now,
+                AdditionalExaminationType = type
+            };
+            var ipCode = new IcpcCode
+            {
+                Name = "Name",
+                Code = "code"
+            };
+            var episode = new Episode
+            {
+                Description = "Description",
+                Priority = 10,
+                Patient = patient,
+                IcpcCode = ipCode
+            };
+            var intolerance = new Intolerance
+            {
+                Description = "descrption",
+                EndDate = DateTime.Now,
+                StartDate = DateTime.Now,
+                Patient = patient
+            };
+            var physical = new PhysicalExamination()
+            {
+                Value = "physical",
+                Date = DateTime.Now,
+                Patient = patient
+            };
+            var consultation = new Consultation
+            {
+                Id = 1,
+                Date = DateTime.Now,
+                Comments = "comments",
+                DoctorId = Guid.Parse(_fakeIdentityUsers[0].Id),
+                Doctor = _fakeIdentityUsers[0],
+                Patient = patient,
+                AdditionalExaminationResults = new List<AdditionalExaminationResult>
+                {
+                    additional
+                },
+                Episodes = new List<Episode>
+                {
+                    episode
+                },
+                Intolerances = new List<Intolerance>
+                {
+                    intolerance
+                },
+                PhysicalExaminations = new List<PhysicalExamination>
+                {
+                    physical
+                }
+            };
+
+
+            _constulatations = new List<Consultation>
+            {
+                consultation
+            };
+            _patients = new List<Patient>
+            {
+                patient
+            };
+            var code = new IcpcCode()
+            {
+                Code = "code",
+                Name = "name"
+            };
+
+            _icpcCodes = new List<IcpcCode>
+            {
+                code
+            };
         }
     }
 }

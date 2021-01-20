@@ -19,9 +19,7 @@ namespace WebApi.IntegrationTests
 {
     public class ConsultationRouteTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private HttpClient _client;
-        private JToken _token;
-        private CustomWebApplicationFactory<Startup> _factory;
+        private readonly HttpClient _client;
 
         public ConsultationRouteTests(CustomWebApplicationFactory<Startup> factory)
         {
@@ -94,21 +92,6 @@ namespace WebApi.IntegrationTests
                 NormalizedEmail = "M@GMAIL.COM",
                 EmailConfirmed = true,
             };
-            Patient p = new Patient
-            {
-                Name = "jim",
-                Bsn = "bsn",
-                Email = "jim@jim.com",
-                Dob = DateTime.Now,
-                Gender = Gender.Other,
-                PhoneNumber = "124124",
-                City = "hank",
-                Street = "lepelaarstraat",
-                HouseNumber = "20",
-                HouseNumberAddon = "",
-                PostalCode = "4273cv",
-                Country = "Netherlands"
-            };
 
 
             var resultPatient = _client.GetAsync("/api/patients/").Result;
@@ -118,7 +101,7 @@ namespace WebApi.IntegrationTests
             var jArray = JArray.Parse(jsonPatient);
             var patientList = jArray.ToObject<List<Patient>>();
 
-            Consultation c = new Consultation
+            var c = new Consultation
             {
                 Id = 1,
                 Date = DateTime.Now,
@@ -135,11 +118,6 @@ namespace WebApi.IntegrationTests
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var result = _client.PostAsync("/api/consultations/", content).Result;
-            var readAsStringAsync = result.Content.ReadAsStringAsync();
-            var json = readAsStringAsync.Result;
-            var u = JObject.Parse(json);
-            var user = u.ToObject<Consultation>();
-            var userSerializeObject = JsonConvert.SerializeObject(user);
 
             Assert.Equal(HttpStatusCode.Created, result.StatusCode);
         }
@@ -152,7 +130,7 @@ namespace WebApi.IntegrationTests
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
-            Consultation c = new Consultation
+            var c = new Consultation
             {
                 Id = 1,
                 Date = DateTime.Now,
@@ -177,13 +155,12 @@ namespace WebApi.IntegrationTests
             var dto = jObject.ToObject<Consultation>();
             dto.Comments = "NEW COMMENT";
 
-            UpdateConsultationDto update = new UpdateConsultationDto
+            var update = new UpdateConsultationDto
             {
                 Comments = "commentscomments",
                 DoctorId = Guid.Parse(dto.Doctor.Id),
                 PatientId = dto.Patient.Id,
                 Date = DateTime.Now,
-                
             };
 
             var serialize = JsonConvert.SerializeObject(update);

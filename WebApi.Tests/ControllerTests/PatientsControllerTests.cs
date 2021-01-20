@@ -9,15 +9,14 @@ using WebApi.controllers;
 using WebApi.Tests.Helpers;
 using WebApi.Tests.Mocks;
 using Xunit;
+using AutoMapper;
+using Infrastructure.Repositories;
+using WebApi.Mappings;
+using Microsoft.AspNetCore.Identity;
+using WebApi.Models.Patients;
 
 namespace WebApi.Tests.ControllerTests
 {
-    using AutoMapper;
-    using Infrastructure.Repositories;
-    using Mappings;
-    using Microsoft.AspNetCore.Identity;
-    using Models.Patients;
-
     public class PatientsControllerTests
     {
         private List<Patient> _fakeUsersPatient;

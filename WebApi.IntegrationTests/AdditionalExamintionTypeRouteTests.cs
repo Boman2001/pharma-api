@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Domain.Enums;
 using Core.Domain.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebApi.Models.AdditionalExaminationTypes;
-using WebApi.Models.Prescriptions;
 using Xunit;
 using Xunit.Extensions.Ordering;
 
@@ -21,9 +17,8 @@ namespace WebApi.IntegrationTests
 {
     public class AdditionalExamintionTypeRouteTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private HttpClient _client;
-        private JToken _token;
-        private CustomWebApplicationFactory<Startup> _factory;
+        private readonly HttpClient _client;
+
         public AdditionalExamintionTypeRouteTests(CustomWebApplicationFactory<Startup> factory)
         {
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
@@ -86,7 +81,7 @@ namespace WebApi.IntegrationTests
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
 
-            AdditionalExaminationType c = new AdditionalExaminationType
+            var c = new AdditionalExaminationType
             {
                 Name = "namname",
                 Unit = "unitunit"
@@ -98,11 +93,6 @@ namespace WebApi.IntegrationTests
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var result = _client.PostAsync("/api/AdditionalExaminationTypes/", content).Result;
-            var readAsStringAsync = result.Content.ReadAsStringAsync();
-            var json = readAsStringAsync.Result;
-            var u = JObject.Parse(json);
-            var user = u.ToObject<AdditionalExaminationType>();
-            var userSerializeObject = JsonConvert.SerializeObject(user);
 
             Assert.Equal(HttpStatusCode.Created, result.StatusCode);
         }
@@ -115,7 +105,7 @@ namespace WebApi.IntegrationTests
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
-            Consultation c = new Consultation
+            var c = new Consultation
             {
                 Id = 1,
                 Date = DateTime.Now,
@@ -139,7 +129,7 @@ namespace WebApi.IntegrationTests
             var jObject = JObject.Parse(environmentVariable);
             var dto = jObject.ToObject<AdditionalExaminationTypeDto>();
 
-            AdditionalExaminationTypeDto update = new AdditionalExaminationTypeDto
+            var update = new AdditionalExaminationTypeDto
             {
                 Id = dto.Id,
                 Name = dto.Name,

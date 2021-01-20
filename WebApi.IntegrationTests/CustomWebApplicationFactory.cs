@@ -95,12 +95,10 @@ namespace WebApi.IntegrationTests
 
         public void InitializeDbForTests(SecurityDbContext db, ApplicationDbContext dbdata)
         {
-
             var geAdditional = getAdditionalExaminationTypes();
             var activities = GetActivities();
-
             var additionalExamination = getAdditionalExaminationResults(geAdditional[0]);
-            var constultations = getConsultations(additionalExamination[0]);
+            var constultations = GetConsultations(additionalExamination[0]);
             var patients = getPatients();
             var prescription = getPrescriptions(constultations[0], patients[0]);
             db.Users.AddRange(_users);
@@ -117,36 +115,36 @@ namespace WebApi.IntegrationTests
 
         private List<AdditionalExaminationResult> getAdditionalExaminationResults(AdditionalExaminationType type)
         {
-            AdditionalExaminationResult additional = new AdditionalExaminationResult
+            var additional = new AdditionalExaminationResult
             {
                 Value = "value",
                 Date = DateTime.Now,
                 AdditionalExaminationType = type
             };
-            return new List<AdditionalExaminationResult>() { additional };
+            return new List<AdditionalExaminationResult>() {additional};
         }
 
         private List<AdditionalExaminationType> getAdditionalExaminationTypes()
         {
-            AdditionalExaminationType type = new AdditionalExaminationType
+            var type = new AdditionalExaminationType
             {
                 Id = 1,
                 Name = "name",
                 Unit = "unit"
             };
 
-            AdditionalExaminationType typee = new AdditionalExaminationType
+            var typee = new AdditionalExaminationType
             {
                 Id = 2,
                 Name = "nam3e",
                 Unit = "uni3t"
             };
-            return new List<AdditionalExaminationType>() {type, typee };
+            return new List<AdditionalExaminationType>() {type, typee};
         }
 
         private List<Prescription> getPrescriptions(Consultation cons, Patient pa)
         {
-            Prescription ap = new Prescription
+            var ap = new Prescription
             {
                 Id = 1,
                 Description = "desc",
@@ -160,7 +158,7 @@ namespace WebApi.IntegrationTests
 
         private List<Patient> getPatients()
         {
-            Patient p = new Patient
+            var p = new Patient
             {
                 Id = 1,
                 Name = "jim",
@@ -177,12 +175,12 @@ namespace WebApi.IntegrationTests
                 Country = "Netherlands"
             };
 
-            return new List<Patient>() { p };
+            return new List<Patient>() {p};
         }
 
-        private List<Consultation> getConsultations(AdditionalExaminationResult additional)
+        private List<Consultation> GetConsultations(AdditionalExaminationResult additional)
         {
-            Patient p = new Patient
+            var p = new Patient
             {
                 Id = 5,
                 Name = "jim",
@@ -199,32 +197,32 @@ namespace WebApi.IntegrationTests
                 Country = "Netherlands"
             };
 
-            IcpcCode ipCode = new IcpcCode
+            var ipCode = new IcpcCode
             {
                 Name = "Name",
                 Code = "code"
             };
-            Episode ep = new Episode
+            var ep = new Episode
             {
                 Description = "Description",
                 Priority = 10,
                 Patient = p,
                 IcpcCode = ipCode
             };
-            Intolerance intolerances = new Intolerance
+            var intolerances = new Intolerance
             {
                 Description = "descrption",
                 EndDate = DateTime.Now,
                 StartDate = DateTime.Now,
                 Patient = p
             };
-            PhysicalExamination physical = new PhysicalExamination()
+            var physical = new PhysicalExamination()
             {
                 Value = "physical",
                 Date = DateTime.Now,
                 Patient = p,
             };
-            Consultation c = new Consultation
+            var c = new Consultation
             {
                 Id = 1,
                 Date = DateTime.Now,
@@ -250,7 +248,7 @@ namespace WebApi.IntegrationTests
                     physical
                 }
             };
-            return new List<Consultation>() { c };
+            return new List<Consultation>() {c};
         }
 
         private List<Activity> GetActivities()

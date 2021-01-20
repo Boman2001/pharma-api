@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -11,7 +10,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebApi.Models.AdditionalExaminationResults;
-using WebApi.Models.AdditionalExaminationTypes;
 using Xunit;
 using Xunit.Extensions.Ordering;
 
@@ -19,7 +17,8 @@ namespace WebApi.IntegrationTests
 {
     public class AdditionalExaminationResultsRouteTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private HttpClient _client;
+        private readonly HttpClient _client;
+
         public AdditionalExaminationResultsRouteTests(CustomWebApplicationFactory<Startup> factory)
         {
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
@@ -82,7 +81,7 @@ namespace WebApi.IntegrationTests
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
 
-            CreateAdditionalExaminationResultDto c = new CreateAdditionalExaminationResultDto()
+            var c = new CreateAdditionalExaminationResultDto()
             {
                 ConsultationId = 1,
                 PatientId = 1,
@@ -97,10 +96,6 @@ namespace WebApi.IntegrationTests
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var result = _client.PostAsync("/api/AdditionalExaminationResults/", content).Result;
-            var readAsStringAsync = result.Content.ReadAsStringAsync();
-            var json = readAsStringAsync.Result;
-            var u = JObject.Parse(json);
-            var user = u.ToObject<AdditionalExaminationResult>();
 
             Assert.Equal(HttpStatusCode.Created, result.StatusCode);
         }
@@ -113,7 +108,7 @@ namespace WebApi.IntegrationTests
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
-            Consultation c = new Consultation
+            var c = new Consultation
             {
                 Id = 1,
                 Date = DateTime.Now,
@@ -137,7 +132,7 @@ namespace WebApi.IntegrationTests
             var jObject = JObject.Parse(environmentVariable);
             var dto = jObject.ToObject<AdditionalExaminationResultDto>();
 
-            UpdateAdditionalExaminationResultDto update = new UpdateAdditionalExaminationResultDto
+            var update = new UpdateAdditionalExaminationResultDto
             {
                 Id = dto.Id,
                 ConsultationId = 1,

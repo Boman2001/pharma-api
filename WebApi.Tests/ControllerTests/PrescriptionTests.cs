@@ -84,7 +84,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Given_Prescription_Posts_And_Returns_201_Code()
         {
-            NewPrescriptionDto entity = new NewPrescriptionDto
+            var entity = new NewPrescriptionDto
             {
                 Description = "DEDEDE",
                 StartDate = DateTime.Now,
@@ -150,7 +150,7 @@ namespace WebApi.Tests.ControllerTests
                 userInformation
             });
 
-            var p = new Patient
+            var patient = new Patient
             {
                 Name = "jim",
                 Bsn = "bsn",
@@ -182,45 +182,45 @@ namespace WebApi.Tests.ControllerTests
                 Name = "Name",
                 Code = "code"
             };
-            var ep = new Episode
+            var episode = new Episode
             {
                 Description = "Description",
                 Priority = 10,
-                Patient = p,
+                Patient = patient,
                 IcpcCode = ipCode
             };
-            var intolerances = new Intolerance
+            var intolerance = new Intolerance
             {
                 Description = "descrption",
                 EndDate = DateTime.Now,
                 StartDate = DateTime.Now,
-                Patient = p
+                Patient = patient
             };
             var physical = new PhysicalExamination()
             {
                 Value = "physical",
                 Date = DateTime.Now,
-                Patient = p
+                Patient = patient
             };
-            var c = new Consultation
+            var consultation = new Consultation
             {
                 Id = 1,
                 Date = DateTime.Now,
                 Comments = "comments",
                 DoctorId = Guid.Parse(_fakeIdentityUsers[0].Id),
                 Doctor = _fakeIdentityUsers[0],
-                Patient = p,
+                Patient = patient,
                 AdditionalExaminationResults = new List<AdditionalExaminationResult>
                 {
                     additional
                 },
                 Episodes = new List<Episode>
                 {
-                    ep
+                    episode
                 },
                 Intolerances = new List<Intolerance>
                 {
-                    intolerances
+                    intolerance
                 },
                 PhysicalExaminations = new List<PhysicalExamination>
                 {
@@ -234,8 +234,8 @@ namespace WebApi.Tests.ControllerTests
                 Description = "description",
                 StartDate = DateTime.Now,
                 EndDate = DateTime.MaxValue,
-                Patient = p,
-                Consultation = c
+                Patient = patient,
+                Consultation = consultation
             };
             var activity02 = new Prescription
             {
@@ -243,8 +243,8 @@ namespace WebApi.Tests.ControllerTests
                 Description = "description",
                 StartDate = DateTime.Now,
                 EndDate = DateTime.MaxValue,
-                Patient = p,
-                Consultation = c
+                Patient = patient,
+                Consultation = consultation
             };
             _fakeEntities = new List<Prescription>
             {
@@ -253,11 +253,11 @@ namespace WebApi.Tests.ControllerTests
 
             _constulatations = new List<Consultation>
             {
-                c
+                consultation
             };
             _patients = new List<Patient>
             {
-                p
+                patient
             };
         }
     }

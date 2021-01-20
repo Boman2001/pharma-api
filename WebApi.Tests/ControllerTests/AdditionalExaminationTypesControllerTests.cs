@@ -133,7 +133,7 @@ namespace WebApi.Tests.ControllerTests
                 Name = "Naam",
                 Unit = "Unit"
             };
-            var aentity02 = new AdditionalExaminationType
+            var entity02 = new AdditionalExaminationType
             {
                 Id = 2,
                 Name = "Naam",
@@ -141,7 +141,7 @@ namespace WebApi.Tests.ControllerTests
             };
             _fakeEntities = new List<AdditionalExaminationType>
             {
-                entity, aentity02
+                entity, entity02
             };
 
             _fakeIdentityUsers = IdentityHelper.GetIdentityUsers();

@@ -1,6 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -17,8 +15,6 @@ namespace WebApi.IntegrationTests
     {
         private readonly HttpClient _client;
 
-        private JToken _token;
-
         public AuthRouteTests(CustomWebApplicationFactory<Startup> factory)
         {
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
@@ -31,7 +27,7 @@ namespace WebApi.IntegrationTests
         [Fact]
         public void Given_Valid_Login_Details_Returns_Ok_And_Valid_Token()
         {
-            var newUserDto = new LoginDto { Email = "m@gmail.com", Password = "password" };
+            var newUserDto = new LoginDto {Email = "m@gmail.com", Password = "password"};
 
             var serialize = JsonConvert.SerializeObject(newUserDto);
 
@@ -47,7 +43,6 @@ namespace WebApi.IntegrationTests
 
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.Equal(email, newUserDto.Email);
-            
         }
 
 
