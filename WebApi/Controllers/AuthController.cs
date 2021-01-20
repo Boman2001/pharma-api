@@ -23,7 +23,6 @@ namespace WebApi.Controllers
         private readonly IIdentityRepository _identityRepository;
         private readonly MultiFactorAuthenticationHelper _multiFactorAuthenticationHelper;
         private readonly IRepository<UserInformation> _userInformationRepository;
-        private readonly ApplicationDbContext _applicationDbContext;
 
         public AuthController(IIdentityRepository identityRepository,
             IRepository<UserInformation> userInformationRepository,
@@ -34,7 +33,6 @@ namespace WebApi.Controllers
             _identityRepository = identityRepository;
             _userInformationRepository = userInformationRepository;
             _multiFactorAuthenticationHelper = new MultiFactorAuthenticationHelper(userManager, identityRepository, configuration);
-            _applicationDbContext = applicationDbContext;
         }
 
         [HttpPost("login/twofactor")]
