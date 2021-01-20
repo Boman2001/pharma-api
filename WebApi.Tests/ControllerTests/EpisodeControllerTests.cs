@@ -52,7 +52,7 @@ namespace WebApi.Tests.ControllerTests
 
             MockGenericExtension.ExtendMock(fakeGenericRepo, _fakeEntities);
             FakeController = new EpisodesController(
-                IdentityRepositoryFake, 
+                IdentityRepositoryFake,
                 fakeGenericRepo.Object,
                 constulatationsMock.Object,
                 userInformationMock.Object,
@@ -62,6 +62,15 @@ namespace WebApi.Tests.ControllerTests
             IdentityHelper.SetUser(_fakeIdentityUsers[0], FakeController);
         }
 
+//<<<<<<< feature/examination-types-controller
+//        [Trait("Category", "Get Tests")]
+//        [Fact]
+//        public void Get_All_Episode_With_200_code()
+//        {
+//            var result = FakeController.Get(null, null, false);
+//            var objectResult = (OkObjectResult) result.Result;
+//           var activities = (List<EpisodeDto>) objectResult.Value;
+//=======
         //[Trait("Category", "Get Tests")]
         //[Fact]
         //public void Get_All_Episode_With_200_code()
@@ -69,6 +78,7 @@ namespace WebApi.Tests.ControllerTests
         //    var result = FakeController.Get(null, null);
         //    var objectResult = (OkObjectResult) result.Result;
         //    var activities = (List<EpisodeDto>) objectResult.Value;
+//>>>>>>> development
 
         //    Assert.Equal(_fakeEntities.Count, activities.Count);
         //    Assert.Equal(200, objectResult.StatusCode);
