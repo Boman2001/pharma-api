@@ -12,7 +12,6 @@ namespace WebApi.Models.Intolerances
         [Required(ErrorMessage = "Start datum is verplicht.")]
         public DateTime? StartDate { get; set; }
 
-        [Required(ErrorMessage = "Eind datum is verplicht.")]
         public DateTime? EndDate { get; set; }
 
         [Required(ErrorMessage = "Consult Id is verplicht.")]
