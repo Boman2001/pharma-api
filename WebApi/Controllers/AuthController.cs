@@ -27,7 +27,6 @@ namespace WebApi.Controllers
         public AuthController(IIdentityRepository identityRepository,
             IRepository<UserInformation> userInformationRepository,
             UserManager<IdentityUser> userManager,
-            ApplicationDbContext applicationDbContext,
             IConfiguration configuration)
         {
             _identityRepository = identityRepository;
