@@ -78,7 +78,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Get_AdditionExaminationResults_By_Id_Returns_AdditionExaminationResult_With_200_codeAsync()
         {
-            var result = await FakeController.Get(_fakeEntities[0].Id);
+            var result = FakeController.Get(_fakeEntities[0].Id);
             var objectResult = (OkObjectResult) result.Result;
             var entity = (AdditionalExaminationResultDto) objectResult.Value;
 
