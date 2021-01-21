@@ -101,10 +101,10 @@ namespace Infrastructure.Repositories
             if (password != null)
             {
                 var passwordCheck = await _userManager.CheckPasswordAsync(user, password);
-
+                
                 if (!passwordCheck)
                 {
-                    throw new ArgumentException("Wachtwoord is ongeldig.");
+                    throw new ArgumentException("Wachtwoord is niet sterk genoeg.");
                 }
 
                 result.PasswordHash = _userManager.PasswordHasher.HashPassword(user, password);
