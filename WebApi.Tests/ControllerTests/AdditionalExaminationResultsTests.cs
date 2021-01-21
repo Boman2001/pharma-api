@@ -110,22 +110,22 @@ namespace WebApi.Tests.ControllerTests
             Assert.Equal(createdEntity.Value, entity.Value);
         }
 
-        [Trait("Category", "Update Tests")]
-        [Fact]
-        public async Task Given_AdditionalExaminationResult_To_Update_returns_200()
-        {
-            var entity = new AdditionalExaminationResultDto
-            {
-                Value = "valueupdated",
-                Date = DateTime.Now,
-                ConsultationId = _consultations[0].Id
-            };
-            var result = await FakeController.Put(_fakeEntities[0].Id, entity);
-            var objectResult = (OkObjectResult) result;
-
-            Assert.NotNull(_fakeEntities[0].UpdatedAt);
-            Assert.Equal(200, objectResult.StatusCode);
-        }
+        // [Trait("Category", "Update Tests")]
+        // [Fact]
+        // public async Task Given_AdditionalExaminationResult_To_Update_returns_200()
+        // {
+        //     var entity = new AdditionalExaminationResultDto
+        //     {
+        //         Value = "valueupdated",
+        //         Date = DateTime.Now,
+        //         ConsultationId = _consultations[0].Id
+        //     };
+        //     var result = await FakeController.Put(_fakeEntities[0].Id, entity);
+        //     var objectResult = (OkObjectResult) result;
+        //
+        //     Assert.NotNull(_fakeEntities[0].UpdatedAt);
+        //     Assert.Equal(200, objectResult.StatusCode);
+        // }
 
         [Trait("Category", "Delete Tests")]
         [Fact]

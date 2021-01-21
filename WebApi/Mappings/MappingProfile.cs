@@ -8,6 +8,7 @@ using WebApi.Models.Episodes;
 using WebApi.Models.Intolerances;
 using WebApi.Models.ExaminationTypes;
 using WebApi.Models.IcpcCodes;
+using WebApi.Models.PhysicalExaminations;
 using WebApi.Models.Prescriptions;
 using WebApi.Models.Users;
 
@@ -67,6 +68,9 @@ namespace WebApi.Mappings
             CreateMap<UserInformation, UserInformationDto>();
             CreateMap<UserInformation, UserInformationDto>();
             CreateMap<UserInformationDto, UserDto>();
+            CreateMap<PhysicalExamination, PhysicalExaminationDto>();
+            CreateMap<PhysicalExaminationDto, PhysicalExamination>();
+            CreateMap<BasePhysicalExaminationDto, PhysicalExamination>();
         }
     }
 }

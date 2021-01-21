@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
@@ -43,12 +44,24 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<IEnumerable<Consultation>>> Get()
+        public async Task<ActionResult<IEnumerable<Consultation>>> Get([FromQuery] string? userId)
         {
-            var consultations = _consultationRepository.Get(new[]
+            IEnumerable<Consultation> consultations;
+
+            if (userId != null)
             {
-                "Patient"
-            });
+                consultations = _consultationRepository.Get(c => c.DoctorId.ToString() == userId, new[]
+                {
+                    "Patient"
+                });
+            }
+            else
+            {
+                consultations = _consultationRepository.Get(new[]
+                {
+                    "Patient"
+                });
+            }
 
             var consultationsDtos = new List<ConsultationDto>();
 
@@ -148,7 +161,7 @@ namespace WebApi.controllers
             if (createConsultationDto.PatientId != null)
             {
                 var patient = await _patientRepository.Get(createConsultationDto.PatientId.Value);
-            
+
                 if (patient == null)
                 {
                     return BadRequest("Patiënt bestaat niet.");
@@ -179,7 +192,7 @@ namespace WebApi.controllers
             {
                 return NotFound();
             }
-            
+
             var doctor = await _identityRepository.GetUserById(updateConsultationDto.DoctorId.ToString());
 
             if (doctor == null)
@@ -190,7 +203,7 @@ namespace WebApi.controllers
             if (updateConsultationDto.PatientId != null)
             {
                 var patient = await _patientRepository.Get(updateConsultationDto.PatientId.Value);
-            
+
                 if (patient == null)
                 {
                     return BadRequest("Patient bestaat niet.");
