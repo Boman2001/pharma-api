@@ -16,7 +16,8 @@ namespace Core.Domain.Models
 
         public int PatientId { get; set; }
         [JsonIgnore] public Patient Patient { get; set; }
-
+        
+        public bool? Completed { get; set; }
         public List<AdditionalExaminationResult> AdditionalExaminationResults { get; set; }
         public List<Episode> Episodes { get; set; }
         public List<Intolerance> Intolerances { get; set; }

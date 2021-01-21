@@ -140,6 +140,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     Date = table.Column<DateTime>("datetime2", nullable: false),
                     DoctorId = table.Column<Guid>("uniqueidentifier", nullable: false),
                     PatientId = table.Column<int>("int", nullable: false),
+                    Completed = table.Column<bool>("bool", nullable: true),
                     CreatedAt = table.Column<DateTime>("datetime2", nullable: false),
                     CreatedBy = table.Column<Guid>("uniqueidentifier", nullable: false),
                     UpdatedAt = table.Column<DateTime>("datetime2", nullable: true),
