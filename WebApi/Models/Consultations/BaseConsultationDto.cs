@@ -17,5 +17,7 @@ namespace WebApi.Models.Consultations
 
         [Required(ErrorMessage = "Patiënt Id is verplicht.")]
         public int? PatientId { get; set; }
+        
+        public bool? Completed { get; set; }
     }
 }
