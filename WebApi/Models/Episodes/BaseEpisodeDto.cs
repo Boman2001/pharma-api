@@ -15,6 +15,7 @@ namespace WebApi.Models.Episodes
 
         [Required(ErrorMessage = "Start datum is verplicht.")]
         public DateTime? StartDate { get; set; }
+
         public DateTime? EndDate { get; set; }
 
         [Required(ErrorMessage = "Consult Id is verplicht.")]
