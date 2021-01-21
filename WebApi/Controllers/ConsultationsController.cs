@@ -8,16 +8,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models.Patients;
+using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using System.Linq;
+using System.Security.Claims;
+using WebApi.Models.Consultations;
+using WebApi.Models.Users;
 
 namespace WebApi.controllers
 {
-    using AutoMapper;
-    using Microsoft.AspNetCore.Identity;
-    using Models.Consultations;
-    using Models.Users;
-    using System.Linq;
-    using System.Security.Claims;
-
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]

@@ -1,10 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using Core.Domain.Enums;
 
 namespace WebApi.Models.Patients
 {
-    using Core.Domain.Enums;
-    using System;
-
     public class BasePatientDto
     {
         [Required(ErrorMessage = "Naam is verplicht.")]

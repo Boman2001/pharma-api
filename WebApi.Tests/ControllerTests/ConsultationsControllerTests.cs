@@ -89,7 +89,7 @@ namespace WebApi.Tests.ControllerTests
                 Comments = "comments",
                 Date = DateTime.Now,
                 PatientId = _patients[0].Id,
-                DoctorId = Guid.Parse(_fakeIdentityUsers[0].Id),
+                DoctorId = Guid.Parse(_fakeIdentityUsers[0].Id)
             };
             var lengthBefore = _fakeEntities.Count;
 
@@ -104,12 +104,12 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Given_Consultation_To_Update_returns_200()
         {
-            var entity = new UpdateConsultationDto()
+            var entity = new UpdateConsultationDto
             {
                 Comments = "commentsUpdate",
                 Date = DateTime.Now,
                 PatientId = _patients[0].Id,
-                DoctorId = Guid.Parse(_fakeIdentityUsers[0].Id),
+                DoctorId = Guid.Parse(_fakeIdentityUsers[0].Id)
             };
             var result = await FakeController.Put(_fakeEntities[0].Id, entity);
 
@@ -186,7 +186,7 @@ namespace WebApi.Tests.ControllerTests
             {
                 Description = "descrption", EndDate = DateTime.Now, StartDate = DateTime.Now, Patient = patient
             };
-            var physical = new PhysicalExamination()
+            var physical = new PhysicalExamination
             {
                 Value = "physical", Date = DateTime.Now, Patient = patient
             };

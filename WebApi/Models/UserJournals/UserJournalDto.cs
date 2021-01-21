@@ -1,5 +1,4 @@
 ﻿using System;
-using WebApi.Models.IcpcCodes;
 
 namespace WebApi.Models.UserJournals
 {

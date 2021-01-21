@@ -1,8 +1,5 @@
 ﻿namespace WebApi.Models.Patients
 {
-    using Core.Domain.Enums;
-    using System;
-
     public class PatientDto : BasePatientDto
     {
         public int Id { get; set; }

@@ -196,7 +196,7 @@ namespace WebApi.Tests.ControllerTests
                 StartDate = DateTime.Now,
                 Patient = patient
             };
-            var physical = new PhysicalExamination()
+            var physical = new PhysicalExamination
             {
                 Value = "physical",
                 Date = DateTime.Now,

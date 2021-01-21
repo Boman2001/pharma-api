@@ -2,11 +2,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Core.Domain.Models;
 using Core.DomainServices.Helpers;
 using Core.DomainServices.Repositories;
-using Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -86,17 +84,14 @@ namespace WebApi.Controllers
                 Email = login.Email, UserName = login.Email, PasswordHash = login.Password
             };
 
-            SecurityToken securityToken;
-
             try
             {
-                securityToken = await _identityRepository.Login(identityUser, identityUser.PasswordHash);
+                await _identityRepository.Login(identityUser, identityUser.PasswordHash);
                 var user = await _identityRepository.GetUserByEmail(identityUser.Email);
                 
                 return Ok(new
                 {
-                    TwoFactorUrl = user.TwoFactorEnabled ? null : await _multiFactorAuthenticationHelper.LoadSharedKeyAndQrCodeUriAsync(user),
-                    Email = user.Email
+                    TwoFactorUrl = user.TwoFactorEnabled ? null : await _multiFactorAuthenticationHelper.LoadSharedKeyAndQrCodeUriAsync(user), user.Email
                 });
             }
             catch (Exception ex)

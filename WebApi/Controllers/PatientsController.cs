@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Domain.Models;
 using Core.DomainServices.Helpers;
@@ -8,14 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using AutoMapper;
+using System.Linq;
+using System.Security.Claims;
+using WebApi.Models.Patients;
 
 namespace WebApi.controllers
 {
-    using AutoMapper;
-    using Models.Patients;
-    using System.Linq;
-    using System.Security.Claims;
-
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -23,17 +21,15 @@ namespace WebApi.controllers
     public class PatientsController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
-        private readonly PatientHelper _patientHelper;
         private readonly IRepository<Patient> _patientRepository;
         private readonly IMapper _mapper;
 
-        public PatientsController(IRepository<Patient> patientRepository, IConfiguration config,
-            IIdentityRepository identityRepository, IMapper mapper)
+        public PatientsController(IRepository<Patient> patientRepository, IIdentityRepository identityRepository,
+            IMapper mapper)
         {
             _patientRepository = patientRepository;
             _identityRepository = identityRepository;
             _mapper = mapper;
-            _patientHelper = new PatientHelper(config);
         }
 
         [HttpGet]

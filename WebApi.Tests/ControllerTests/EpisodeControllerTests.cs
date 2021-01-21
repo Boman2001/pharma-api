@@ -175,7 +175,7 @@ namespace WebApi.Tests.ControllerTests
             {
                 Description = "descrption", EndDate = DateTime.Now, StartDate = DateTime.Now, Patient = patient
             };
-            var physical = new PhysicalExamination()
+            var physical = new PhysicalExamination
             {
                 Value = "physical", Date = DateTime.Now, Patient = patient
             };
@@ -214,7 +214,7 @@ namespace WebApi.Tests.ControllerTests
             {
                 patient
             };
-            var code = new IcpcCode()
+            var code = new IcpcCode
             {
                 Code = "code", Name = "name"
             };
