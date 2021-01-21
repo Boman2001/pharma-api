@@ -55,8 +55,7 @@ namespace WebApi.Controllers
                     await _identityRepository.Update(user, null);
                 }
 
-                var userResult = await _userManager.FindByEmailAsync(user.Email);
-                var rolesList = await _userManager.GetRolesAsync(userResult);
+                var rolesList = await _userManager.GetRolesAsync(user);
                 var userDto = new RoleDto
                 {
                     Id = Guid.Parse(user.Id),
