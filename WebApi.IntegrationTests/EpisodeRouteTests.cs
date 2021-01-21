@@ -105,48 +105,6 @@ namespace WebApi.IntegrationTests
             Assert.Equal(HttpStatusCode.Created, result.StatusCode);
         }
 
-        // [Fact, Order(4)]
-        // public async Task Update_episodes_And_test_If_User_Changed()
-        // {
-        //     var environmentVariable = Environment.GetEnvironmentVariable("Episode");
-        //     var jObject = JObject.Parse(environmentVariable);
-        //     var dto = jObject.ToObject<EpisodeDto>();
-        //
-        //     var update = new EpisodeDto
-        //     {
-        //         Description = "NewDescc",
-        //         ConsultationId = 1,
-        //         PatientId = 1,
-        //         EndDate = DateTime.Now,
-        //         StartDate = DateTime.Now,
-        //         Priority = 10,
-        //         IcpcCodeId = 1
-        //     };
-        //
-        //     var serialize = JsonConvert.SerializeObject(update);
-        //     var content = new StringContent(serialize, Encoding.UTF8, "application/json");
-        //
-        //     var defaultPage = await _client.PutAsync("/api/Episodes/" + dto.Id, content);
-        //     var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
-        //     var json = readAsStringAsync.Result;
-        //     var u = JObject.Parse(json);
-        //     var user = u.ToObject<EpisodeDto>();
-        //
-        //
-        //     var defaultPager = await _client.GetAsync("/api/Episodes/" + dto.Id);
-        //     var asStringAsync = defaultPager.Content.ReadAsStringAsync();
-        //     var result = asStringAsync.Result;
-        //     var parsedJObject = JObject.Parse(result);
-        //     var userDto = parsedJObject.ToObject<EpisodeDto>();
-        //
-        //     Assert.Equal(HttpStatusCode.OK, defaultPager.StatusCode);
-        //     Assert.NotNull(environmentVariable);
-        //     Assert.IsType<EpisodeDto>(userDto);
-        //     Assert.Equal(update.Description, userDto.Description);
-        //     Assert.Equal(HttpStatusCode.OK, defaultPage.StatusCode);
-        //     Assert.NotNull(user);
-        // }
-
         [Fact, Order(4)]
         public async Task Given_Invalid_Data_Update_Return_Bad_Request()
         {
