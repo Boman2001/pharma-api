@@ -21,8 +21,10 @@ namespace WebApi.Controllers
         private readonly IIdentityRepository _identityRepository;
         private readonly MultiFactorAuthenticationHelper _multiFactorAuthenticationHelper;
         private readonly IRepository<UserInformation> _userInformationRepository;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public AuthController(IIdentityRepository identityRepository,
+        public AuthController(
+            IIdentityRepository identityRepository,
             IRepository<UserInformation> userInformationRepository,
             UserManager<IdentityUser> userManager,
             IConfiguration configuration)
@@ -30,6 +32,7 @@ namespace WebApi.Controllers
             _identityRepository = identityRepository;
             _userInformationRepository = userInformationRepository;
             _multiFactorAuthenticationHelper = new MultiFactorAuthenticationHelper(userManager, identityRepository, configuration);
+            _userManager = userManager;
         }
 
         [HttpPost("login/twofactor")]
@@ -52,7 +55,8 @@ namespace WebApi.Controllers
                     await _identityRepository.Update(user, null);
                 }
 
-                var userDto = new UserDto
+                var rolesList = await _userManager.GetRolesAsync(user);
+                var userDto = new RoleDto
                 {
                     Id = Guid.Parse(user.Id),
                     Email = user.Email,
@@ -65,7 +69,8 @@ namespace WebApi.Controllers
                     HouseNumber = userInformation.HouseNumber,
                     HouseNumberAddon = userInformation.HouseNumberAddon,
                     PostalCode = userInformation.PostalCode,
-                    Country = userInformation.Country
+                    Country = userInformation.Country,
+                    Roles = rolesList
                 };
 
                 return Ok(new {Token = new JwtSecurityTokenHandler().WriteToken(securityToken), User = userDto});
