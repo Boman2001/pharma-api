@@ -1,16 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Models.IcpcCodes;
+using System.Linq;
+using System.Security.Claims;
+
 
 namespace WebApi.controllers
 {
-    using System.Linq;
-    using System.Security.Claims;
-
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -19,11 +21,14 @@ namespace WebApi.controllers
     {
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<IcpcCode> _icpcCodeRepository;
+        private readonly IMapper _mapper;
 
-        public IcpcCodesController(IRepository<IcpcCode> icpcCodeRepository, IIdentityRepository identityRepository)
+        public IcpcCodesController(IRepository<IcpcCode> icpcCodeRepository, IIdentityRepository identityRepository,
+            IMapper mapper)
         {
             _icpcCodeRepository = icpcCodeRepository;
             _identityRepository = identityRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -32,7 +37,14 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<IcpcCode>> Get()
         {
-            return Ok(_icpcCodeRepository.Get());
+            var icpcCodes = _icpcCodeRepository.Get();
+
+            var icpcCodeDtos = icpcCodes
+                .Select(icpcCode =>
+                    _mapper.Map<IcpcCode, IcpcCodeDto>(icpcCode))
+                .ToList();
+
+            return Ok(icpcCodeDtos);
         }
 
         [HttpGet("{id}")]
@@ -43,7 +55,14 @@ namespace WebApi.controllers
         {
             var icpcCode = await _icpcCodeRepository.Get(id);
 
-            return icpcCode != null ? Ok(icpcCode) : NotFound();
+            if (icpcCode == null)
+            {
+                return NotFound();
+            }
+
+            var icpcCodeDto = _mapper.Map<IcpcCode, IcpcCodeDto>(icpcCode);
+
+            return Ok(icpcCodeDto);
         }
 
         [HttpPost]
@@ -51,30 +70,45 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<IcpcCode>> Post([FromBody] IcpcCode icpcCode)
+        public async Task<ActionResult<IcpcCode>> Post([FromBody] BaseIcpcCodeDto baseIcpcCodeDto)
         {
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
+            var icpcCode = _mapper.Map<BaseIcpcCodeDto, IcpcCode>(baseIcpcCodeDto);
+
             var createdIcpcCode = await _icpcCodeRepository.Add(icpcCode, currentUser);
 
-            return CreatedAtAction(nameof(Post), null, createdIcpcCode);
+            var createdIcpcCodeDto = _mapper.Map<IcpcCode, IcpcCodeDto>(createdIcpcCode);
+
+            return CreatedAtAction(nameof(Post), createdIcpcCodeDto);
         }
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Put(int id, [FromBody] IcpcCode icpcCode)
+        public async Task<IActionResult> Put(int id, [FromBody] IcpcCodeDto updateIcpcCodeDto)
         {
+            var icpcCode = await _icpcCodeRepository.Get(id);
+
+            if (icpcCode == null)
+            {
+                return NotFound();
+            }
+
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
+            _mapper.Map(updateIcpcCodeDto, icpcCode);
+
             icpcCode.Id = id;
 
-            var updatedIcpcCode = await _icpcCodeRepository.Update(icpcCode,currentUser);
+            var updatedAdditionalExaminationType = await _icpcCodeRepository.Update(icpcCode, currentUser);
 
-            return Ok(updatedIcpcCode);
+            var icpcCodeDto = _mapper.Map<IcpcCode, IcpcCodeDto>(updatedAdditionalExaminationType);
+
+            return Ok(icpcCodeDto);
         }
 
         [HttpDelete("{id}")]
@@ -86,7 +120,7 @@ namespace WebApi.controllers
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            await _icpcCodeRepository.Delete(id,currentUser);
+            await _icpcCodeRepository.Delete(id, currentUser);
 
             return NoContent();
         }

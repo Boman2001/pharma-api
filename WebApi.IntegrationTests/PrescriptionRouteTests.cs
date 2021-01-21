@@ -124,7 +124,7 @@ namespace WebApi.IntegrationTests
             var c = new Consultation
             {
                 Id = 1,
-                Date = DateTime.Now,
+                Date = DateTime.Now
             };
 
             var serialize = JsonConvert.SerializeObject(c);
@@ -187,7 +187,7 @@ namespace WebApi.IntegrationTests
 
             var content = new StringContent("test", Encoding.UTF8, "application/json");
 
-            var defaultPage = await _client.PutAsync("/api/prescriptions/" + userDto.Id.ToString(), content);
+            var defaultPage = await _client.PutAsync("/api/prescriptions/" + userDto.Id, content);
             var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
@@ -205,7 +205,7 @@ namespace WebApi.IntegrationTests
 
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
-            var defaultPage = await _client.DeleteAsync("/api/consultations/" + udser.Id.ToString());
+            var defaultPage = await _client.DeleteAsync("/api/consultations/" + udser.Id);
 
             Assert.Equal(HttpStatusCode.NoContent, defaultPage.StatusCode);
         }

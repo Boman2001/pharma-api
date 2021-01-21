@@ -39,38 +39,9 @@ namespace WebApi.Tests.ControllerTests
             IdentityRepositoryFake = new IdentityRepository(userManager, signInManager, config);
 
             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_fakeUsersPatient);
-            FakeController = new PatientsController(fakeGenericRepo.Object, config, IdentityRepositoryFake, mapper);
+            FakeController = new PatientsController(fakeGenericRepo.Object, IdentityRepositoryFake, mapper);
 
             IdentityHelper.SetUser(_fakeIdentityUsers[0], FakeController);
-        }
-
-        //Get Tests
-
-        [Trait("Category", "Get Tests")]
-        [Fact]
-        public void Get_All_Patients_With_200_code()
-        {
-            var result = FakeController.Get();
-            var objectResult = (OkObjectResult) result.Result;
-            var patients = (List<Patient>) objectResult.Value;
-
-            Assert.Equal(_fakeUsersPatient.Count, patients.Count);
-            Assert.Equal(200, objectResult.StatusCode);
-            Assert.Equal(patients[0], _fakeUsersPatient[0]);
-            Assert.IsType<Patient>(patients[0]);
-        }
-
-        [Trait("Category", "Get Tests")]
-        [Fact]
-        public async Task Given_Id_Returns_Patient()
-        {
-            var result = await FakeController.Get(_fakeUsersPatient[0].Id);
-            var objectResult = (OkObjectResult) result.Result;
-            var patient = (Patient) objectResult.Value;
-
-            Assert.Equal(200, objectResult.StatusCode);
-            Assert.Equal(patient, _fakeUsersPatient[0]);
-            Assert.IsType<Patient>(patient);
         }
 
         [Trait("Category", "Get Tests")]
@@ -139,58 +110,6 @@ namespace WebApi.Tests.ControllerTests
             Assert.Equal(patient.HouseNumber, createdPatient.HouseNumber);
             Assert.Equal(patient.PostalCode, createdPatient.PostalCode);
             Assert.Equal(patient.Country, createdPatient.Country);
-        }
-
-        [Trait("Category", "Post Tests")]
-        [Fact]
-        public async Task Given_Empty_Patient_Returns_Bad_Request()
-        {
-            var patient = new PatientDto();
-            var lengthBefore = _fakeUsersPatient.Count;
-
-            var result = await FakeController.Post(patient);
-            var objectResult = (BadRequestObjectResult) result.Result;
-
-            Assert.Equal(lengthBefore, _fakeUsersPatient.Count);
-            Assert.Equal(400, objectResult.StatusCode);
-        }
-
-        //Update Tests
-
-        [Trait("Category", "Update Tests")]
-        [Fact]
-        public async Task Given_Patient_To_Update_returns_200()
-        {
-            var patient = new Patient
-            {
-                Name = "Name",
-                Bsn = "BEST",
-                Email = "test",
-                Dob = DateTime.Now,
-                Gender = Gender.Male,
-                PhoneNumber = "1321",
-                City = "hank",
-                Street = "lepelaarstraat20",
-                HouseNumber = "20",
-                PostalCode = "23",
-                Country = "qwe"
-            };
-            var result = await FakeController.Put(_fakeUsersPatient.Count, patient);
-            var objectResult = (OkObjectResult) result;
-
-            Assert.Equal(200, objectResult.StatusCode);
-        }
-
-
-        [Trait("Category", "Update Tests")]
-        [Fact]
-        public async Task Given__Empty_Patient_To_Update_Returns_Error()
-        {
-            var patient = new Patient();
-            var result = await FakeController.Put(_fakeUsersPatient.Count, patient);
-            var objectResult = (OkObjectResult) result;
-
-            Assert.Equal(200, objectResult.StatusCode);
         }
 
         //Delete Tests

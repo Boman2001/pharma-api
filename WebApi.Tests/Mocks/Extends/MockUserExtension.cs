@@ -15,7 +15,7 @@ namespace WebApi.Tests.Mocks.Extends
             IEnumerable<UserInformation> usersInformationList)
         {
             repository.Setup(x => x.Update(It.IsAny<UserInformation>(), It.IsAny<IdentityUser>()))
-                .Returns((UserInformation a, IdentityUser user) => Task.FromResult(
+                .Returns((UserInformation a, IdentityUser _) => Task.FromResult(
                     usersInformationList.Where(c => c.UserId.ToString() == a.UserId.ToString()).Select(d =>
                     {
                         d.Name = a.Name;

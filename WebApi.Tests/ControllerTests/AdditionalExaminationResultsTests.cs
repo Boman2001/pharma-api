@@ -16,7 +16,6 @@ using WebApi.Tests.Helpers;
 using WebApi.Tests.Mocks.Extends;
 using Xunit;
 
-
 namespace WebApi.Tests.ControllerTests
 {
     public class AdditionalExaminationResultsTests
@@ -27,7 +26,7 @@ namespace WebApi.Tests.ControllerTests
         private List<Consultation> _consultations;
         private List<AdditionalExaminationType> _types;
         private AdditionalExaminationResultsController FakeController { get; }
-        
+
         private IdentityRepository IdentityRepositoryFake { get; }
 
         public AdditionalExaminationResultsTests()
@@ -51,12 +50,12 @@ namespace WebApi.Tests.ControllerTests
             var typeRepo = MockGenericRepository.GetUserInformationMock(_types);
             MockGenericExtension.ExtendMock(fakeGenericRepo, _fakeEntities);
 
-            FakeController = new AdditionalExaminationResultsController(IdentityRepositoryFake, fakeGenericRepo.Object, 
+            FakeController = new AdditionalExaminationResultsController(IdentityRepositoryFake, fakeGenericRepo.Object,
                 constulationRepo.Object,
                 patientRepo.Object,
                 typeRepo.Object,
                 mock);
-            
+
             IdentityHelper.SetUser(_fakeIdentityUsers[0], FakeController);
         }
 
@@ -76,9 +75,9 @@ namespace WebApi.Tests.ControllerTests
 
         [Trait("Category", "Get Tests")]
         [Fact]
-        public async Task Get_AdditionExaminationResults_By_Id_Returns_AdditionExaminationResult_With_200_codeAsync()
+        public void Get_AdditionExaminationResults_By_Id_Returns_AdditionExaminationResult_With_200_codeAsync()
         {
-            var result = await FakeController.Get(_fakeEntities[0].Id);
+            var result = FakeController.Get(_fakeEntities[0].Id);
             var objectResult = (OkObjectResult) result.Result;
             var entity = (AdditionalExaminationResultDto) objectResult.Value;
 
@@ -93,9 +92,7 @@ namespace WebApi.Tests.ControllerTests
         {
             var entity = new AdditionalExaminationResultDto
             {
-                Value = "value",
-                Date = DateTime.Now,
-                ConsultationId = _consultations[0].Id
+                Value = "value", Date = DateTime.Now, ConsultationId = _consultations[0].Id
             };
 
             var lengthBefore = _fakeEntities.Count;
@@ -108,23 +105,6 @@ namespace WebApi.Tests.ControllerTests
             Assert.Equal(201, objActionResult.StatusCode);
             Assert.Equal(createdEntity.Date, entity.Date);
             Assert.Equal(createdEntity.Value, entity.Value);
-        }
-
-        [Trait("Category", "Update Tests")]
-        [Fact]
-        public async Task Given_AdditionalExaminationResult_To_Update_returns_200()
-        {
-            var entity = new AdditionalExaminationResultDto
-            {
-                Value = "valueupdated",
-                Date = DateTime.Now,
-                ConsultationId = _consultations[0].Id
-            };
-            var result = await FakeController.Put(_fakeEntities[0].Id, entity);
-            var objectResult = (OkObjectResult) result;
-
-            Assert.NotNull(_fakeEntities[0].UpdatedAt);
-            Assert.Equal(200, objectResult.StatusCode);
         }
 
         [Trait("Category", "Delete Tests")]
@@ -180,47 +160,33 @@ namespace WebApi.Tests.ControllerTests
 
             var activity = new AdditionalExaminationResult
             {
-                Id = 1,
-                Value = "value",
-                Date = DateTime.Now
+                Id = 1, Value = "value", Date = DateTime.Now
             };
 
 
             var type = new AdditionalExaminationType
             {
-                Name = "typename",
-                Unit = "GPS"
+                Name = "typename", Unit = "GPS"
             };
             var additional = new AdditionalExaminationResult
             {
-                Value = "value",
-                Date = DateTime.Now,
-                AdditionalExaminationType = type
+                Value = "value", Date = DateTime.Now, AdditionalExaminationType = type
             };
             var ipCode = new IcpcCode
             {
-                Name = "Name",
-                Code = "code"
+                Name = "Name", Code = "code"
             };
             var episode = new Episode
             {
-                Description = "Description",
-                Priority = 10,
-                Patient = patient02,
-                IcpcCode = ipCode
+                Description = "Description", Priority = 10, Patient = patient02, IcpcCode = ipCode
             };
             var intolerance = new Intolerance
             {
-                Description = "descrption",
-                EndDate = DateTime.Now,
-                StartDate = DateTime.Now,
-                Patient = patient02
+                Description = "descrption", EndDate = DateTime.Now, StartDate = DateTime.Now, Patient = patient02
             };
-            var physical = new PhysicalExamination()
+            var physical = new PhysicalExamination
             {
-                Value = "physical",
-                Date = DateTime.Now,
-                Patient = patient02
+                Value = "physical", Date = DateTime.Now, Patient = patient02
             };
             var consultation = new Consultation
             {
@@ -265,10 +231,14 @@ namespace WebApi.Tests.ControllerTests
             {
                 activity, activity02
             };
-            _consultations = new List<Consultation>();
-            _consultations.Add(consultation);
-            _types = new List<AdditionalExaminationType>();
-            _types.Add(type);
+            _consultations = new List<Consultation>
+            {
+                consultation
+            };
+            _types = new List<AdditionalExaminationType>
+            {
+                type
+            };
         }
     }
 }

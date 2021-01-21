@@ -24,20 +24,20 @@ namespace WebApi.Tests.Mocks
                 .Returns(usersInformationList);
 
             repository.Setup(x => x.Get(It.IsAny<int>(),It.IsAny<IEnumerable<string>>()))
-                .Returns((int s, IEnumerable<string> stringm) => usersInformationList.FirstOrDefault(x => x.Id == s));
+                .Returns((int s, IEnumerable<string> _) => usersInformationList.FirstOrDefault(x => x.Id == s));
 
             repository.Setup(t => t.Get(It.IsAny<int>()))
                 .ReturnsAsync((int s) => usersInformationList.FirstOrDefault(x => x.Id == s));
 
             repository.Setup(x => x.Add(It.IsAny<T>(), It.IsAny<IdentityUser>()))
-                .Callback((T t, IdentityUser user) =>
+                .Callback((T t, IdentityUser _) =>
                 {
                     usersInformationList.Add(t);
                 })
                 .Returns(Task.FromResult(It.IsAny<T>()));
 
             repository.Setup(x => x.Delete(It.IsAny<int>(), It.IsAny<IdentityUser>()))
-                .Callback((int t, IdentityUser user) =>
+                .Callback((int t, IdentityUser _) =>
                 {
                     usersInformationList.RemoveAt(t);
                 })

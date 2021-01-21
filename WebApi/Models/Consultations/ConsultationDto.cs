@@ -1,9 +1,8 @@
 ﻿using WebApi.Models.Patients;
+using WebApi.Models.Users;
 
 namespace WebApi.Models.Consultations
 {
-    using Users;
-
     public class ConsultationDto : BaseConsultationDto
     {
         public int Id { get; set; }

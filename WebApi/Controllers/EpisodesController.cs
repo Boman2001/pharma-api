@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core.Domain.Models;
@@ -7,12 +8,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models.Episodes;
+using WebApi.Models.IcpcCodes;
+using System.Linq;
+using System.Security.Claims;
+
 
 namespace WebApi.controllers
 {
-    using System.Linq;
-    using System.Security.Claims;
-
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -42,20 +44,70 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<Episode>> Get([FromQuery] int? patientId)
+        public ActionResult<IEnumerable<Episode>> Get([FromQuery] int? patientId, [FromQuery] DateTime? consultDate,
+            [FromQuery] bool expired)
         {
             IEnumerable<Episode> episodes;
 
-            if (patientId.HasValue)
+            if (patientId.HasValue && consultDate.HasValue && expired)
             {
-                episodes = _episodeRepository.Get(e => e.PatientId == patientId);
+                episodes = _episodeRepository.Get(e =>
+                        e.PatientId == patientId.Value &&
+                        e.EndDate.Value.Date <= consultDate.Value.Date,
+                    new[]
+                    {
+                        "IcpcCode"
+                    }
+                );
+            }
+            else if (patientId.HasValue && consultDate.HasValue)
+            {
+                episodes = _episodeRepository.Get(e =>
+                        e.PatientId == patientId.Value &&
+                        e.StartDate.Date <= consultDate.Value.Date &&
+                        (e.EndDate.Value.Date > consultDate.Value.Date || e.EndDate == null),
+                    new[]
+                    {
+                        "IcpcCode"
+                    }
+                );
+            }
+            else if (patientId.HasValue)
+            {
+                episodes = _episodeRepository.Get(e => e.PatientId == patientId.Value,
+                    new[]
+                    {
+                        "IcpcCode"
+                    });
+            }
+            else if (consultDate.HasValue)
+            {
+                episodes = _episodeRepository.Get(
+                    e => e.EndDate.Value.Date <= consultDate.Value.Date || e.EndDate == null,
+                    new[]
+                    {
+                        "IcpcCode"
+                    });
             }
             else
             {
-                episodes = _episodeRepository.Get();
+                episodes = _episodeRepository.Get(new[]
+                {
+                    "IcpcCode"
+                });
             }
 
-            var episodeDtos = episodes.Select(episode => _mapper.Map<Episode, EpisodeDto>(episode)).ToList();
+            var episodeDtos = new List<EpisodeDto>();
+
+            foreach (var episode in episodes)
+            {
+                var episodeDto = _mapper.Map<Episode, EpisodeDto>(episode);
+                var icpcCodeDto = _mapper.Map<IcpcCode, IcpcCodeDto>(episode.IcpcCode);
+
+                episodeDto.IcpcCode = icpcCodeDto;
+
+                episodeDtos.Add(episodeDto);
+            }
 
             return Ok(episodeDtos);
         }
@@ -64,9 +116,12 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<Episode>> Get(int id)
+        public ActionResult<Episode> Get(int id)
         {
-            var episode = await _episodeRepository.Get(id);
+            var episode = _episodeRepository.Get(id, new[]
+            {
+                "IcpcCode"
+            });
 
             if (episode == null)
             {
@@ -74,6 +129,9 @@ namespace WebApi.controllers
             }
 
             var episodeDto = _mapper.Map<Episode, EpisodeDto>(episode);
+            var icpcCodeDto = _mapper.Map<IcpcCode, IcpcCodeDto>(episode.IcpcCode);
+
+            episodeDto.IcpcCode = icpcCodeDto;
 
             return Ok(episodeDto);
         }
@@ -119,7 +177,7 @@ namespace WebApi.controllers
             var currentUser = await _identityRepository.GetUserById(userId);
 
             var episode = _mapper.Map<BaseEpisodeDto, Episode>(createEpisodeDto);
-            
+
             var createdEpisode = await _episodeRepository.Add(episode, currentUser);
 
             var createdEpisodeDto = _mapper.Map<Episode, EpisodeDto>(createdEpisode);
@@ -174,13 +232,13 @@ namespace WebApi.controllers
             var currentUser = await _identityRepository.GetUserById(userId);
 
             _mapper.Map(updateEpisodeDto, episode);
-            
+
             episode.Id = id;
 
             var updatedEpisode = await _episodeRepository.Update(episode, currentUser);
 
             var updatedEpisoded = _mapper.Map<Episode, EpisodeDto>(updatedEpisode);
-            
+
             return Ok(updatedEpisoded);
         }
 

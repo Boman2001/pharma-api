@@ -32,7 +32,8 @@ namespace WebApi.IntegrationTests
         public async Task Get_AdditionalExaminationResult_With_Token()
         {
             var tokenEnvironmentVariable = Environment.GetEnvironmentVariable("Token");
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
             var defaultPage = await _client.GetAsync("/api/AdditionalExaminationResults");
             var content = defaultPage.Content.ReadAsStringAsync();
@@ -67,7 +68,8 @@ namespace WebApi.IntegrationTests
         {
             var tokenEnvironmentVariable = Environment.GetEnvironmentVariable("Token");
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
             var defaultPage = await _client.GetAsync("/api/AdditionalExaminationResults/1323232");
 
             Assert.Equal(HttpStatusCode.NotFound, defaultPage.StatusCode);
@@ -78,10 +80,11 @@ namespace WebApi.IntegrationTests
         {
             var tokenEnvironmentVariable = Environment.GetEnvironmentVariable("Token");
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
 
-            var c = new AdditionalExaminationResultDto()
+            var c = new AdditionalExaminationResultDto
             {
                 ConsultationId = 1,
                 PatientId = 1,
@@ -110,8 +113,7 @@ namespace WebApi.IntegrationTests
 
             var c = new Consultation
             {
-                Id = 1,
-                Date = DateTime.Now,
+                Id = 1, Date = DateTime.Now
             };
 
             var serialize = JsonConvert.SerializeObject(c);
@@ -126,47 +128,6 @@ namespace WebApi.IntegrationTests
         }
 
         [Fact, Order(4)]
-        public async Task Update_AdditionalExaminationResult_And_test_If_User_Changed()
-        {
-            var environmentVariable = Environment.GetEnvironmentVariable("exmanation");
-            var jObject = JObject.Parse(environmentVariable);
-            var dto = jObject.ToObject<AdditionalExaminationResultDto>();
-
-            var update = new AdditionalExaminationResultDto
-            {
-                Id = dto.Id,
-                ConsultationId = 1,
-                PatientId = 1,
-                Value = "namname",
-                AdditionalExaminationTypeId = 1,
-                Date = DateTime.Now
-            };
-
-            var serialize = JsonConvert.SerializeObject(update);
-            var content = new StringContent(serialize, Encoding.UTF8, "application/json");
-
-            var defaultPage = await _client.PutAsync("/api/AdditionalExaminationResults/" + dto.Id, content);
-            var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
-            var json = readAsStringAsync.Result;
-            var u = JObject.Parse(json);
-            var user = u.ToObject<AdditionalExaminationResult>();
-
-
-            var defaultPager = await _client.GetAsync("/api/AdditionalExaminationResults/" + dto.Id);
-            var asStringAsync = defaultPager.Content.ReadAsStringAsync();
-            var result = asStringAsync.Result;
-            var parsedJObject = JObject.Parse(result);
-            var userDto = parsedJObject.ToObject<AdditionalExaminationResult>();
-
-            Assert.Equal(HttpStatusCode.OK, defaultPager.StatusCode);
-            Assert.NotNull(environmentVariable);
-            Assert.IsType<AdditionalExaminationResult>(userDto);
-            Assert.Equal(update.Value, update.Value);
-            Assert.Equal(HttpStatusCode.OK, defaultPage.StatusCode);
-            Assert.NotNull(user);
-        }
-
-        [Fact, Order(4)]
         public async Task Given_Invalid_Data_Update_Return_Bad_Request()
         {
             var environmentVariable = Environment.GetEnvironmentVariable("exmanation");
@@ -175,7 +136,7 @@ namespace WebApi.IntegrationTests
 
             var content = new StringContent("test", Encoding.UTF8, "application/json");
 
-            var defaultPage = await _client.PutAsync("/api/AdditionalExaminationResults/" + userDto.Id.ToString(), content);
+            var defaultPage = await _client.PutAsync("/api/AdditionalExaminationResults/" + userDto.Id, content);
             var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
@@ -193,7 +154,7 @@ namespace WebApi.IntegrationTests
 
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
-            var defaultPage = await _client.DeleteAsync("/api/AdditionalExaminationResults/" + udser.Id.ToString());
+            var defaultPage = await _client.DeleteAsync("/api/AdditionalExaminationResults/" + udser.Id);
 
             Assert.Equal(HttpStatusCode.NoContent, defaultPage.StatusCode);
         }

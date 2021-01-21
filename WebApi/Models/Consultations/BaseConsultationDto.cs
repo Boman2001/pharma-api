@@ -1,9 +1,9 @@
-﻿#nullable enable
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+
+#nullable enable
 namespace WebApi.Models.Consultations
 {
-    using System;
-    using System.ComponentModel.DataAnnotations;
-
     public class BaseConsultationDto
     {
         [Required(ErrorMessage = "Datum is verplicht.")]
@@ -17,5 +17,7 @@ namespace WebApi.Models.Consultations
 
         [Required(ErrorMessage = "Patiënt Id is verplicht.")]
         public int? PatientId { get; set; }
+        
+        public bool? Completed { get; set; }
     }
 }

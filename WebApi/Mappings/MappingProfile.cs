@@ -5,55 +5,75 @@ using WebApi.Models.AdditionalExaminationResults;
 using WebApi.Models.AdditionalExaminationTypes;
 using WebApi.Models.Authentication;
 using WebApi.Models.Episodes;
+using WebApi.Models.Intolerances;
+using WebApi.Models.ExaminationTypes;
+using WebApi.Models.IcpcCodes;
+using WebApi.Models.PhysicalExaminations;
 using WebApi.Models.Prescriptions;
+using WebApi.Models.UserJournals;
 using WebApi.Models.Users;
+using WebApi.Models.Consultations;
+using WebApi.Models.Patients;
 
 namespace WebApi.Mappings
 {
-    using Models.Consultations;
-    using Models.Patients;
-
     public class MappingProfile : Profile
     {
         public MappingProfile()
         {
-            CreateMap<IdentityUser, UserDto>();
-            CreateMap<UserInformation, UserDto>();
-            CreateMap<UserInformation, UserInformationDto>();
-            CreateMap<UserInformationDto, UserDto>();
-            CreateMap<UserDto, UserInformationDto>();
-            CreateMap<UserDto, UserInformation>();
-            CreateMap<UserDto, UserDto>();
-            CreateMap<UserDto, UserInformation>();
-            CreateMap<UserInformation, UserInformationDto>();
-            CreateMap<LoginDto, IdentityUser>();
-            CreateMap<PatientDto, Patient>();
-            CreateMap<Consultation, ConsultationDto>();
+            CreateMap<AdditionalExaminationResult, AdditionalExaminationResultDto>();
+            CreateMap<AdditionalExaminationResult, AdditionalExaminationResultDto>();
+            CreateMap<AdditionalExaminationResultDto, AdditionalExaminationResult>();
+            CreateMap<AdditionalExaminationResultDto, AdditionalExaminationResult>();
+            CreateMap<AdditionalExaminationType, AdditionalExaminationTypeDto>();
+            CreateMap<AdditionalExaminationType, BaseAdditionalExaminationTypeDto>();
+            CreateMap<BaseAdditionalExaminationResultDto, AdditionalExaminationResult>();
+            CreateMap<BaseAdditionalExaminationTypeDto, AdditionalExaminationType>();
             CreateMap<BaseConsultationDto, Consultation>();
-            CreateMap<UpdateConsultationDto, Consultation>();
+            CreateMap<BaseConsultationDto, Consultation>();
+            CreateMap<BaseEpisodeDto, Episode>();
+            CreateMap<BaseExaminationTypeDto, ExaminationType>();
+            CreateMap<BaseIcpcCodeDto, IcpcCode>();
+            CreateMap<BaseIntoleranceDto, Intolerance>();
+            CreateMap<BasePatientDto, Patient>();
+            CreateMap<BasePhysicalExaminationDto, PhysicalExamination>();
+            CreateMap<BasePrescriptionDto, Prescription>();
+            CreateMap<BaseUserJournalDto, UserJournal>();
+            CreateMap<Consultation, ConsultationDto>();
             CreateMap<Consultation, CreatedConsultationDto>();
             CreateMap<Consultation, UpdateConsultationDto>();
-            CreateMap<Patient, PatientDto>();
-            CreateMap<Prescription, PrescriptionDto>();
             CreateMap<ConsultationDto, Consultation>();
-            CreateMap<PrescriptionDto, Prescription>();
-            CreateMap<Prescription, CreatedPrescriptionDto>();
-            CreateMap<UpdatePrescriptionDto, Prescription>();
-            CreateMap<Prescription, UpdatePrescriptionDto>();
-            CreateMap<Prescription, UpdatedPrescriptionDto>();
-            CreateMap<AdditionalExaminationType, BaseAdditionalExaminationTypeDto>();
-            CreateMap<BaseAdditionalExaminationTypeDto, AdditionalExaminationType>();
-            CreateMap<AdditionalExaminationType, AdditionalExaminationTypeDto>();
-            CreateMap<AdditionalExaminationResult, AdditionalExaminationResultDto>();
-            CreateMap<AdditionalExaminationResultDto, AdditionalExaminationResult>();
-            CreateMap<AdditionalExaminationResultDto, AdditionalExaminationResult>();
-            CreateMap<AdditionalExaminationResult, AdditionalExaminationResultDto>();
             CreateMap<Episode, EpisodeDto>();
             CreateMap<EpisodeDto, Episode>();
-            CreateMap<BasePrescriptionDto, Prescription>();
-            CreateMap<BaseEpisodeDto, Episode>();
-            CreateMap<BaseConsultationDto, Consultation>();
-            CreateMap<BaseAdditionalExaminationResultDto, AdditionalExaminationResult>();
+            CreateMap<ExaminationType, ExaminationTypeDto>();
+            CreateMap<ExaminationTypeDto, ExaminationType>();
+            CreateMap<IcpcCode, IcpcCodeDto>();
+            CreateMap<IcpcCodeDto, IcpcCode>();
+            CreateMap<IdentityUser, UserDto>();
+            CreateMap<Intolerance, CreatedIntoleranceDto>();
+            CreateMap<Intolerance, IntoleranceDto>();
+            CreateMap<Intolerance, UpdatedIntoleranceDto>();
+            CreateMap<LoginDto, IdentityUser>();
+            CreateMap<Patient, PatientDto>();
+            CreateMap<PatientDto, Patient>();
+            CreateMap<PhysicalExamination, PhysicalExaminationDto>();
+            CreateMap<PhysicalExaminationDto, PhysicalExamination>();
+            CreateMap<Prescription, CreatedPrescriptionDto>();
+            CreateMap<Prescription, PrescriptionDto>();
+            CreateMap<Prescription, UpdatePrescriptionDto>();
+            CreateMap<Prescription, UpdatedPrescriptionDto>();
+            CreateMap<PrescriptionDto, Prescription>();
+            CreateMap<UpdateConsultationDto, Consultation>();
+            CreateMap<UpdatePrescriptionDto, Prescription>();
+            CreateMap<UserDto, UserDto>();
+            CreateMap<UserDto, UserInformation>();
+            CreateMap<UserDto, UserInformation>();
+            CreateMap<UserDto, UserInformationDto>();
+            CreateMap<UserInformation, UserDto>();
+            CreateMap<UserInformation, UserInformationDto>();
+            CreateMap<UserInformation, UserInformationDto>();
+            CreateMap<UserInformationDto, UserDto>();
+            CreateMap<UserJournal, UserJournalDto>();
         }
     }
 }

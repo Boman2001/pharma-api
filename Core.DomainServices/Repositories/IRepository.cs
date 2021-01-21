@@ -25,8 +25,6 @@ namespace Core.DomainServices.Repositories
         Task<T> Update(T model, IdentityUser identityUser);
         Task Delete(int id, IdentityUser identityUser);
         Task Delete(T model, IdentityUser identityUser);
-        Task ForceDelete(int id);
-        Task ForceDelete(T model);
         Task Save();
         void Detach(IEnumerable<T> entities);
         void Detach(T entity);

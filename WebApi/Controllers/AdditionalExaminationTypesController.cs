@@ -7,12 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models.AdditionalExaminationTypes;
+using System.Linq;
+using System.Security.Claims;
 
 namespace WebApi.controllers
 {
-    using System.Linq;
-    using System.Security.Claims;
-
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -77,21 +76,25 @@ namespace WebApi.controllers
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            var additionalExaminationType = _mapper.Map<BaseAdditionalExaminationTypeDto, AdditionalExaminationType>(baseAdditionalExaminationTypeDto);
+            var additionalExaminationType =
+                _mapper.Map<BaseAdditionalExaminationTypeDto, AdditionalExaminationType>(
+                    baseAdditionalExaminationTypeDto);
 
             var createdAdditionalExaminationType =
                 await _additionalExaminationTypeRepository.Add(additionalExaminationType, currentUser);
 
-            var createdPrescriptionDto = _mapper.Map<AdditionalExaminationType, AdditionalExaminationTypeDto>(createdAdditionalExaminationType);
+            var additionalExaminationTypeDto =
+                _mapper.Map<AdditionalExaminationType, AdditionalExaminationTypeDto>(createdAdditionalExaminationType);
 
-            return CreatedAtAction(nameof(Post), createdPrescriptionDto);
+            return CreatedAtAction(nameof(Post), additionalExaminationTypeDto);
         }
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Put(int id, [FromBody] AdditionalExaminationTypeDto updateAdditionalExaminationTypeDto)
+        public async Task<IActionResult> Put(int id,
+            [FromBody] AdditionalExaminationTypeDto updateAdditionalExaminationTypeDto)
         {
             var additionalExaminationType = await _additionalExaminationTypeRepository.Get(id);
 
@@ -99,7 +102,7 @@ namespace WebApi.controllers
             {
                 return NotFound();
             }
-            
+
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
@@ -110,7 +113,8 @@ namespace WebApi.controllers
             var updatedAdditionalExaminationType =
                 await _additionalExaminationTypeRepository.Update(additionalExaminationType, currentUser);
 
-            var additionalExaminationTypeDto = _mapper.Map<AdditionalExaminationType, AdditionalExaminationTypeDto>(updatedAdditionalExaminationType);
+            var additionalExaminationTypeDto =
+                _mapper.Map<AdditionalExaminationType, AdditionalExaminationTypeDto>(updatedAdditionalExaminationType);
 
             return Ok(additionalExaminationTypeDto);
         }

@@ -52,7 +52,7 @@ namespace WebApi.Tests.ControllerTests
 
             MockGenericExtension.ExtendMock(fakeGenericRepo, _fakeEntities);
             FakeController = new EpisodesController(
-                IdentityRepositoryFake, 
+                IdentityRepositoryFake,
                 fakeGenericRepo.Object,
                 constulatationsMock.Object,
                 userInformationMock.Object,
@@ -64,23 +64,9 @@ namespace WebApi.Tests.ControllerTests
 
         [Trait("Category", "Get Tests")]
         [Fact]
-        public void Get_All_Episode_With_200_code()
+        public void Get_Episode_By_Id_Returns_Episode_With_200_codeAsync()
         {
-            var result = FakeController.Get(null);
-            var objectResult = (OkObjectResult) result.Result;
-            var activities = (List<EpisodeDto>) objectResult.Value;
-
-            Assert.Equal(_fakeEntities.Count, activities.Count);
-            Assert.Equal(200, objectResult.StatusCode);
-            Assert.Equal(activities[0].Description, _fakeEntities[0].Description);
-            Assert.IsType<EpisodeDto>(activities[0]);
-        }
-
-        [Trait("Category", "Get Tests")]
-        [Fact]
-        public async Task Get_Episode_By_Id_Returns_Episode_With_200_codeAsync()
-        {
-            var result = await FakeController.Get(_fakeEntities[0].Id);
+            var result = FakeController.Get(_fakeEntities[0].Id);
             var objectResult = (OkObjectResult) result.Result;
             var entity = (EpisodeDto) objectResult.Value;
 
@@ -142,13 +128,11 @@ namespace WebApi.Tests.ControllerTests
             _fakeIdentityUsers = IdentityHelper.GetIdentityUsers();
             var activity = new Episode
             {
-                Id = 1,
-                Description = "description"
+                Id = 1, Description = "description"
             };
             var activity02 = new Episode
             {
-                Id = 2,
-                Description = "description"
+                Id = 2, Description = "description"
             };
             _fakeEntities = new List<Episode>
             {
@@ -173,39 +157,27 @@ namespace WebApi.Tests.ControllerTests
 
             var type = new AdditionalExaminationType
             {
-                Name = "typename",
-                Unit = "GPS"
+                Name = "typename", Unit = "GPS"
             };
             var additional = new AdditionalExaminationResult
             {
-                Value = "value",
-                Date = DateTime.Now,
-                AdditionalExaminationType = type
+                Value = "value", Date = DateTime.Now, AdditionalExaminationType = type
             };
             var ipCode = new IcpcCode
             {
-                Name = "Name",
-                Code = "code"
+                Name = "Name", Code = "code"
             };
             var episode = new Episode
             {
-                Description = "Description",
-                Priority = 10,
-                Patient = patient,
-                IcpcCode = ipCode
+                Description = "Description", Priority = 10, Patient = patient, IcpcCode = ipCode
             };
             var intolerance = new Intolerance
             {
-                Description = "descrption",
-                EndDate = DateTime.Now,
-                StartDate = DateTime.Now,
-                Patient = patient
+                Description = "descrption", EndDate = DateTime.Now, StartDate = DateTime.Now, Patient = patient
             };
-            var physical = new PhysicalExamination()
+            var physical = new PhysicalExamination
             {
-                Value = "physical",
-                Date = DateTime.Now,
-                Patient = patient
+                Value = "physical", Date = DateTime.Now, Patient = patient
             };
             var consultation = new Consultation
             {
@@ -242,10 +214,9 @@ namespace WebApi.Tests.ControllerTests
             {
                 patient
             };
-            var code = new IcpcCode()
+            var code = new IcpcCode
             {
-                Code = "code",
-                Name = "name"
+                Code = "code", Name = "name"
             };
 
             _icpcCodes = new List<IcpcCode>

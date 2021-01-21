@@ -96,7 +96,7 @@ namespace WebApi.Tests.ControllerTests
         public async Task Given_Correct_User_Adds_User_And_Returns_200()
         {
             var lengthBefore = _fakeUsersInformation.Count;
-            var user = new NewUserDto
+            var user = new CreateUserDto
             {
                 Email = "emailTwdo@gmail.com",
                 PhoneNumber = "3145142",
@@ -123,7 +123,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Given_Email_Already_In_Use_Gives_400()
         {
-            var user = new NewUserDto
+            var user = new CreateUserDto
             {
                 Email = _fakeUser01.Email, Password = _fakeUser01.PasswordHash
             };
@@ -143,7 +143,7 @@ namespace WebApi.Tests.ControllerTests
         public async Task Given_Correct_User_Updates_User()
         {
             var count = _fakeIdentityUsers.Count;
-            var postUserDto = new NewUserDto
+            var postUserDto = new CreateUserDto
             {
                 Email = "emailTwo@gmail.com", Password = "Password"
             };

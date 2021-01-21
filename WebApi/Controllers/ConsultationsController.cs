@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Domain.Models;
 using Core.DomainServices.Repositories;
@@ -6,16 +8,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models.Patients;
+using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using System.Linq;
+using System.Security.Claims;
+using WebApi.Models.Consultations;
+using WebApi.Models.Users;
 
 namespace WebApi.controllers
 {
-    using AutoMapper;
-    using Microsoft.AspNetCore.Identity;
-    using Models.Consultations;
-    using Models.Users;
-    using System.Linq;
-    using System.Security.Claims;
-
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -43,12 +44,40 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<IEnumerable<Consultation>>> Get()
+        public async Task<ActionResult<IEnumerable<Consultation>>> Get([FromQuery] string? userId,
+            [FromQuery] DateTime? date)
         {
-            var consultations = _consultationRepository.Get(new[]
+            IEnumerable<Consultation> consultations;
+
+            if (userId != null && date != null)
             {
-                "Patient"
-            });
+                consultations = _consultationRepository.Get(
+                    c => c.DoctorId.ToString() == userId && c.Date.Date == date.Value.Date, new[]
+                    {
+                        "Patient"
+                    });
+            }
+            else if (userId != null)
+            {
+                consultations = _consultationRepository.Get(c => c.DoctorId.ToString() == userId, new[]
+                {
+                    "Patient"
+                });
+            }
+            else if (date != null)
+            {
+                consultations = _consultationRepository.Get(c => c.Date.Date == date.Value.Date, new[]
+                {
+                    "Patient"
+                });
+            }
+            else
+            {
+                consultations = _consultationRepository.Get(new[]
+                {
+                    "Patient"
+                });
+            }
 
             var consultationsDtos = new List<ConsultationDto>();
 
@@ -148,7 +177,7 @@ namespace WebApi.controllers
             if (createConsultationDto.PatientId != null)
             {
                 var patient = await _patientRepository.Get(createConsultationDto.PatientId.Value);
-            
+
                 if (patient == null)
                 {
                     return BadRequest("Patiënt bestaat niet.");
@@ -179,7 +208,7 @@ namespace WebApi.controllers
             {
                 return NotFound();
             }
-            
+
             var doctor = await _identityRepository.GetUserById(updateConsultationDto.DoctorId.ToString());
 
             if (doctor == null)
@@ -190,7 +219,7 @@ namespace WebApi.controllers
             if (updateConsultationDto.PatientId != null)
             {
                 var patient = await _patientRepository.Get(updateConsultationDto.PatientId.Value);
-            
+
                 if (patient == null)
                 {
                     return BadRequest("Patient bestaat niet.");

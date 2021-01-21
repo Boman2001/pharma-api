@@ -46,9 +46,9 @@ namespace WebApi.Tests
                 new Claim(ClaimTypes.Name, identity.Id), new Claim(ClaimTypes.Sid, identity.Id)
             }, "mock"));
 
-            FakeController.ControllerContext = new ControllerContext()
+            FakeController.ControllerContext = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext()
+                HttpContext = new DefaultHttpContext
                 {
                     User = user
                 }
@@ -84,7 +84,7 @@ namespace WebApi.Tests
                 PhoneNumberConfirmed = true,
                 NormalizedUserName = "M@GMAIL.COM",
                 NormalizedEmail = "M@GMAIL.COM",
-                EmailConfirmed = true,
+                EmailConfirmed = true
             };
 
             _fakeIdentityUsers = new List<IdentityUser>
