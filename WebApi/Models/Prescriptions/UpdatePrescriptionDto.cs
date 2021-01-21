@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace WebApi.Models.Prescriptions
+﻿namespace WebApi.Models.Prescriptions
 {
     public class UpdatePrescriptionDto : BasePrescriptionDto
     {

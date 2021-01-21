@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -10,7 +9,6 @@ using Core.Domain.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using WebApi.Models.AdditionalExaminationResults;
 using WebApi.Models.Episodes;
 using Xunit;
 using Xunit.Extensions.Ordering;
@@ -83,7 +81,7 @@ namespace WebApi.IntegrationTests
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
 
 
-            var c = new EpisodeDto()
+            var c = new EpisodeDto
             {
                 Description = "NewDesc",
                 ConsultationId = 1,
@@ -100,52 +98,10 @@ namespace WebApi.IntegrationTests
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var result = _client.PostAsync("/api/Episodes/", content).Result;
-            var readAsStringAsync = result.Content.ReadAsStringAsync();
+            result.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.Created, result.StatusCode);
         }
-
-        // [Fact, Order(4)]
-        // public async Task Update_episodes_And_test_If_User_Changed()
-        // {
-        //     var environmentVariable = Environment.GetEnvironmentVariable("Episode");
-        //     var jObject = JObject.Parse(environmentVariable);
-        //     var dto = jObject.ToObject<EpisodeDto>();
-        //
-        //     var update = new EpisodeDto
-        //     {
-        //         Description = "NewDescc",
-        //         ConsultationId = 1,
-        //         PatientId = 1,
-        //         EndDate = DateTime.Now,
-        //         StartDate = DateTime.Now,
-        //         Priority = 10,
-        //         IcpcCodeId = 1
-        //     };
-        //
-        //     var serialize = JsonConvert.SerializeObject(update);
-        //     var content = new StringContent(serialize, Encoding.UTF8, "application/json");
-        //
-        //     var defaultPage = await _client.PutAsync("/api/Episodes/" + dto.Id, content);
-        //     var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
-        //     var json = readAsStringAsync.Result;
-        //     var u = JObject.Parse(json);
-        //     var user = u.ToObject<EpisodeDto>();
-        //
-        //
-        //     var defaultPager = await _client.GetAsync("/api/Episodes/" + dto.Id);
-        //     var asStringAsync = defaultPager.Content.ReadAsStringAsync();
-        //     var result = asStringAsync.Result;
-        //     var parsedJObject = JObject.Parse(result);
-        //     var userDto = parsedJObject.ToObject<EpisodeDto>();
-        //
-        //     Assert.Equal(HttpStatusCode.OK, defaultPager.StatusCode);
-        //     Assert.NotNull(environmentVariable);
-        //     Assert.IsType<EpisodeDto>(userDto);
-        //     Assert.Equal(update.Description, userDto.Description);
-        //     Assert.Equal(HttpStatusCode.OK, defaultPage.StatusCode);
-        //     Assert.NotNull(user);
-        // }
 
         [Fact, Order(4)]
         public async Task Given_Invalid_Data_Update_Return_Bad_Request()
@@ -156,7 +112,7 @@ namespace WebApi.IntegrationTests
 
             var content = new StringContent("test", Encoding.UTF8, "application/json");
 
-            var defaultPage = await _client.PutAsync("/api/Episodes/" + userDto.Id.ToString(), content);
+            var defaultPage = await _client.PutAsync("/api/Episodes/" + userDto.Id, content);
             var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
@@ -174,7 +130,7 @@ namespace WebApi.IntegrationTests
 
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
-            var defaultPage = await _client.DeleteAsync("/api/Episodes/" + userDto.Id.ToString());
+            var defaultPage = await _client.DeleteAsync("/api/Episodes/" + userDto.Id);
 
             Assert.Equal(HttpStatusCode.NoContent, defaultPage.StatusCode);
         }

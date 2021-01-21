@@ -1,5 +1,4 @@
-﻿using Core.Domain.Models;
-using WebApi.Models.IcpcCodes;
+﻿using WebApi.Models.IcpcCodes;
 
 namespace WebApi.Models.Episodes
 {

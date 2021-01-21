@@ -8,12 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models.PhysicalExaminations;
 using WebApi.Models.ExaminationTypes;
+using System.Linq;
+using System.Security.Claims;
 
 namespace WebApi.Controllers
 {
-    using System.Linq;
-    using System.Security.Claims;
-
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]

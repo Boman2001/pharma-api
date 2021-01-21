@@ -1,8 +1,7 @@
-﻿namespace WebApi.Models.Users
-{
-    using System;
-    using System.ComponentModel.DataAnnotations;
+﻿using System;
 
+namespace WebApi.Models.Users
+{
     public class UpdateUserDto : BaseUserDto
     {
         public Guid Id { get; set; }

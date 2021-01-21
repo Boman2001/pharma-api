@@ -11,12 +11,11 @@ using WebApi.Models.Consultations;
 using WebApi.Models.Intolerances;
 using WebApi.Models.Patients;
 using WebApi.Models.Users;
+using System.Linq;
+using System.Security.Claims;
 
 namespace WebApi.controllers
 {
-    using System.Linq;
-    using System.Security.Claims;
-
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -173,7 +172,7 @@ namespace WebApi.controllers
             if (createIntoleranceDto.PatientId != null)
             {
                 var patient = await _patientRepository.Get(createIntoleranceDto.PatientId.Value);
-            
+
                 if (patient == null)
                 {
                     return BadRequest("Patient bestaat niet.");
