@@ -53,7 +53,7 @@ namespace WebApi.controllers
             {
                 episodes = _episodeRepository.Get(e =>
                         e.PatientId == patientId.Value &&
-                        e.EndDate.Value.Date < consultDate.Value.Date,
+                        e.EndDate.Value.Date <= consultDate.Value.Date,
                     new[]
                     {
                         "IcpcCode"
@@ -65,7 +65,7 @@ namespace WebApi.controllers
                 episodes = _episodeRepository.Get(e =>
                         e.PatientId == patientId.Value &&
                         e.StartDate.Date <= consultDate.Value.Date &&
-                        (e.EndDate.Value.Date >= consultDate.Value.Date || e.EndDate == null),
+                        (e.EndDate.Value.Date > consultDate.Value.Date || e.EndDate == null),
                     new[]
                     {
                         "IcpcCode"
