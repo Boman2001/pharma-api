@@ -10,6 +10,7 @@ using WebApi.Models.ExaminationTypes;
 using WebApi.Models.IcpcCodes;
 using WebApi.Models.PhysicalExaminations;
 using WebApi.Models.Prescriptions;
+using WebApi.Models.UserJournals;
 using WebApi.Models.Users;
 
 namespace WebApi.Mappings
@@ -35,7 +36,9 @@ namespace WebApi.Mappings
             CreateMap<BaseExaminationTypeDto, ExaminationType>();
             CreateMap<BaseIcpcCodeDto, IcpcCode>();
             CreateMap<BaseIntoleranceDto, Intolerance>();
+            CreateMap<BasePhysicalExaminationDto, PhysicalExamination>();
             CreateMap<BasePrescriptionDto, Prescription>();
+            CreateMap<BaseUserJournalDto, UserJournal>();
             CreateMap<Consultation, ConsultationDto>();
             CreateMap<Consultation, CreatedConsultationDto>();
             CreateMap<Consultation, UpdateConsultationDto>();
@@ -53,6 +56,8 @@ namespace WebApi.Mappings
             CreateMap<LoginDto, IdentityUser>();
             CreateMap<Patient, PatientDto>();
             CreateMap<PatientDto, Patient>();
+            CreateMap<PhysicalExamination, PhysicalExaminationDto>();
+            CreateMap<PhysicalExaminationDto, PhysicalExamination>();
             CreateMap<Prescription, CreatedPrescriptionDto>();
             CreateMap<Prescription, PrescriptionDto>();
             CreateMap<Prescription, UpdatePrescriptionDto>();
@@ -68,9 +73,8 @@ namespace WebApi.Mappings
             CreateMap<UserInformation, UserInformationDto>();
             CreateMap<UserInformation, UserInformationDto>();
             CreateMap<UserInformationDto, UserDto>();
-            CreateMap<PhysicalExamination, PhysicalExaminationDto>();
-            CreateMap<PhysicalExaminationDto, PhysicalExamination>();
-            CreateMap<BasePhysicalExaminationDto, PhysicalExamination>();
+            CreateMap<UserJournal, UserJournalDto>();
+            CreateMap<BasePatientDto, Patient>();
         }
     }
 }

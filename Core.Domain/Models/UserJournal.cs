@@ -1,4 +1,6 @@
-﻿namespace Core.Domain.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Core.Domain.Models
 {
     public class UserJournal : BaseEntity
     {
@@ -6,9 +8,9 @@
         public int Property { get; set; }
 
         public int ConsultationId { get; set; }
-        public Consultation Consultation { get; set; }
+        [JsonIgnore] public Consultation Consultation { get; set; }
 
         public int PatientId { get; set; }
-        public Patient Patient { get; set; }
+        [JsonIgnore] public Patient Patient { get; set; }
     }
 }

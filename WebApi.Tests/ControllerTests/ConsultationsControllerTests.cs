@@ -44,12 +44,14 @@ namespace WebApi.Tests.ControllerTests
             IdentityRepositoryFake = new IdentityRepository(userManager, signInManager, config);
             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_fakeEntities);
             var patientRepo = MockGenericRepository.GetUserInformationMock(_patients);
-            var fakeGenericRepoUserInformationMock = MockGenericRepository.GetUserInformationMock(_fakeUsersInformation);
+            var fakeGenericRepoUserInformationMock =
+                MockGenericRepository.GetUserInformationMock(_fakeUsersInformation);
             MockUserExtension.ExtendMock(fakeGenericRepoUserInformationMock, _fakeUsersInformation);
 
             MockGenericExtension.ExtendMock(fakeGenericRepo, _fakeEntities);
 
-            FakeController = new ConsultationsController(IdentityRepositoryFake, fakeGenericRepo.Object, fakeGenericRepoUserInformationMock.Object,
+            FakeController = new ConsultationsController(IdentityRepositoryFake, fakeGenericRepo.Object,
+                fakeGenericRepoUserInformationMock.Object,
                 patientRepo.Object,
                 mapper);
 
@@ -60,7 +62,7 @@ namespace WebApi.Tests.ControllerTests
         [Fact]
         public async Task Get_All_Consultations_With_200_codeAsync()
         {
-            var result = await FakeController.Get(null);
+            var result = await FakeController.Get(null, null);
             var objectResult = (OkObjectResult) result.Result;
 
             Assert.Equal(200, objectResult.StatusCode);
@@ -166,39 +168,27 @@ namespace WebApi.Tests.ControllerTests
 
             var type = new AdditionalExaminationType
             {
-                Name = "typename",
-                Unit = "GPS"
+                Name = "typename", Unit = "GPS"
             };
             var additional = new AdditionalExaminationResult
             {
-                Value = "value",
-                Date = DateTime.Now,
-                AdditionalExaminationType = type
+                Value = "value", Date = DateTime.Now, AdditionalExaminationType = type
             };
             var ipCode = new IcpcCode
             {
-                Name = "Name",
-                Code = "code"
+                Name = "Name", Code = "code"
             };
             var episode = new Episode
             {
-                Description = "Description",
-                Priority = 10,
-                Patient = patient,
-                IcpcCode = ipCode
+                Description = "Description", Priority = 10, Patient = patient, IcpcCode = ipCode
             };
             var intolerance = new Intolerance
             {
-                Description = "descrption",
-                EndDate = DateTime.Now,
-                StartDate = DateTime.Now,
-                Patient = patient
+                Description = "descrption", EndDate = DateTime.Now, StartDate = DateTime.Now, Patient = patient
             };
             var physical = new PhysicalExamination()
             {
-                Value = "physical",
-                Date = DateTime.Now,
-                Patient = patient
+                Value = "physical", Date = DateTime.Now, Patient = patient
             };
             var consultation = new Consultation
             {

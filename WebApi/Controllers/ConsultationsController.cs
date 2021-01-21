@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Domain.Models;
@@ -44,13 +45,29 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<IEnumerable<Consultation>>> Get([FromQuery] string? userId)
+        public async Task<ActionResult<IEnumerable<Consultation>>> Get([FromQuery] string? userId,
+            [FromQuery] DateTime? date)
         {
             IEnumerable<Consultation> consultations;
 
-            if (userId != null)
+            if (userId != null && date != null)
+            {
+                consultations = _consultationRepository.Get(
+                    c => c.DoctorId.ToString() == userId && c.Date.Date == date.Value.Date, new[]
+                    {
+                        "Patient"
+                    });
+            }
+            else if (userId != null)
             {
                 consultations = _consultationRepository.Get(c => c.DoctorId.ToString() == userId, new[]
+                {
+                    "Patient"
+                });
+            }
+            else if (date != null)
+            {
+                consultations = _consultationRepository.Get(c => c.Date.Date == date.Value.Date, new[]
                 {
                     "Patient"
                 });
