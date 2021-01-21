@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Core.Domain.Models
 {
@@ -8,12 +9,12 @@ namespace Core.Domain.Models
         public DateTime Date { get; set; }
 
         public int ConsultationId { get; set; }
-        public Consultation Consultation { get; set; }
+        [JsonIgnore]    public Consultation Consultation { get; set; }
 
         public int PatientId { get; set; }
-        public Patient Patient { get; set; }
+        [JsonIgnore]    public Patient Patient { get; set; }
 
         public int ExaminationTypeId { get; set; }
-        public ExaminationType ExaminationType { get; set; }
+        [JsonIgnore]     public ExaminationType ExaminationType { get; set; }
     }
 }
