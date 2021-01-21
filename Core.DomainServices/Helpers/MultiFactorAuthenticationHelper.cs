@@ -52,10 +52,10 @@ namespace Core.DomainServices.Helpers
             }
 
             var result = new StringBuilder();
-            int currentPosition = 0;
+            var currentPosition = 0;
             while (currentPosition + 4 < unformattedKey.Length)
             {
-                result.Append(unformattedKey.Substring(currentPosition, 4)).Append(" ");
+                result.Append(unformattedKey.Substring(currentPosition, 4)).Append(' ');
                 currentPosition += 4;
             }
 
@@ -84,10 +84,8 @@ namespace Core.DomainServices.Helpers
             {
                 return await _identityRepository.GetTokenForTwoFactor(user);
             }
-            else
-            {
-                throw new Exception("Ongeldige 2-fa");
-            }
+
+            throw new ArgumentException("Ongeldige 2-fa.");
         }
     }
 }

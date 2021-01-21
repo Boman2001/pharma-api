@@ -39,11 +39,11 @@ namespace WebApi.Tests.Mocks
                 );
 
            mgr.Setup(x => x.GetAuthenticatorKeyAsync(It.IsAny<IdentityUser>()))
-               .ReturnsAsync((string b) => "value");
+               .ReturnsAsync((string _) => "value");
             mgr.Setup(x => x.Users).Returns(ls.AsQueryable());
 
             mgr.Setup(x => x.GetRolesAsync(It.IsAny<IdentityUser>()))
-                .ReturnsAsync((IdentityUser user) => new List<string>() {"Admin"}.ToList());
+                .ReturnsAsync((IdentityUser _) => new List<string> {"Admin"}.ToList());
 
             return mgr;
         }

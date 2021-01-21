@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Domain.Enums;
 using Core.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -90,7 +89,7 @@ namespace WebApi.IntegrationTests
                 NormalizedUserName = "M@GMAIL.COM",
                 Email = "m@gmail.com",
                 NormalizedEmail = "M@GMAIL.COM",
-                EmailConfirmed = true,
+                EmailConfirmed = true
             };
 
 
@@ -130,7 +129,7 @@ namespace WebApi.IntegrationTests
             var c = new Consultation
             {
                 Id = 1,
-                Date = DateTime.Now,
+                Date = DateTime.Now
             };
 
             var serialize = JsonConvert.SerializeObject(c);
@@ -157,7 +156,7 @@ namespace WebApi.IntegrationTests
                 Comments = "commentscomments",
                 DoctorId = Guid.Parse(dto.Doctor.Id),
                 PatientId = dto.Patient.Id,
-                Date = DateTime.Now,
+                Date = DateTime.Now
             };
 
             var serialize = JsonConvert.SerializeObject(update);
@@ -193,7 +192,7 @@ namespace WebApi.IntegrationTests
 
             var content = new StringContent("test", Encoding.UTF8, "application/json");
 
-            var defaultPage = await _client.PutAsync("/api/consultations/" + userDto.Id.ToString(), content);
+            var defaultPage = await _client.PutAsync("/api/consultations/" + userDto.Id, content);
             var readAsStringAsync = defaultPage.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.BadRequest, defaultPage.StatusCode);
@@ -211,7 +210,7 @@ namespace WebApi.IntegrationTests
 
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", tokenEnvironmentVariable);
-            var defaultPage = await _client.DeleteAsync("/api/consultations/" + udser.Id.ToString());
+            var defaultPage = await _client.DeleteAsync("/api/consultations/" + udser.Id);
 
             Assert.Equal(HttpStatusCode.NoContent, defaultPage.StatusCode);
         }

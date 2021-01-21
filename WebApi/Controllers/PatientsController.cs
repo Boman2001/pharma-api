@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Domain.Models;
 using Core.DomainServices.Helpers;
@@ -8,14 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using AutoMapper;
+using System.Linq;
+using System.Security.Claims;
+using WebApi.Models.Patients;
 
 namespace WebApi.controllers
 {
-    using AutoMapper;
-    using Models.Patients;
-    using System.Linq;
-    using System.Security.Claims;
-
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -23,17 +21,15 @@ namespace WebApi.controllers
     public class PatientsController : ControllerBase
     {
         private readonly IIdentityRepository _identityRepository;
-        private readonly PatientHelper _patientHelper;
         private readonly IRepository<Patient> _patientRepository;
         private readonly IMapper _mapper;
 
-        public PatientsController(IRepository<Patient> patientRepository, IConfiguration config,
-            IIdentityRepository identityRepository, IMapper mapper)
+        public PatientsController(IRepository<Patient> patientRepository, IIdentityRepository identityRepository,
+            IMapper mapper)
         {
             _patientRepository = patientRepository;
             _identityRepository = identityRepository;
             _mapper = mapper;
-            _patientHelper = new PatientHelper(config);
         }
 
         [HttpGet]
@@ -42,7 +38,11 @@ namespace WebApi.controllers
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<Patient>> Get()
         {
-            return Ok(_patientRepository.Get());
+            var patients = _patientRepository.Get();
+
+            var patientDtos = patients.Select(patient => _mapper.Map<Patient, PatientDto>(patient)).ToList();
+
+            return Ok(patientDtos);
         }
 
         [HttpGet("{id}")]
@@ -53,7 +53,14 @@ namespace WebApi.controllers
         {
             var patient = await _patientRepository.Get(id);
 
-            return patient != null ? (ActionResult<Patient>)Ok(patient) : NotFound();
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            var patientDto = _mapper.Map<Patient, PatientDto>(patient);
+
+            return Ok(patientDto);
         }
 
         [HttpPost]
@@ -61,47 +68,45 @@ namespace WebApi.controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<Patient>> Post([FromBody] PatientDto patientDto)
+        public async Task<ActionResult<Patient>> Post([FromBody] BasePatientDto basePatientDto)
         {
-            patientDto.Id = 0;
-
-            Patient createdPatient;
-
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
 
-            try
-            {
-                var patient = _mapper.Map<PatientDto, Patient>(patientDto);
-                
-                createdPatient = await _patientHelper.AddLatLongToPatient(patient);
-                createdPatient = await _patientRepository.Add(createdPatient, currentUser);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(new
-                {
-                    message = e.Message
-                });
-            }
+            var patient = _mapper.Map<BasePatientDto, Patient>(basePatientDto);
 
-            return CreatedAtAction(nameof(Post), null, createdPatient);
+            var createdPatient = await _patientRepository.Add(patient, currentUser);
+
+            var createdPrescriptionDto = _mapper.Map<Patient, PatientDto>(createdPatient);
+
+            return CreatedAtAction(nameof(Post), createdPrescriptionDto);
         }
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Put(int id, [FromBody] Patient patient)
+        public async Task<IActionResult> Put(int id, [FromBody] BasePatientDto updatePatientDto)
         {
+            var patient = await _patientRepository.Get(id);
+
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
             var userId = User.Claims.First(u => u.Type == ClaimTypes.Sid).Value;
             var currentUser = await _identityRepository.GetUserById(userId);
+
+            _mapper.Map(updatePatientDto, patient);
 
             patient.Id = id;
 
             var updatedPatient = await _patientRepository.Update(patient, currentUser);
 
-            return Ok(updatedPatient);
+            var patientDto = _mapper.Map<Patient, PatientDto>(updatedPatient);
+
+            return Ok(patientDto);
         }
 
         [HttpDelete("{id}")]

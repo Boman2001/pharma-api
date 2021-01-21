@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace WebApi.Models.Intolerances
+﻿namespace WebApi.Models.Intolerances
 {
     public class UpdateIntoleranceDto : BaseIntoleranceDto
     {

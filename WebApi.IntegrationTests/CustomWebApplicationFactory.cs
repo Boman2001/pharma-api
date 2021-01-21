@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Domain.Enums;
+using Core.Domain.Interfaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -92,17 +93,16 @@ namespace WebApi.IntegrationTests
             });
         }
 
-
-        public void InitializeDbForTests(SecurityDbContext db, ApplicationDbContext dbdata)
+        private void InitializeDbForTests(SecurityDbContext db, ApplicationDbContext dbdata)
         {
-            var geAdditional = getAdditionalExaminationTypes();
+            var geAdditional = GetAdditionalExaminationTypes();
             var activities = GetActivities();
-            var additionalExamination = getAdditionalExaminationResults(geAdditional[0]);
-            var icpcCode = getIcpcCodes();
-            var patients = getPatients();
-            var episodes = getEpisodes(patients[0], icpcCode[0]);
+            var additionalExamination = GetAdditionalExaminationResults(geAdditional[0]);
+            var icpcCode = GetIcpcCodes();
+            var patients = GetPatients();
+            var episodes = GetEpisodes(patients[0], icpcCode[0]);
             var constultations = GetConsultations(additionalExamination[0], episodes[0]);
-            var prescription = getPrescriptions(constultations[0], patients[0]);
+            var prescription = GetPrescriptions(constultations[0], patients[0]);
             db.Users.AddRange(_users);
             db.SaveChanges();
             dbdata.UserInformation.AddRange(_userInformations);
@@ -115,7 +115,7 @@ namespace WebApi.IntegrationTests
             dbdata.SaveChanges();
         }
 
-        private List<AdditionalExaminationResult> getAdditionalExaminationResults(AdditionalExaminationType type)
+        private static List<AdditionalExaminationResult> GetAdditionalExaminationResults(AdditionalExaminationType type)
         {
             var additional = new AdditionalExaminationResult
             {
@@ -123,10 +123,10 @@ namespace WebApi.IntegrationTests
                 Date = DateTime.Now,
                 AdditionalExaminationType = type
             };
-            return new List<AdditionalExaminationResult>() {additional};
+            return new List<AdditionalExaminationResult> {additional};
         }
 
-        private List<AdditionalExaminationType> getAdditionalExaminationTypes()
+        private static List<AdditionalExaminationType> GetAdditionalExaminationTypes()
         {
             var type = new AdditionalExaminationType
             {
@@ -141,20 +141,20 @@ namespace WebApi.IntegrationTests
                 Name = "nam3e",
                 Unit = "uni3t"
             };
-            return new List<AdditionalExaminationType>() {type, typee};
+            return new List<AdditionalExaminationType> {type, typee};
         }
 
-        private List<IcpcCode> getIcpcCodes()
+        private static List<IcpcCode> GetIcpcCodes()
         {
             var ipCode = new IcpcCode
             {
                 Name = "Name",
                 Code = "code"
             };
-            return new List<IcpcCode>() {ipCode};
+            return new List<IcpcCode> {ipCode};
         }
 
-        private List<Prescription> getPrescriptions(Consultation cons, Patient pa)
+        private static IEnumerable<Prescription> GetPrescriptions(IEntity cons, IEntity pa)
         {
             var ap = new Prescription
             {
@@ -165,10 +165,10 @@ namespace WebApi.IntegrationTests
                 ConsultationId = cons.Id,
                 PatientId = pa.Id
             };
-            return new List<Prescription>() {ap};
+            return new List<Prescription> {ap};
         }
 
-        private List<Episode> getEpisodes(Patient p, IcpcCode icpcCode)
+        private static List<Episode> GetEpisodes(Patient p, IcpcCode icpcCode)
         {
             var ep = new Episode
             {
@@ -177,10 +177,10 @@ namespace WebApi.IntegrationTests
                 Patient = p,
                 IcpcCode = icpcCode
             };
-            return new List<Episode>() {ep};
+            return new List<Episode> {ep};
         }
 
-        private List<Patient> getPatients()
+        private static List<Patient> GetPatients()
         {
             var p = new Patient
             {
@@ -199,7 +199,7 @@ namespace WebApi.IntegrationTests
                 Country = "Netherlands"
             };
 
-            return new List<Patient>() {p};
+            return new List<Patient> {p};
         }
 
         private List<Consultation> GetConsultations(AdditionalExaminationResult additional, Episode ep)
@@ -228,11 +228,11 @@ namespace WebApi.IntegrationTests
                 StartDate = DateTime.Now,
                 Patient = p
             };
-            var physical = new PhysicalExamination()
+            var physical = new PhysicalExamination
             {
                 Value = "physical",
                 Date = DateTime.Now,
-                Patient = p,
+                Patient = p
             };
             var c = new Consultation
             {
@@ -243,27 +243,27 @@ namespace WebApi.IntegrationTests
                 Doctor = _users[0],
                 PatientId = p.Id,
                 Patient = p,
-                AdditionalExaminationResults = new List<AdditionalExaminationResult>()
+                AdditionalExaminationResults = new List<AdditionalExaminationResult>
                 {
                     additional
                 },
-                Episodes = new List<Episode>()
+                Episodes = new List<Episode>
                 {
                     ep
                 },
-                Intolerances = new List<Intolerance>()
+                Intolerances = new List<Intolerance>
                 {
                     intolerances
                 },
-                PhysicalExaminations = new List<PhysicalExamination>()
+                PhysicalExaminations = new List<PhysicalExamination>
                 {
                     physical
                 }
             };
-            return new List<Consultation>() {c};
+            return new List<Consultation> {c};
         }
 
-        private List<Activity> GetActivities()
+        private static IEnumerable<Activity> GetActivities()
         {
             var activities = new List<Activity>();
             var activity = new Activity
@@ -299,7 +299,7 @@ namespace WebApi.IntegrationTests
                 NormalizedUserName = "M@GMAIL.COM",
                 Email = "m@gmail.com",
                 NormalizedEmail = "M@GMAIL.COM",
-                EmailConfirmed = true,
+                EmailConfirmed = true
             };
 
             var user1 = new IdentityUser
@@ -311,7 +311,7 @@ namespace WebApi.IntegrationTests
                 NormalizedUserName = "M1@GMAIL.COM",
                 Email = "m1@gmail.com",
                 NormalizedEmail = "M1@GMAIL.COM",
-                EmailConfirmed = true,
+                EmailConfirmed = true
             };
 
             var user2 = new IdentityUser
@@ -323,7 +323,7 @@ namespace WebApi.IntegrationTests
                 NormalizedUserName = "M2@GMAIL.COM",
                 Email = "m2@gmail.com",
                 NormalizedEmail = "M2@GMAIL.COM",
-                EmailConfirmed = true,
+                EmailConfirmed = true
             };
             user1.PasswordHash = passwordHasher.HashPassword(user1, "password");
             user2.PasswordHash = passwordHasher.HashPassword(user2, "password");

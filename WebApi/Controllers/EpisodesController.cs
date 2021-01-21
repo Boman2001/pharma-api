@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core.Domain.Models;
@@ -10,12 +9,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models.Episodes;
 using WebApi.Models.IcpcCodes;
+using System.Linq;
+using System.Security.Claims;
+
 
 namespace WebApi.controllers
 {
-    using System.Linq;
-    using System.Security.Claims;
-
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -54,7 +53,7 @@ namespace WebApi.controllers
             {
                 episodes = _episodeRepository.Get(e =>
                         e.PatientId == patientId.Value &&
-                        (e.EndDate.Value.Date < consultDate.Value.Date),
+                        e.EndDate.Value.Date < consultDate.Value.Date,
                     new[]
                     {
                         "IcpcCode"
@@ -97,9 +96,9 @@ namespace WebApi.controllers
                     "IcpcCode"
                 });
             }
-            
+
             var episodeDtos = new List<EpisodeDto>();
-            
+
             foreach (var episode in episodes)
             {
                 var episodeDto = _mapper.Map<Episode, EpisodeDto>(episode);
@@ -109,7 +108,7 @@ namespace WebApi.controllers
 
                 episodeDtos.Add(episodeDto);
             }
-            
+
             return Ok(episodeDtos);
         }
 
@@ -131,7 +130,7 @@ namespace WebApi.controllers
 
             var episodeDto = _mapper.Map<Episode, EpisodeDto>(episode);
             var icpcCodeDto = _mapper.Map<IcpcCode, IcpcCodeDto>(episode.IcpcCode);
-            
+
             episodeDto.IcpcCode = icpcCodeDto;
 
             return Ok(episodeDto);

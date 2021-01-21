@@ -144,7 +144,7 @@ namespace Infrastructure.Repositories
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
                 CreatedBy = guid,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.Now
             });
 
             await Save();
@@ -185,7 +185,7 @@ namespace Infrastructure.Repositories
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
                 CreatedBy = guid,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.Now
             });
 
             await Save();
@@ -226,7 +226,7 @@ namespace Infrastructure.Repositories
                 SubjectId = entity.Id,
                 SubjectType = typeof(T).ToString(),
                 CreatedBy = guid,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.Now
             });
 
             await Save();
@@ -263,30 +263,6 @@ namespace Infrastructure.Repositories
                 CreatedAt = DateTime.Now
             });
 
-            await Save();
-        }
-
-        public async Task ForceDelete(int id)
-        {
-            var entity = await Get(id);
-
-            if (entity == null)
-            {
-                return;
-            }
-
-            _dbSet.Remove(entity);
-            await Save();
-        }
-
-        public async Task ForceDelete(T entity)
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
-            _dbSet.Remove(entity);
             await Save();
         }
 

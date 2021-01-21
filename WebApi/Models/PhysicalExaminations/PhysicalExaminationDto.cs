@@ -1,5 +1,4 @@
-﻿using WebApi.Models.AdditionalExaminationTypes;
-using WebApi.Models.ExaminationTypes;
+﻿using WebApi.Models.ExaminationTypes;
 
 namespace WebApi.Models.PhysicalExaminations
 {
