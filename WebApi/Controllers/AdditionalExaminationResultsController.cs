@@ -168,8 +168,15 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id,
-            [FromBody] AdditionalExaminationResultDto updateAdditionalExaminationResultDto)
+            [FromBody] BaseAdditionalExaminationResultDto updateAdditionalExaminationResultDto)
         {
+            var additionalExaminationType = await _additionalExaminationTypeRepository.Get(id);
+
+            if (additionalExaminationType == null)
+            {
+                return NotFound();
+            }
+
             var additionalExaminationResult = await _additionalExaminationResultRepository.Get(id);
 
             if (additionalExaminationResult == null)
@@ -195,19 +202,6 @@ namespace WebApi.Controllers
                 if (patient == null)
                 {
                     return BadRequest("Patiënt bestaat niet.");
-                }
-            }
-
-            if (updateAdditionalExaminationResultDto
-                .AdditionalExaminationTypeId != null)
-            {
-                var additionalExaminationType =
-                    await _additionalExaminationTypeRepository.Get(updateAdditionalExaminationResultDto
-                        .AdditionalExaminationTypeId.Value);
-
-                if (additionalExaminationType == null)
-                {
-                    return NotFound();
                 }
             }
 
