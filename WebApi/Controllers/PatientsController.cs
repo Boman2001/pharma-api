@@ -23,13 +23,15 @@ namespace WebApi.controllers
         private readonly IIdentityRepository _identityRepository;
         private readonly IRepository<Patient> _patientRepository;
         private readonly IMapper _mapper;
+        private PatientHelper _patientHelper;
 
         public PatientsController(IRepository<Patient> patientRepository, IIdentityRepository identityRepository,
-            IMapper mapper)
+            IMapper mapper, IConfiguration configuration)
         {
             _patientRepository = patientRepository;
             _identityRepository = identityRepository;
             _mapper = mapper;
+            _patientHelper = new PatientHelper(configuration);
         }
 
         [HttpGet]
@@ -75,7 +77,9 @@ namespace WebApi.controllers
 
             var patient = _mapper.Map<BasePatientDto, Patient>(basePatientDto);
 
-            var createdPatient = await _patientRepository.Add(patient, currentUser);
+            var createPatient = await _patientHelper.AddLatLongToPatient(patient);
+
+            var createdPatient = await _patientRepository.Add(createPatient, currentUser);
 
             var createdPrescriptionDto = _mapper.Map<Patient, PatientDto>(createdPatient);
 
@@ -102,7 +106,9 @@ namespace WebApi.controllers
 
             patient.Id = id;
 
-            var updatedPatient = await _patientRepository.Update(patient, currentUser);
+            var updatePatient = await _patientHelper.AddLatLongToPatient(patient);
+
+            var updatedPatient = await _patientRepository.Update(updatePatient, currentUser);
 
             var patientDto = _mapper.Map<Patient, PatientDto>(updatedPatient);
 
