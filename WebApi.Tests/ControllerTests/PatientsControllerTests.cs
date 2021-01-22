@@ -39,7 +39,7 @@ namespace WebApi.Tests.ControllerTests
             IdentityRepositoryFake = new IdentityRepository(userManager, signInManager, config);
 
             var fakeGenericRepo = MockGenericRepository.GetUserInformationMock(_fakeUsersPatient);
-            FakeController = new PatientsController(fakeGenericRepo.Object, IdentityRepositoryFake, mapper);
+            FakeController = new PatientsController(fakeGenericRepo.Object, IdentityRepositoryFake, mapper, config);
 
             IdentityHelper.SetUser(_fakeIdentityUsers[0], FakeController);
         }
